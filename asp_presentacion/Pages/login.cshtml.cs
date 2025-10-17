@@ -21,7 +21,7 @@ namespace asp_presentacion.Pages
             if (Email == "admin" && Password == "1234")
             {
                 // Ejemplo: redirigir al index si login correcto
-                return RedirectToPage("/Index");
+                return RedirectToPage("/Anfitrion");
             }
 
             // Si es incorrecto, mostrar error (por ahora opcional)

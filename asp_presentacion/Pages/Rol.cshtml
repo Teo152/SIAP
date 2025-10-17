@@ -1,0 +1,39 @@
+﻿@page
+@model asp_presentacion.Pages.RolModel
+@{
+    ViewData["Title"] = "Seleccionar Rol";
+}
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-light bg-white border-bottom shadow-sm px-4">
+    <a class="navbar-brand fw-bold" href="/">🏠 SkyBnB</a>
+    <div class="ms-auto">
+        <a href="/Login" class="btn btn-outline-dark">Iniciar sesión</a>
+    </div>
+</nav>
+
+<!-- SECCIÓN DE ELECCIÓN DE ROL -->
+<div class="d-flex flex-column justify-content-center align-items-center" style="height:80vh; background-color:#fff5f5;">
+    <h2 class="fw-bold mb-4" style="color:#2b2b2b;">Escoge tu rol</h2>
+
+    <div class="d-flex flex-column gap-3">
+        <a href="/Registro?rol=2" class="btn btn-danger btn-lg px-5">Huésped</a>
+        <a href="/Registro?rol=1" class="btn btn-danger btn-lg px-5">Anfitrión</a>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #fff;
+    }
+
+    .btn-danger {
+        background-color: #d00000;
+        border: none;
+    }
+
+        .btn-danger:hover {
+            background-color: #b00000;
+        }
+</style>

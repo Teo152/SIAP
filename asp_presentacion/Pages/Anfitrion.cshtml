@@ -1,15 +1,19 @@
 ﻿@page
-@model IndexModel
+@model SkyBnB.Pages.Anfitrion.IndexModel
 @{
-    ViewData["Title"] = "SkyBnB";
+    ViewData["Title"] = "Mis Propiedades - SkyBnB";
 }
 
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm px-4">
-    <a class="navbar-brand fw-bold" href="#" style="font-size: 1.5rem;">🏠 SkyBnB</a>
-    <div class="ms-auto">
-        <a href="/Rol" class="btn btn-outline-secondary me-2">Registrarse</a>
-        <a href="/Login" class="btn btn-dark">Iniciar sesión</a>
+    <a class="navbar-brand fw-bold" href="/" style="font-size: 1.5rem;">🏠 SkyBnB</a>
+    <div class="ms-auto d-flex align-items-center">
+        <a href="#" class="me-3 text-dark text-decoration-none">Mensajes</a>
+        <a asp-page="/Propiedades" class="me-3 text-dark text-decoration-none">Mis propiedades</a>
+        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
+             style="width: 35px; height: 35px;">
+            <i class="bi bi-person"></i>
+        </div>
     </div>
 </nav>
 
@@ -18,7 +22,7 @@
     <div class="p-4 bg-light rounded-3 shadow-sm">
         <form method="get" class="row g-3 align-items-center text-center">
             <div class="col-md-3">
-                <input type="text" name="Destino" class="form-control" placeholder="Explorar destinos" />
+                <input type="text" name="Destino" class="form-control" placeholder="Dónde" />
             </div>
             <div class="col-md-2">
                 <input type="date" name="CheckIn" class="form-control" placeholder="Check-In" />
@@ -41,13 +45,16 @@
 <!-- LISTADO DE PROPIEDADES -->
 <div class="container mt-5">
     <div class="row g-4">
-        @if (Model.ListaPropiedades != null && Model.ListaPropiedades.Any())
+        @if (Model.Propiedades != null && Model.Propiedades.Any())
         {
-            foreach (var propiedad in Model.ListaPropiedades)
+            foreach (var propiedad in Model.Propiedades)
             {
                 <div class="col-md-3">
                     <div class="card border-0 shadow-sm h-100 rounded-3">
-                        <img src="@($"data:image/png;base64,{propiedad.imagen}")" class="card-img-top rounded-top" alt="Imagen" style="height:180px; object-fit:cover;" />
+                        <img src="@($"data:image/png;base64,{propiedad.imagen}")"
+                             class="card-img-top rounded-top"
+                             alt="Imagen propiedad"
+                             style="height:180px; object-fit:cover;" />
                         <div class="card-body">
                             <h6 class="card-title fw-bold">@propiedad.nombre</h6>
                             <p class="text-muted mb-0">@propiedad.direccion</p>
@@ -59,7 +66,7 @@
         else
         {
             <div class="text-center text-muted">
-                <p>No se encontraron propiedades.</p>
+                <p>No tienes propiedades registradas aún.</p>
             </div>
         }
     </div>
@@ -84,7 +91,6 @@
         background-color: #fff;
     }
 
-    /* Color rosa para el botón buscar */
     .btn-pink {
         background-color: #d63384;
         color: white;
@@ -97,22 +103,14 @@
             color: white;
         }
 
-    /* Ajustes para inputs de fecha para mostrar placeholders (compatibilidad limitada) */
-    input[type="date"]::placeholder {
-        color: #6c757d;
-    }
-
-    /* Sombra y borde redondeado para tarjetas */
     .card {
         border-radius: 12px;
     }
 
-    /* Ajuste para el navbar brand */
     .navbar-brand {
         color: #000;
     }
 
-    /* Links navbar */
     .btn-outline-secondary {
         color: #6c757d;
         border-color: #6c757d;

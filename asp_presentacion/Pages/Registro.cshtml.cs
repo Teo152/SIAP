@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using lib_dominio.Entidades;
 using lib_presentaciones.Interfaces;
@@ -19,18 +18,31 @@ namespace asp_presentacion.Pages
         [BindProperty]
         public Usuarios Usuario { get; set; } = new();
 
-        public void OnGet() { }
+        public void OnGet(int? rol)
+        {
+            // Si viene de la página de rol, asigna el valor (1 = anfitrión, 2 = huésped)
+            if (rol.HasValue)
+            {
+                Usuario.rol = (RolUsuario)rol.Value;
+            }
+        }
 
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
                 return Page();
 
-            // Guardar usuario en la BD
-            await _usuariosPresentacion.Guardar(Usuario);
-
-            // Redirigir al login después del registro
-            return RedirectToPage("/Login");
+            try
+            {
+                await _usuariosPresentacion.Guardar(Usuario);
+                return RedirectToPage("/Anfitrion");
+            }
+            catch (Exception ex)
+            {
+                // Puedes mostrar el error en la página
+                ModelState.AddModelError(string.Empty, $"Error: {ex.Message}");
+                return Page();
+            }
         }
     }
 }

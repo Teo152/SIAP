@@ -1,7 +1,7 @@
 ﻿@page
 @model asp_presentacion.Pages.RegistroModel
 @{
-    ViewData["Title"] = "Registro Huésped";
+    ViewData["Title"] = "Registro Anfitrion";
 }
 
 <!-- NAVBAR -->
@@ -15,7 +15,7 @@
 <!-- FORMULARIO DE REGISTRO -->
 <div class="container mt-5 mb-5">
     <div class="mx-auto" style="max-width: 800px;">
-        <h2 class="fw-bold mb-4" style="color:#2b2b2b;">Registro</h2>
+        <h2 class="fw-bold mb-4 text-center" style="color:#2b2b2b;"></h2>
 
         <form method="post">
             <div class="row g-3">
@@ -26,9 +26,8 @@
                     <input asp-for="Usuario.apellido" class="form-control form-control-lg" placeholder="Apellido" required />
                 </div>
 
-
                 <div class="col-md-6">
-                    <input asp-for="Usuario.email" type="email" class="form-control form-control-lg" placeholder="Email" required />
+                    <input asp-for="Usuario.email" type="email" class="form-control form-control-lg" placeholder="Correo electrónico" required />
                 </div>
                 <div class="col-md-6">
                     <input asp-for="Usuario.contrasena" type="password" class="form-control form-control-lg" placeholder="Contraseña" required />
@@ -40,7 +39,9 @@
                 <div class="col-md-6">
                     <input asp-for="Usuario.fecha_nacimiento" type="date" class="form-control form-control-lg" placeholder="Fecha de nacimiento" required />
                 </div>
-                <input type="hidden" asp-for="Usuario.rol" value="2" />
+
+                <!-- Campo oculto del rol (1 = Anfitrión, 2 = Huésped) -->
+                <input type="hidden" asp-for="Usuario.rol" />
             </div>
 
             <div class="mt-5 text-center">

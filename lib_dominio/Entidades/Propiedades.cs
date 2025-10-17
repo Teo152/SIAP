@@ -22,7 +22,9 @@ namespace lib_dominio.Entidades
         public string estanciaminima { get; set; }
 
         public string? reglas_propiedad { get; set; }
-        public int usuario { get; set; }
+        public string? descripcion { get; set; }
+        public string politicas_cancelacion { get; set; }
+        public int? usuario { get; set; }
        
         
         public string? imagen { get; set; }

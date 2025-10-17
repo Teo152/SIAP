@@ -1,0 +1,74 @@
+﻿@page
+@model asp_presentacion.Pages.Anfitrion.PropiedadesModel
+@{
+    ViewData["Title"] = "Tus propiedades";
+}
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-light bg-white border-bottom shadow-sm px-4">
+    <a class="navbar-brand fw-bold" href="/">🏠 SkyBnB</a>
+    <div class="d-flex align-items-center">
+        <a class="me-3 text-dark text-decoration-none" href="/Anfitrion/Mensajes">Mensajes</a>
+        <a class="text-dark text-decoration-none" href="/Anfitrion/Propiedades">Mis propiedades</a>
+        <img src="/img/user.png" alt="perfil" class="rounded-circle ms-3" style="width:35px; height:35px;">
+    </div>
+</nav>
+
+<!-- CONTENIDO -->
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Tus propiedades</h2>
+        <a href="/Anfitrion/NuevaPropiedad" class="btn btn-danger">Nueva</a>
+    </div>
+
+    <table class="table table-bordered align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Propiedad</th>
+                <th>Dirección</th>
+                <th>Estado</th>
+                <th>Reservas</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Propiedades != null && Model.Propiedades.Any())
+            {
+                foreach (var p in Model.Propiedades)
+                {
+                    <tr>
+                        <td>@p.nombre</td>
+                        <td>@p.direccion</td>
+                        <td><span class="badge bg-light text-dark">Activo</span></td>
+                        <td>0 reservas</td> 
+                        <td>
+                            <a asp-page="/Anfitrion/EditarPropiedad" asp-route-id="@p.id" class="text-decoration-none">Ver/Editar</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" class="text-center text-muted">No tienes propiedades registradas aún.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #fff;
+    }
+
+    .btn-danger {
+        background-color: #d00000;
+        border: none;
+    }
+
+        .btn-danger:hover {
+            background-color: #b00000;
+        }
+</style>
