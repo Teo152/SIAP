@@ -1,0 +1,126 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "SkyBnB";
+}
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm px-4">
+    <a class="navbar-brand fw-bold" href="#" style="font-size: 1.5rem;">🏠 SkyBnB</a>
+    <div class="ms-auto">
+        <a href="/Registro" class="btn btn-outline-secondary me-2">Registrarse</a>
+        <a href="/Login" class="btn btn-dark">Iniciar sesión</a>
+    </div>
+</nav>
+
+<!-- FILTRO -->
+<div class="container mt-4">
+    <div class="p-4 bg-light rounded-3 shadow-sm">
+        <form method="get" class="row g-3 align-items-center text-center">
+            <div class="col-md-3">
+                <input type="text" name="Destino" class="form-control" placeholder="Explorar destinos" />
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="CheckIn" class="form-control" placeholder="Check-In" />
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="CheckOut" class="form-control" placeholder="Check-Out" />
+            </div>
+            <div class="col-md-2">
+                <input type="number" name="Huespedes" class="form-control" placeholder="¿Cuántos?" min="1" />
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-pink w-100">
+                    🔍 Buscar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- LISTADO DE PROPIEDADES -->
+<div class="container mt-5">
+    <div class="row g-4">
+        @if (Model.ListaPropiedades != null && Model.ListaPropiedades.Any())
+        {
+            foreach (var propiedad in Model.ListaPropiedades)
+            {
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm h-100 rounded-3">
+                        <img src="@($"data:image/png;base64,{propiedad.imagen}")" class="card-img-top rounded-top" alt="Imagen" style="height:180px; object-fit:cover;" />
+                        <div class="card-body">
+                            <h6 class="card-title fw-bold">@propiedad.nombre</h6>
+                            <p class="text-muted mb-0">@propiedad.direccion</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center text-muted">
+                <p>No se encontraron propiedades.</p>
+            </div>
+        }
+    </div>
+
+    <!-- Paginación -->
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item disabled"><span class="page-link">&lt;</span></li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item disabled"><span class="page-link">...</span></li>
+            <li class="page-item"><a class="page-link" href="#">10</a></li>
+            <li class="page-item"><a class="page-link" href="#">&gt;</a></li>
+        </ul>
+    </nav>
+</div>
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #fff;
+    }
+
+    /* Color rosa para el botón buscar */
+    .btn-pink {
+        background-color: #d63384;
+        color: white;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-pink:hover {
+            background-color: #b12d6b;
+            color: white;
+        }
+
+    /* Ajustes para inputs de fecha para mostrar placeholders (compatibilidad limitada) */
+    input[type="date"]::placeholder {
+        color: #6c757d;
+    }
+
+    /* Sombra y borde redondeado para tarjetas */
+    .card {
+        border-radius: 12px;
+    }
+
+    /* Ajuste para el navbar brand */
+    .navbar-brand {
+        color: #000;
+    }
+
+    /* Links navbar */
+    .btn-outline-secondary {
+        color: #6c757d;
+        border-color: #6c757d;
+    }
+
+        .btn-outline-secondary:hover {
+            background-color: #d63384;
+            border-color: #d63384;
+            color: white;
+        }
+</style>

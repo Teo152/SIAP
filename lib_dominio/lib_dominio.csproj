@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Nucleo\DatosGenerales.cs" />
+    <None Include="Nucleo\EncodingHelper.cs" />
+    <None Include="Nucleo\EncriptarConversor.cs" />
+    <None Include="Nucleo\Enumerables.cs" />
+    <None Include="Nucleo\JsonConversor.cs" />
+    <None Include="Nucleo\LogConversor.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,80 @@
+﻿@page
+@model asp_presentacion.Pages.RegistroModel
+@{
+    ViewData["Title"] = "Registro Huésped";
+}
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-light bg-white border-bottom shadow-sm px-4">
+    <a class="navbar-brand fw-bold" href="/">🏠 SkyBnB</a>
+    <div class="ms-auto">
+        <a href="/Login" class="btn btn-outline-dark">Iniciar sesión</a>
+    </div>
+</nav>
+
+<!-- FORMULARIO DE REGISTRO -->
+<div class="container mt-5 mb-5">
+    <div class="mx-auto" style="max-width: 800px;">
+        <h2 class="fw-bold mb-4" style="color:#2b2b2b;">Registro</h2>
+
+        <form method="post">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <input asp-for="Usuario.nombre" class="form-control form-control-lg" placeholder="Nombre" required />
+                </div>
+                <div class="col-md-6">
+                    <input asp-for="Usuario.apellido" class="form-control form-control-lg" placeholder="Apellido" required />
+                </div>
+
+
+                <div class="col-md-6">
+                    <input asp-for="Usuario.email" type="email" class="form-control form-control-lg" placeholder="Email" required />
+                </div>
+                <div class="col-md-6">
+                    <input asp-for="Usuario.contrasena" type="password" class="form-control form-control-lg" placeholder="Contraseña" required />
+                </div>
+
+                <div class="col-md-6">
+                    <input asp-for="Usuario.telefono" class="form-control form-control-lg" placeholder="Teléfono" required />
+                </div>
+                <div class="col-md-6">
+                    <input asp-for="Usuario.fecha_nacimiento" type="date" class="form-control form-control-lg" placeholder="Fecha de nacimiento" required />
+                </div>
+                <input type="hidden" asp-for="Usuario.rol" value="2" />
+            </div>
+
+            <div class="mt-5 text-center">
+                <button type="submit" class="btn btn-danger btn-lg w-100 fw-semibold">Continuar</button>
+                <p class="mt-3 text-muted small">
+                    Al continuar, aceptas nuestros <a href="#" class="text-decoration-none text-dark">Términos de servicio</a> y <a href="#" class="text-decoration-none text-dark">Política de privacidad</a>.
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #fff;
+    }
+
+    .form-control {
+        background-color: #f8f4f4;
+        border: none;
+        height: 50px;
+    }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 2px #d00000;
+        }
+
+    .btn-danger {
+        background-color: #d00000;
+        border: none;
+    }
+
+        .btn-danger:hover {
+            background-color: #b00000;
+        }
+</style>

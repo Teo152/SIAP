@@ -1,0 +1,60 @@
+﻿@page
+@model asp_presentacion.Pages.LoginModel
+@{
+    ViewData["Title"] = "Inicio de sesión";
+}
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-light bg-white border-bottom shadow-sm px-4">
+    <a class="navbar-brand fw-bold" href="/">🏠 SkyBnB</a>
+</nav>
+
+<!-- FORMULARIO DE LOGIN -->
+<div class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+    <div class="w-100" style="max-width: 400px;">
+        <h2 class="text-center mb-4 fw-bold" style="color:#2b2b2b;">Iniciar sesión</h2>
+
+        <form method="post">
+            <div class="mb-3">
+                <input asp-for="Email" type="email" class="form-control form-control-lg" placeholder="Email" required />
+            </div>
+            <div class="mb-3">
+                <input asp-for="Password" type="password" class="form-control form-control-lg" placeholder="Contraseña" required />
+            </div>
+
+            <button type="submit" class="btn btn-danger btn-lg w-100 fw-semibold">
+                Iniciar sesión
+            </button>
+        </form>
+
+        <div class="text-center mt-3">
+            <small>¿No tienes una cuenta? <a href="/Registro" class="text-decoration-none fw-semibold" style="color:#d00000;">Regístrate aquí</a></small>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #fff;
+    }
+
+    .form-control {
+        background-color: #f8f4f4;
+        border: none;
+        height: 50px;
+    }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 2px #d00000;
+        }
+
+    .btn-danger {
+        background-color: #d00000;
+        border: none;
+    }
+
+        .btn-danger:hover {
+            background-color: #b00000;
+        }
+</style>
