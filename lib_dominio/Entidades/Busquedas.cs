@@ -1,27 +1,23 @@
-﻿
-
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace lib_dominio.Entidades
+namespace lib_dominio.Entidades;
+
+public class Busquedas
 {
-    public class Busquedas
-    {
-        public int id { get; set; }
-  
-        public DateTime? fecha_deseada { get; set; }
-        public DateTime? fecha_Fin { get; set; }
+    public int Id { get; set; }
 
-        public int? Cantidad_Huespedes { get; set; }
-        
-        public string? ciudad { get; set; }
+    public DateTime? Fecha_deseada { get; set; }
+    public DateTime? Fecha_Fin { get; set; }
 
-        public double? precio_min    { get; set; }
-        public double? precio_max    { get; set; }
+    public int? Cantidad_Huespedes { get; set; }
 
-        public string? tipo_propiedad { get; set; }
-        public int usuario { get; set; }
-        [ForeignKey("usuario")][JsonIgnore] public Usuarios _Usuario { get; set; }
+    public string? Ciudad { get; set; }
 
-    }
+    public double? Precio_min { get; set; }
+    public double? Precio_max { get; set; }
+
+    public string? TipoPropiedad { get; set; }
+    public int UsuarioId { get; set; }
+    [JsonIgnore] public Usuarios Usuario { get; set; }
 }

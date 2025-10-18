@@ -20,28 +20,28 @@
         <form method="post">
             <div class="row g-3">
                 <div class="col-md-6">
-                    <input asp-for="Usuario.nombre" class="form-control form-control-lg" placeholder="Nombre" required />
+                    <input asp-for="Usuario.Nombre" class="form-control form-control-lg" placeholder="Nombre" required />
                 </div>
                 <div class="col-md-6">
-                    <input asp-for="Usuario.apellido" class="form-control form-control-lg" placeholder="Apellido" required />
-                </div>
-
-                <div class="col-md-6">
-                    <input asp-for="Usuario.email" type="email" class="form-control form-control-lg" placeholder="Correo electrónico" required />
-                </div>
-                <div class="col-md-6">
-                    <input asp-for="Usuario.contrasena" type="password" class="form-control form-control-lg" placeholder="Contraseña" required />
+                    <input asp-for="Usuario.Apellido" class="form-control form-control-lg" placeholder="Apellido" required />
                 </div>
 
                 <div class="col-md-6">
-                    <input asp-for="Usuario.telefono" class="form-control form-control-lg" placeholder="Teléfono" required />
+                    <input asp-for="Usuario.Email" type="Email" class="form-control form-control-lg" placeholder="Correo electrónico" required />
                 </div>
                 <div class="col-md-6">
-                    <input asp-for="Usuario.fecha_nacimiento" type="date" class="form-control form-control-lg" placeholder="Fecha de nacimiento" required />
+                    <input asp-for="Usuario.PasswordHash" type="password" class="form-control form-control-lg" placeholder="Contraseña" required />
+                </div>
+
+                <div class="col-md-6">
+                    <input asp-for="Usuario.PhoneNumber" class="form-control form-control-lg" placeholder="Teléfono" required />
+                </div>
+                <div class="col-md-6">
+                    <input asp-for="Usuario.FechaNacimiento" type="date" class="form-control form-control-lg" placeholder="Fecha de nacimiento" required />
                 </div>
 
                 <!-- Campo oculto del rol (1 = Anfitrión, 2 = Huésped) -->
-                <input type="hidden" asp-for="Usuario.rol" />
+                <input type="hidden" asp-for="Usuario.Rol" />
             </div>
 
             <div class="mt-5 text-center">

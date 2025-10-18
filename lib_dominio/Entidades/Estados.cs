@@ -1,10 +1,10 @@
-﻿
+﻿namespace lib_dominio.Entidades;
 
-namespace lib_dominio.Entidades
+public enum Estados
 {
-    public class Estados
-    {
-        public int id { get; set; }
-        public string tipo { get; set; }
-    }
+    Pendiente,
+    Aprovado,
+    Activo,
+    Cancelado,
+    Completado
 }

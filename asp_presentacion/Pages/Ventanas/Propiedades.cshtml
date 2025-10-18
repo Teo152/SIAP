@@ -1,5 +1,5 @@
 ﻿@page
-@model asp_presentacion.Pages.Ventanas.PropiedadesModel  //tener en cuanta este nombre aca
+@model asp_presentacion.Pages.Ventanas.PropiedadesModel  //tener en cuanta este Nombre aca
 @{
     ViewData["Titulo"] = " ";
 }
@@ -40,26 +40,26 @@
                         Model.Accion == lib_dominio.Nucleo.Enumerables.Ventanas.Borrar)
             {
                 <input type="hidden"
-                       asp-for="@Model.Actual!.id" />
+                       asp-for="@Model.Actual!.Id" />
             }
             @if (Model.Accion == lib_dominio.Nucleo.Enumerables.Ventanas.Borrar)
             {
                 <input type="hidden"
-                       asp-for="@Model.Actual!.nombre" />
+                       asp-for="@Model.Actual!.Nombre" />
                 <input type="hidden"
-                       asp-for="@Model.Actual!.direccion" />
+                       asp-for="@Model.Actual!.Direccion" />
                 <input type="hidden"
-                       asp-for="@Model.Actual!.capacidad" />
+                       asp-for="@Model.Actual!.Capacidad" />
                 <input type="hidden"
-                       asp-for="@Model.Actual!.tipo_de_propiedad" />
+                       asp-for="@Model.Actual!.TipoPropiedad" />
                 <input type="hidden"
-                       asp-for="@Model.Actual!.precio" />
+                       asp-for="@Model.Actual!.Precio" />
                 <input type="hidden"
-                       asp-for="@Model.Actual!.estanciaminima" />
+                       asp-for="@Model.Actual!.EstanciaMiinima" />
                 <input type="hidden"
-                       asp-for="@Model.Actual!.reglas_propiedad" />
+                       asp-for="@Model.Actual!.ReglasPropiedad" />
                 <input type="hidden"
-                       asp-for="@Model.Actual!.imagen" />
+                       asp-for="@Model.Actual!.Imagen" />
 
             }
 
@@ -75,9 +75,9 @@
                                 Nombre  @*aca modifico lo de guardar en cada div*@
                             </label>
                             <div class="col-lg-6">
-                                <input id="nmNombre"
+                                <input Id="nmNombre"
                                        class="cts_forms form-control"
-                                       asp-for="@Model.Actual!.nombre" /> @*esta linea conecta con la variable del visual*@
+                                       asp-for="@Model.Actual!.Nombre" /> @*esta linea conecta con la variable del visual*@
                             </div>
                         </div>
                          <div class="form-group">
@@ -85,9 +85,9 @@
                                 Nombre  @*aca modifico lo de guardar en cada div*@
                             </label>
                             <div class="col-lg-6">
-                                <input id="nmNombre"
+                                <input Id="nmNombre"
                                        class="cts_forms form-control"
-                                       asp-for="@Model.Actual!.direccion" /> @*esta linea conecta con la variable del visual*@
+                                       asp-for="@Model.Actual!.Direccion" /> @*esta linea conecta con la variable del visual*@
                             </div>
                         </div>
                         <div class="form-group">
@@ -95,9 +95,9 @@
                                 Nombre  @*aca modifico lo de guardar en cada div*@
                             </label>
                             <div class="col-lg-6">
-                                <input id="nmNombre"
+                                <input Id="nmNombre"
                                        class="cts_forms form-control"
-                                       asp-for="@Model.Actual!.capacidad" /> @*esta linea conecta con la variable del visual*@
+                                       asp-for="@Model.Actual!.Capacidad" /> @*esta linea conecta con la variable del visual*@
                             </div>
                         </div>
                         <div class="form-group">
@@ -105,9 +105,9 @@
                                 Nombre  @*aca modifico lo de guardar en cada div*@
                             </label>
                             <div class="col-lg-6">
-                                <input id="nmNombre"
+                                <input Id="nmNombre"
                                        class="cts_forms form-control"
-                                       asp-for="@Model.Actual!.tipo_de_propiedad" /> @*esta linea conecta con la variable del visual*@
+                                       asp-for="@Model.Actual!.TipoPropiedad" /> @*esta linea conecta con la variable del visual*@
                             </div>
                         </div>
                         <div class="form-group">
@@ -115,9 +115,9 @@
                                 Precio
                             </label>
                             <div class="col-lg-6">
-                                <input id="nmTelefono"
+                                <input Id="nmTelefono"
                                        class="cts_forms form-control"
-                                       asp-for="@Model.Actual!.precio" />
+                                       asp-for="@Model.Actual!.Precio" />
                             </div>
                         </div>
                         <div class="form-group">
@@ -125,9 +125,9 @@
                                 Detalles
                             </label>
                             <div class="col-lg-6">
-                                <input id="nmDirreccion"
+                                <input Id="nmDirreccion"
                                        class="cts_forms form-control"
-                                       asp-for="@Model.Actual!.estanciaminima" />
+                                       asp-for="@Model.Actual!.EstanciaMiinima" />
                             </div>
                         </div>
                         <div class="form-group">
@@ -135,9 +135,9 @@
                                 Nombre  @*aca modifico lo de guardar en cada div*@
                             </label>
                             <div class="col-lg-6">
-                                <input id="nmNombre"
+                                <input Id="nmNombre"
                                        class="cts_forms form-control"
-                                       asp-for="@Model.Actual!.reglas_propiedad" /> @*esta linea conecta con la variable del visual*@
+                                       asp-for="@Model.Actual!.ReglasPropiedad" /> @*esta linea conecta con la variable del visual*@
                             </div>
                         </div>
                         <div class="form-group">
@@ -145,9 +145,9 @@
                                 Nombre  @*aca modifico lo de guardar en cada div*@
                             </label>
                             <div class="col-lg-6">
-                                <input id="nmNombre"
+                                <input Id="nmNombre"
                                        class="cts_forms form-control"
-                                       asp-for="@Model.Actual!.usuario" /> @*esta linea conecta con la variable del visual*@
+                                       asp-for="@Model.Actual!.Usuario" /> @*esta linea conecta con la variable del visual*@
                             </div>
                         </div>
                         <div class="form-group">
@@ -155,9 +155,9 @@
                                 Nombre  @*aca modifico lo de guardar en cada div*@
                             </label>
                             <div class="col-lg-6">
-                                <input id="nmNombre"
+                                <input Id="nmNombre"
                                        class="cts_forms form-control"
-                                       asp-for="@Model.Actual!.imagen" /> @*esta linea conecta con la variable del visual*@
+                                       asp-for="@Model.Actual!.Imagen" /> @*esta linea conecta con la variable del visual*@
                             </div>
                         </div>
                     </div>
@@ -186,7 +186,7 @@
                             </h4>
                             <h6 align="left">
 
-                                @Model.Actual!.nombre
+                                @Model.Actual!.Nombre
                             </h6>
                             <br />
                             <br />
@@ -206,10 +206,10 @@
             @if (Model.Accion == lib_dominio.Nucleo.Enumerables.Ventanas.Listas ||
                         Model.Accion == lib_dominio.Nucleo.Enumerables.Ventanas.Borrar)
             {
-                <input id="flnombre"
+                <input Id="flnombre"
                        class="cts_forms form-control"
-                       asp-for="@Model.Filtro!.nombre"
-                       placeholder="nombre" />
+                       asp-for="@Model.Filtro!.Nombre"
+                       placeholder="Nombre" />
                 <br />
 
                 <div class="containers_vn panel panel-default">
@@ -261,32 +261,32 @@
                                 <tr>
 
                                     <td>
-                                        @elemento.nombre
+                                        @elemento.Nombre
                                     </td>
                                     <td>
-                                        @elemento.direccion
+                                        @elemento.Direccion
                                     </td>
                                     <td>
-                                        @elemento.capacidad
+                                        @elemento.Capacidad
                                     </td>
                                     <td>
-                                        @elemento.tipo_de_propiedad
+                                        @elemento.TipoPropiedad
                                     </td>
                                     <td>
-                                        @elemento.precio
+                                        @elemento.Precio
                                     </td>
                                     <td>
-                                        @elemento.estanciaminima
+                                        @elemento.EstanciaMiinima
                                     </td>
                                     <td>
-                                        @elemento.reglas_propiedad
+                                        @elemento.ReglasPropiedad
                                     </td>
 
                                     <td class="cl_hidden">
-                                        @elemento.usuario
+                                        @elemento.Usuario
                                     </td>
                                     <td class="cl_hidden">
-                                        @elemento.imagen
+                                        @elemento.Imagen
                                     </td>
 
                                     <td>
@@ -294,12 +294,12 @@
                                                value="Modicar"
                                                asp-page-handler="BtModificar"
                                                class="btn btn-secondary"
-                                               asp-route-data="@elemento.id" />
+                                               asp-route-data="@elemento.Id" />
                                         <input type="submit"
                                                value="Borrar"
                                                asp-page-handler="BtBorrarVal"
                                                class="btn btn-secondary"
-                                               asp-route-data="@elemento.id" />
+                                               asp-route-data="@elemento.Id" />
                                     </td>
                                 </tr>
                             }

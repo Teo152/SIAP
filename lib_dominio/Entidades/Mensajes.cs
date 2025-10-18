@@ -1,18 +1,15 @@
-﻿
-
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace lib_dominio.Entidades
-{
-    public class Mensajes
-    {
-        public int id { get; set; }
-        public string texto { get; set; }
-        public int remitente { get; set; }
-        public int destinatario { get; set; }
+namespace lib_dominio.Entidades;
 
-        [ForeignKey("remitente")][JsonIgnore] public Usuarios _Usuario { get; set; }
-        [ForeignKey("destinatario")][JsonIgnore] public Usuarios _Usuario1 { get; set; }
-    }
+public class Mensajes
+{
+    public int Id { get; set; }
+    public string Texto { get; set; }
+    public int RemitenteId { get; set; }
+    public int DestinatarioId { get; set; }
+
+    [JsonIgnore] public Usuarios Remitente { get; set; } = null!;
+    [JsonIgnore] public Usuarios Destinatario { get; set; } = null!;
 }

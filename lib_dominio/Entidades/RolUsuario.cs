@@ -1,11 +1,10 @@
-﻿
+﻿using System.ComponentModel;
 
-namespace lib_dominio.Entidades
+namespace lib_dominio.Entidades;
+
+public enum RolUsuario
 {
-   public enum RolUsuario
-    {
-        Huesped,
-        Anfitrion,
-        Administrador
-    }
+    Administrador,
+    Anfitrion,
+    Huesped
 }

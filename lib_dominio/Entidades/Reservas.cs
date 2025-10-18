@@ -1,35 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
-namespace lib_dominio.Entidades
+namespace lib_dominio.Entidades;
+
+public class Reservas
 {
-    public class Reservas
-    {
-        public int id { get; set; }
+    public int Id { get; set; }
 
-        public DateTime fecha_creacion { get; set; }
-        public DateTime fecha_deseada { get; set; }
-        public DateTime fecha_fin { get; set; }
+    public DateTime Fecha_creacion { get; set; }
+    public DateTime Fecha_deseada { get; set; }
+    public DateTime Fecha_fin { get; set; }
+    public int Cantidad_huespedes { get; set; }
+    public double Costo_total { get; set; }
+    public int EstadoId { get; set; }
+    public int PropiedadId { get; set; }
+    public int UsuarioId { get; set; }
+    public Estados Estado { get; set; }
 
-        public int cantidad_huespedes { get; set; }
+    [JsonIgnore] public Propiedades Propiedad { get; set; } = null!;
+    [JsonIgnore] public Usuarios Usuario { get; set; } = null!;
 
-        public double costo_total { get; set; }
-
-        public int estado { get; set; }
-
-        public int propiedad { get; set; }
-
-        public int usuario { get; set; }
-
-        [ForeignKey("estado")][JsonIgnore] public Estados _Estado { get; set; }
-        [ForeignKey("propiedad")][JsonIgnore] public Propiedades _Propiedad { get; set; }
-        [ForeignKey("usuario")][JsonIgnore] public Usuarios _Usuario { get; set; }
-
-
-    }
+    [JsonIgnore] public ICollection<Resenas>? Resenas { get; set; }
 }

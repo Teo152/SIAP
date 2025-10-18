@@ -1,22 +1,18 @@
-﻿
-using System.ComponentModel.DataAnnotations.Schema;
-
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
+namespace lib_dominio.Entidades;
 
-namespace lib_dominio.Entidades
+public class Pagos
 {
-    public class Pagos
-    {
-        public int id { get; set; }
-        public DateTime fecha_pago { get; set; }
-        public string codigo { get; set; }
-        public double monto { get; set; }
-        public string metodo { get; set; }
-        public int reserva { get; set; }
-        public int usuario { get; set; }
+    public int Id { get; set; }
+    public DateTime Fecha_pago { get; set; }
+    public string Codigo { get; set; } = null!;
+    public double Monto { get; set; }
+    public string Metodo { get; set; } = null!;
+    public int ReservaId { get; set; }
+    public int UsuarioId { get; set; }
 
-        [ForeignKey("reserva")][JsonIgnore] public Reservas _Reserva { get; set; }
-        [ForeignKey("usuario")][JsonIgnore] public Usuarios _Usuario { get; set; }
-    }
+    [JsonIgnore] public Reservas Reserva { get; set; } = null!;
+    [JsonIgnore] public Usuarios Usuario { get; set; } = null!;
 }

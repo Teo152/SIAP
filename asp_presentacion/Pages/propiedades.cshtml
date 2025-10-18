@@ -37,12 +37,12 @@
                 foreach (var p in Model.Propiedades)
                 {
                     <tr>
-                        <td>@p.nombre</td>
-                        <td>@p.direccion</td>
+                        <td>@p.Nombre</td>
+                        <td>@p.Direccion</td>
                         <td><span class="badge bg-light text-dark">Activo</span></td>
                         <td>0 reservas</td> 
                         <td>
-                            <a asp-page="/Anfitrion/EditarPropiedad" asp-route-id="@p.id" class="text-decoration-none">Ver/Editar</a>
+                            <a asp-page="/Anfitrion/EditarPropiedad" asp-route-id="@p.Id" class="text-decoration-none">Ver/Editar</a>
                         </td>
                     </tr>
                 }

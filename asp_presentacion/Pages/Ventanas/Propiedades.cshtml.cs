@@ -4,11 +4,13 @@ using lib_presentaciones.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Numerics;
+
 namespace asp_presentacion.Pages.Ventanas
 {
     public class PropiedadesModel : PageModel
     {
         private IPropiedadesPresentacion? iPresentacion = null;
+
         public PropiedadesModel(IPropiedadesPresentacion iPresentacion)
         {
             try
@@ -21,12 +23,16 @@ namespace asp_presentacion.Pages.Ventanas
                 LogConversor.Log(ex, ViewData!);
             }
         }
+
         public IFormFile? FormFile { get; set; }
         [BindProperty] public Enumerables.Ventanas Accion { get; set; }
         [BindProperty] public Propiedades? Actual { get; set; }
         [BindProperty] public Propiedades? Filtro { get; set; }
         [BindProperty] public List<Propiedades>? Lista { get; set; }
-        public virtual void OnGet() { OnPostBtRefrescar(); }
+
+        public virtual void OnGet()
+        { OnPostBtRefrescar(); }
+
         public void OnPostBtRefrescar()
         {
             try
@@ -37,7 +43,7 @@ namespace asp_presentacion.Pages.Ventanas
                     HttpContext.Response.Redirect("/");
                     return;
                 }
-                Filtro!.nombre = Filtro!.nombre ?? " ";
+                Filtro!.Nombre = Filtro!.Nombre ?? " ";
 
                 Accion = Enumerables.Ventanas.Listas;
                 var task = this.iPresentacion!.Listar();
@@ -50,39 +56,42 @@ namespace asp_presentacion.Pages.Ventanas
                 LogConversor.Log(ex, ViewData!);
             }
         }
+
         public virtual void OnPostBtNuevo()
         {
             try
             {
                 Accion = Enumerables.Ventanas.Editar;
                 Actual = new Propiedades();
-                Actual.nombre = "PRUEBA";
+                Actual.Nombre = "PRUEBA";
             }
             catch (Exception ex)
             {
                 LogConversor.Log(ex, ViewData!);
             }
         }
+
         public virtual void OnPostBtModificar(string data)
         {
             try
             {
                 OnPostBtRefrescar();
                 Accion = Enumerables.Ventanas.Editar;
-                Actual = Lista!.FirstOrDefault(x => x.id.ToString() == data);
+                Actual = Lista!.FirstOrDefault(x => x.Id.ToString() == data);
             }
             catch (Exception ex)
             {
                 LogConversor.Log(ex, ViewData!);
             }
         }
+
         public virtual void OnPostBtGuardar()
         {
             try
             {
                 Accion = Enumerables.Ventanas.Editar;
                 Task<Propiedades>? task = null;
-                if (Actual!.id == 0)
+                if (Actual!.Id == 0)
                     task = this.iPresentacion!.Guardar(Actual!)!;
                 else
                     task = this.iPresentacion!.Modificar(Actual!)!;
@@ -96,19 +105,21 @@ namespace asp_presentacion.Pages.Ventanas
                 LogConversor.Log(ex, ViewData!);
             }
         }
+
         public virtual void OnPostBtBorrarVal(string data)
         {
             try
             {
                 OnPostBtRefrescar();
                 Accion = Enumerables.Ventanas.Borrar;
-                Actual = Lista!.FirstOrDefault(x => x.id.ToString() == data);
+                Actual = Lista!.FirstOrDefault(x => x.Id.ToString() == data);
             }
             catch (Exception ex)
             {
                 LogConversor.Log(ex, ViewData!);
             }
         }
+
         public virtual void OnPostBtBorrar()
         {
             try
@@ -122,6 +133,7 @@ namespace asp_presentacion.Pages.Ventanas
                 LogConversor.Log(ex, ViewData!);
             }
         }
+
         public void OnPostBtCancelar()
         {
             try

@@ -24,7 +24,6 @@ namespace lib_presentaciones.Implementaciones
             lista = JsonConversor.ConvertirAObjeto<List<Propiedades>>(
                 JsonConversor.ConvertirAString(respuesta["Entidades"]));
 
-
             return lista;
         }
 
@@ -49,7 +48,7 @@ namespace lib_presentaciones.Implementaciones
 
         public async Task<Propiedades?> Guardar(Propiedades? entidad)
         {
-            if (entidad!.id != 0)
+            if (entidad!.Id != 0)
             {
                 throw new Exception("lbFaltaInformacion");
             }
@@ -72,15 +71,13 @@ namespace lib_presentaciones.Implementaciones
 
         public async Task<Propiedades?> Modificar(Propiedades? entidad)
         {
-            if (entidad!.id == 0)
+            if (entidad!.Id == 0)
             {
                 throw new Exception("lbFaltaInformacion");
             }
 
             var datos = new Dictionary<string, object>();
             datos["Entidad"] = entidad;
-
-
 
             comunicaciones = new Comunicaciones();
             datos = comunicaciones.ConstruirUrl(datos, "Propiedades/Modificar");
@@ -97,7 +94,7 @@ namespace lib_presentaciones.Implementaciones
 
         public async Task<Propiedades?> Borrar(Propiedades? entidad)
         {
-            if (entidad!.id == 0)
+            if (entidad!.Id == 0)
             {
                 throw new Exception("lbFaltaInformacion");
             }

@@ -23,7 +23,7 @@ namespace asp_presentacion.Pages
             // Si viene de la página de rol, asigna el valor (1 = anfitrión, 2 = huésped)
             if (rol.HasValue)
             {
-                Usuario.rol = (RolUsuario)rol.Value;
+                Usuario.Rol = (RolUsuario)rol.Value;
             }
         }
 

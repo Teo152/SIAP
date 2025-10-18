@@ -1,38 +1,31 @@
-﻿
+﻿using System.Text.Json.Serialization;
 
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
+namespace lib_dominio.Entidades;
 
-namespace lib_dominio.Entidades
+public class Propiedades
 {
-    public class Propiedades
-    {
-        public int id { get; set; }
-        public string nombre { get; set; }
-        
-        public string direccion { get; set; }
+    public int Id { get; set; }
+    public string Nombre { get; set; } = null!;
+    public string Direccion { get; set; } = null!;
+    public int Capacidad { get; set; }
+    public string TipoPropiedad { get; set; } = null!;
+    public decimal Precio { get; set; } //precio por noche
 
-        public int capacidad { get; set; }
+    //public bool? disponible { get; set; }
+    public string EstanciaMiinima { get; set; } = null!;
 
-        public string tipo_de_propiedad { get; set; }
+    public string? ReglasPropiedad { get; set; }
+    public string? Descripcion { get; set; }
+    public string PoliticasCancelacion { get; set; } = null!;
+    public int UsuarioId { get; set; }
+    public int MunicipioId { get; set; }
+    public string Imagen { get; set; } = null!;
 
-        public decimal precio { get; set; } //precio por noche
+    // Relación con Usuarios
+    // Un anfitrión puede tener múltiples propiedades
+    [JsonIgnore] public Usuarios Usuario { get; set; } = null!; //preguntar por ? o null!
 
-        //public bool? disponible { get; set; }
-        public string estanciaminima { get; set; }
+    [JsonIgnore] public Municipios? Municipio { get; set; } = null!; // "
 
-        public string? reglas_propiedad { get; set; }
-        public string? descripcion { get; set; }
-        public string politicas_cancelacion { get; set; }
-        public int? usuario { get; set; }
-       
-        
-        public string? imagen { get; set; }
-        // Relación con Usuarios
-        // Un anfitrión puede tener múltiples propiedades
-        [ForeignKey("usuario")][JsonIgnore] public Usuarios _Usuario { get; set; }
-
-    
-       
-    }
+    [JsonIgnore] public ICollection<Reservas>? Reservas { get; set; }
 }
