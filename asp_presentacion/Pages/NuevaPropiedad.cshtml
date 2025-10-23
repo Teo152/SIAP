@@ -1,0 +1,206 @@
+﻿@page
+@model asp_presentacion.Pages.NuevaPropiedadModel
+@{
+    ViewData["Title"] = "Registra tu propiedad";
+}
+
+<!-- 🎨 Estilos -->
+<style>
+    body {
+        background-color: #fefcfc;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .container-form {
+        max-width: 900px;
+        margin: 50px auto;
+        background: #fff;
+        padding: 40px 50px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+        font-weight: 700;
+        color: #2b2b2b;
+        margin-bottom: 30px;
+    }
+
+    label.form-label {
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 5px;
+    }
+
+    input.form-control,
+    textarea.form-control,
+    select.form-select {
+        background-color: #fafafa;
+        border: 2px solid #eee;
+        border-radius: 8px;
+        padding: 10px 14px;
+        transition: all 0.2s ease-in-out;
+    }
+
+        input.form-control:focus,
+        textarea.form-control:focus,
+        select.form-select:focus {
+            outline: none;
+            border-color: #ff5a5f;
+            background-color: #fff;
+            box-shadow: none;
+        }
+
+    /* 🔴 Campo con error */
+    .input-validation-error {
+        border-color: #ff5a5f !important;
+        background-color: #fff !important;
+    }
+
+    /* 🔴 Mensajes debajo de cada campo */
+    .field-validation-error {
+        color: #ff5a5f;
+        font-size: 0.875rem;
+        margin-top: 4px;
+        display: block;
+        font-weight: 500;
+    }
+
+    textarea {
+        resize: none;
+    }
+
+    .upload-area {
+        border: 2px dashed #ddd;
+        border-radius: 12px;
+        padding: 40px;
+        text-align: center;
+        background-color: #fafafa;
+        transition: all 0.2s ease;
+    }
+
+        .upload-area:hover {
+            background-color: #fdf3f3;
+            border-color: #ff5a5f;
+        }
+
+    .btn-danger {
+        background-color: #ff5a5f;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 30px;
+        font-weight: 600;
+        transition: background-color 0.2s;
+    }
+
+        .btn-danger:hover {
+            background-color: #e14b4f;
+        }
+
+    .fw-semibold {
+        font-weight: 600;
+    }
+
+    .text-muted {
+        color: #888 !important;
+    }
+</style>
+
+<!-- 🏠 Formulario -->
+<div class="container-form">
+    <h2>Registra tu propiedad</h2>
+
+    <form method="post" enctype="multipart/form-data">
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <label class="form-label">Nombre</label>
+                <input asp-for="Propiedad.Nombre" class="form-control" placeholder="Nombre" required />
+                <span asp-validation-for="Propiedad.Nombre" class="field-validation-error"></span>
+            </div>
+
+            <div class="col-md-6">
+            <label class="form-label">Dirección</label>
+            <input asp-for="Propiedad.Direccion" class="form-control" placeholder="Dirección" required />
+            <span asp-validation-for="Propiedad.Direccion" class="field-validation-error"></span>
+        </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Precio por noche</label>
+                <input asp-for="Propiedad.Precio" class="form-control" type="number" min="1" placeholder="Precio por noche" required />
+                <span asp-validation-for="Propiedad.Precio" class="field-validation-error"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Capacidad (Número de huéspedes)</label>
+                <input asp-for="Propiedad.Capacidad" class="form-control" type="number" min="1" placeholder="Capacidad" required />
+                <span asp-validation-for="Propiedad.Capacidad" class="field-validation-error"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Estancia mínima (Noches)</label>
+                <input asp-for="Propiedad.EstanciaMinima" class="form-control" type="number" min="1" placeholder="Estancia mínima" required />
+                <span asp-validation-for="Propiedad.EstanciaMinima" class="field-validation-error"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Tipo de propiedad</label>
+                <select asp-for="Propiedad.TipoPropiedad" class="form-select" required>
+                    <option value="">Seleccionar</option>
+                    <option>Casa</option>
+                    <option>Apartamento</option>
+                    <option>Loft</option>
+                    <option>Cabaña</option>
+                </select>
+                <span asp-validation-for="Propiedad.TipoPropiedad" class="field-validation-error"></span>
+            </div>
+        </div>
+
+        <!-- Subir fotos -->
+        <div class="mt-5">
+            <label class="form-label">Subir fotos</label>
+            <div class="upload-area">
+                <p class="mb-1 fw-semibold">Arrastra tu foto aquí o haz clic para subirla</p>
+                <p class="text-muted small">Una imagen vale más que mil palabras. Puedes subir hasta 5 fotos.</p>
+                <input type="file" asp-for="Fotos" multiple accept="image/*"
+                       class="form-control mt-2" style="max-width: 300px; margin: 0 auto;" required />
+                <span asp-validation-for="Fotos" class="field-validation-error"></span>
+            </div>
+        </div>
+
+        <!-- Reglas -->
+        <div class="mt-4">
+            <label class="form-label">Reglas de la propiedad</label>
+            <textarea asp-for="Propiedad.ReglasPropiedad" class="form-control" rows="3"
+                      placeholder="Describe las reglas que los huéspedes deben cumplir (opcional)."></textarea>
+            <span asp-validation-for="Propiedad.ReglasPropiedad" class="field-validation-error"></span>
+        </div>
+
+        <!-- Descripción -->
+        <div class="mt-4">
+            <label class="form-label">Descripción de la propiedad</label>
+            <textarea asp-for="Propiedad.Descripcion" class="form-control" rows="4"
+                      placeholder="Describe las características únicas, la distribución, el mobiliario o servicios especiales." required></textarea>
+            <span asp-validation-for="Propiedad.Descripcion" class="field-validation-error"></span>
+        </div>
+
+        <!-- Políticas -->
+        <div class="mt-4">
+            <label class="form-label">Políticas de cancelación</label>
+            <textarea asp-for="Propiedad.PoliticasCancelacion" class="form-control" rows="3"
+                      placeholder="Ingresa tus políticas de cancelación." required></textarea>
+            <span asp-validation-for="Propiedad.PoliticasCancelacion" class="field-validation-error"></span>
+        </div>
+
+        <input type="hidden" asp-for="Propiedad.MunicipioId" value="1" />
+
+        <!-- Botón -->
+        <div class="text-center mt-5">
+            <button type="submit" class="btn btn-danger">Subir</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

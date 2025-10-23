@@ -10,7 +10,7 @@ namespace lib_repositorios.Interfaces
 
         DbSet<Busquedas>? Busquedas { get; set; }
 
-        DbSet<Estados>? Estados { get; set; }
+       // DbSet<Estados>? Estados { get; set; }
         DbSet<Mensajes>? Mensajes { get; set; }
 
         DbSet<Propiedades>? Propiedades { get; set; }

@@ -4,67 +4,70 @@ GO
 USE SIAP
 
 CREATE TABLE ROLES (
-id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
-tipo VARCHAR(100),
-descripcion VARCHAR(100)
+Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+Tipo VARCHAR(100),
+Descripcion VARCHAR(100)
 
 
 );
-
 
 CREATE TABLE USUARIOS (
-    id INT  NOT NULL PRIMARY KEY IDENTITY(1,1),
-    nombre VARCHAR(100),
-    apellido VARCHAR(100) ,
-    email VARCHAR(150) NULL, 
-    contraseña VARCHAR(100),
-    telefono INT,
-    fecha_nacimiento DATETIME NULL, -- solo anfitrion
-    rol INT REFERENCES ROLES (ID),
-   
-    edad INT NULL -- solo huesped
+    Id INT  NOT NULL PRIMARY KEY IDENTITY(1,1),
+    Nombre VARCHAR(100),
+    Apellido VARCHAR(100),
+    Telefono INT,
+    Email VARCHAR(100),
+    Contraseña VARCHAR(100),
+    Rol INT REFERENCES ROLES (Id) ,
+    Fecha_nacimiento DATETIME NULL,
+    Foto Varchar(100)
+
 
 );
-
-
 
 
 CREATE TABLE MENSAJES (
-id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
-texto VARCHAR(500),
-remitente INT REFERENCES USUARIOS (id),
-destinatario INT REFERENCES USUARIOS (id),
+Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+Texto VARCHAR(500),
+RemitenteId INT REFERENCES USUARIOS (Id),
+DestinatarioId INT REFERENCES USUARIOS (Id),
 );
 
-CREATE TABLE PROPIEDADES ( -- mefalta la variable de disponibilidad de falso o verdadaero
-    id INT  NOT NULL PRIMARY KEY IDENTITY(1,1),
-    nombre VARCHAR(100),
-    direccion VARCHAR(100) ,
-    capacidad INT,
-    tipo_de_propiedad VARCHAR(100),
-    precio DECIMAL (10,2),
-    estanciaminima VARCHAR(100), -- comfirmar si va aparte de reglas de negocio y de que tipo es 
-    reglas_propiedad VARCHAR (500),
-    usuario INT REFERENCES USUARIOS (id)
+CREATE TABLE MUNICIPIOS (
+Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+Municipio VARCHAR(100)
 
 
 );
 
-ALTER TABLE PROPIEDADES
-ADD Imagen VARCHAR(255) NULL;
+CREATE TABLE PROPIEDADES (
+   Id INT  NOT NULL PRIMARY KEY IDENTITY(1,1),
+    Nombre VARCHAR(100),
+    Direccion VARCHAR(100) ,
+    Capacidad INT,
+    TipoPropiedad VARCHAR(100),
+    Precio DECIMAL (10,2),
+    EstanciaMinima VARCHAR(100),
+    ReglasPropiedad VARCHAR (500),
+    Descripcion VARCHAR(100),
+    PoliticasCancelacion VARCHAR(100),
+    UsuarioId INT REFERENCES USUARIOS (Id),
+    MunicipioId INT REFERENCES MUNICIPIOS (Id),
+    Imagen VARCHAR(100)
 
+);
 
 
 CREATE TABLE BUSQUEDAS (
-id INT  NOT NULL PRIMARY KEY IDENTITY(1,1),
-fecha_deseada DATETIME null,
-fecha_fin DATETIME null,
+Id INT  NOT NULL PRIMARY KEY IDENTITY(1,1),
+Decha_deseada DATETIME null,
+Fecha_fin DATETIME null,
 Cantidad_huesped  int null,
-ciudad VARCHAR(100) null,
-precio_min DECIMAL (10,2) null,
-precio_max DECIMAL (10,2) null,
+Ciudad VARCHAR(100) null,
+Precio_min DECIMAL (10,2) null,
+Precio_max DECIMAL (10,2) null,
 TipoPropiedad NVARCHAR(50) null,
-usuario INT REFERENCES USUARIOS (id)
+UsuarioId INT REFERENCES USUARIOS (Id)
 );
 
 CREATE TABLE ESTADOS(
@@ -73,35 +76,36 @@ tipo VARCHAR (100)
 );
 
 CREATE TABLE RESERVAS(
-id INT  NOT NULL PRIMARY KEY IDENTITY(1,1),
-fecha_creacion DATETIME,
-fecha_deseada DATETIME,
-fecha_fin DATETIME,
-cantidad_huesped INT,
-costo_total DECIMAL (10,2),
-usuario INT REFERENCES USUARIOS (id),
-propiedad INT REFERENCES PROPIEDADES (id),
-estado INT REFERENCES ESTADOS (id)
+Id INT  NOT NULL PRIMARY KEY IDENTITY(1,1),
+Fecha_creacion DATETIME,
+Fecha_deseada DATETIME,
+Fecha_fin DATETIME,
+Cantidad_huesped INT,
+Costo_total DECIMAL (10,2),
+UsuarioId INT REFERENCES USUARIOS (Id),
+PropiedadId INT REFERENCES PROPIEDADES (Id),
+EstadoId INT REFERENCES ESTADOS (Id)
+
 );
 
 CREATE TABLE PAGOS(
-id INT  NOT NULL PRIMARY KEY IDENTITY(1,1),
-usuario INT REFERENCES USUARIOS (id),
-codigo VARCHAR(100),
-monto DECIMAL(10,2),
-metodo VARCHAR(100),
-reserva INT REFERENCES RESERVAS(id),
-fecha_pago DATETIME
+Id INT  NOT NULL PRIMARY KEY IDENTITY(1,1),
+UsuarioId INT REFERENCES USUARIOS (Id),
+Codigo VARCHAR(100),
+Monto DECIMAL(10,2),
+Metodo VARCHAR(100),
+ReservaId INT REFERENCES RESERVAS(Id),
+Fecha_pago DATETIME
 );
 
 
 
 CREATE TABLE RESENAS(
-id INT  NOT NULL PRIMARY KEY IDENTITY(1,1),
-fecha_creacion DATETIME,
-comentario VARCHAR(200),
-clasificacion int,
-propiedad INT REFERENCES PROPIEDADES (id),
-reserva INT REFERENCES RESERVAS (id)
+Id INT  NOT NULL PRIMARY KEY IDENTITY(1,1),
+Fecha_creacion DATETIME,
+Comentario VARCHAR(200),
+Clasificacion int,
+PropiedadId INT REFERENCES PROPIEDADES (Id),
+ReservaId INT REFERENCES RESERVAS (Id)
 
 );

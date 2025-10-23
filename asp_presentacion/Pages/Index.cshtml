@@ -6,7 +6,7 @@
 
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm px-4">
-    <a class="navbar-brand fw-bold" href="#" style="font-size: 1.5rem;">🏠 SkyBnB</a>
+    <a class="navbar-brand fw-bold" href="/" style="font-size: 1.5rem;">🏠 SkyBnB</a>
     <div class="ms-auto">
         <a href="/Rol" class="btn btn-outline-secondary me-2">Registrarse</a>
         <a href="/Login" class="btn btn-dark">Iniciar sesión</a>
@@ -47,10 +47,16 @@
             {
                 <div class="col-md-3">
                     <div class="card border-0 shadow-sm h-100 rounded-3">
-                        <img src="@($"data:image/png;base64,{propiedad.Imagen}")" class="card-img-top rounded-top" alt="Imagen" style="height:180px; object-fit:cover;" />
+                        <!-- Imagen -->
+                        <img src="@propiedad.Imagen"
+                             onerror="this.src='/uploads/sin_imagen.jpg';"
+                             class="card-img-top rounded-top propiedad-img"
+                             alt="@propiedad.Nombre" />
+
                         <div class="card-body">
                             <h6 class="card-title fw-bold">@propiedad.Nombre</h6>
-                            <p class="text-muted mb-0">@propiedad.Direccion</p>
+                            <p class="text-muted mb-1">@propiedad.Direccion</p>
+                           
                         </div>
                     </div>
                 </div>
@@ -78,13 +84,13 @@
     </nav>
 </div>
 
+<!-- ESTILOS -->
 <style>
     body {
         font-family: 'Poppins', sans-serif;
         background-color: #fff;
     }
 
-    /* Color rosa para el botón buscar */
     .btn-pink {
         background-color: #d63384;
         color: white;
@@ -97,22 +103,28 @@
             color: white;
         }
 
-    /* Ajustes para inputs de fecha para mostrar placeholders (compatibilidad limitada) */
-    input[type="date"]::placeholder {
-        color: #6c757d;
-    }
-
-    /* Sombra y borde redondeado para tarjetas */
     .card {
         border-radius: 12px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    /* Ajuste para el navbar brand */
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+    .propiedad-img {
+        height: 180px;
+        object-fit: cover;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
     .navbar-brand {
         color: #000;
     }
 
-    /* Links navbar */
     .btn-outline-secondary {
         color: #6c757d;
         border-color: #6c757d;
@@ -123,4 +135,13 @@
             border-color: #d63384;
             color: white;
         }
+
+    .pagination .page-item.active .page-link {
+        background-color: #d63384;
+        border-color: #d63384;
+    }
+
+    .fw-semibold {
+        font-weight: 600;
+    }
 </style>

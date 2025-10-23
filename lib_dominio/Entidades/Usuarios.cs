@@ -1,16 +1,24 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations;
+﻿
 
-namespace lib_dominio.Entidades;
-
-public class Usuarios : IdentityUser
+namespace lib_dominio.Entidades
 {
-    public string Nombre { get; set; } = null!;
-    public string Apellido { get; set; } = null!;
-    public DateTime FechaNacimiento { get; set; }
-    public string? Foto { get; set; }
-    public int RolId { get; set; }
-    public RolUsuario Rol { get; set; }
+    public class Usuarios
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public string Apellido { get; set; }
+        public string Email { get; set; } 
+        public string Contrasena { get; set; }
+        public int Telefono { get; set; }
 
-    public string NombreCompleto => $"{Nombre} {Apellido}";
+        public string? Foto { get; set; }
+        public DateTime? Fecha_nacimiento { get; set; } // solo anfitrión
+
+        public RolUsuario? Rol { get; set; }
+
+        
+        
+        
+        
+    }
 }

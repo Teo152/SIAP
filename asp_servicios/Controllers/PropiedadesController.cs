@@ -116,9 +116,22 @@ namespace asp_servicios.Controllers
             }
             catch (Exception ex)
             {
-                respuesta["Error"] = ex.Message.ToString();
-                return JsonConversor.ConvertirAString(respuesta);
+                Exception? inner = ex;
+                while (inner?.InnerException != null)
+                    inner = inner.InnerException;
+
+                // Limpiamos el mensaje
+                string errorMensaje = inner?.Message ?? "Error desconocido en el servidor.";
+                errorMensaje = errorMensaje.Replace("\"", "'").Replace("\r", " ").Replace("\n", " ").Trim();
+
+                // Devolvemos un JSON manualmente formateado (no volvemos a serializar)
+                var json = $"{{\"Error\":\"{errorMensaje}\"}}";
+
+                Console.WriteLine("⚠️ ERROR EN BACKEND: " + errorMensaje);
+                return json;
             }
+
+
         }
 
         [HttpPost]

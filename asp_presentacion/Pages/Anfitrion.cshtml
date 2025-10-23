@@ -51,13 +51,16 @@
             {
                 <div class="col-md-3">
                     <div class="card border-0 shadow-sm h-100 rounded-3">
-                        <img src="@($"data:image/png;base64,{propiedad.Imagen}")"
-                             class="card-img-top rounded-top"
-                             alt="Imagen propiedad"
-                             style="height:180px; object-fit:cover;" />
+                        <!-- 🔹 Mostrar imagen desde /uploads -->
+                        <img src="@propiedad.Imagen"
+                             onerror="this.src='/uploads/sin_imagen.jpg';"
+                             class="card-img-top rounded-top propiedad-img"
+                             alt="Imagen propiedad" />
+
                         <div class="card-body">
                             <h6 class="card-title fw-bold">@propiedad.Nombre</h6>
-                            <p class="text-muted mb-0">@propiedad.Direccion</p>
+                            <p class="text-muted mb-1">@propiedad.Direccion</p>
+                            <p class="fw-semibold text-danger mb-0">$@propiedad.Precio / noche</p>
                         </div>
                     </div>
                 </div>
@@ -85,6 +88,7 @@
     </nav>
 </div>
 
+<!-- ESTILOS -->
 <style>
     body {
         font-family: 'Poppins', sans-serif;
@@ -105,6 +109,19 @@
 
     .card {
         border-radius: 12px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+    .propiedad-img {
+        height: 180px;
+        object-fit: cover;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
     }
 
     .navbar-brand {
@@ -121,4 +138,9 @@
             border-color: #d63384;
             color: white;
         }
+
+    .pagination .page-item.active .page-link {
+        background-color: #d63384;
+        border-color: #d63384;
+    }
 </style>

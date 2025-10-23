@@ -26,7 +26,7 @@ namespace lib_aplicaciones.Implementaciones
             if (entidad == null)
                 throw new Exception("lbFaltaInformacion");
 
-            if (entidad!.id == 0)
+            if (entidad!.Id == 0)
                 throw new Exception("lbNoSeGuardo");
 
             this.IConexion!.Propiedades!.Remove(entidad);
@@ -39,10 +39,14 @@ namespace lib_aplicaciones.Implementaciones
             if (entidad == null)
                 throw new Exception("lbFaltaInformacion");
 
-            if (entidad.id != 0)
+            if (entidad.Id != 0)
                 throw new Exception("lbYaSeGuardo");
 
+            if (string.IsNullOrEmpty(entidad.Imagen))
+                entidad.Imagen = "sin_imagen.jpg";
 
+         if (entidad.MunicipioId == 0 || entidad.MunicipioId.ToString() == "")
+    entidad.MunicipioId = 1;
 
             this.IConexion!.Propiedades!.Add(entidad);
             this.IConexion.SaveChanges();
@@ -57,7 +61,7 @@ namespace lib_aplicaciones.Implementaciones
         public List<Propiedades> PorNombre(Propiedades? entidad)
         {
             return this.IConexion!.Propiedades!
-                .Where(x => x.nombre!.Contains(entidad!.nombre!))
+                .Where(x => x.Nombre!.Contains(entidad!.Nombre!))
                 .ToList();
         }
 
@@ -68,7 +72,7 @@ namespace lib_aplicaciones.Implementaciones
             if (entidad == null)
                 throw new Exception("lbFaltaInformacion");
 
-            if (entidad!.id == 0)
+            if (entidad!.Id == 0)
                 throw new Exception("lbNoSeGuardo");
 
 

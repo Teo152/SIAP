@@ -28,14 +28,14 @@ namespace lib_presentaciones.Implementaciones
             return lista;
         }
 
-        public async Task<List<Usuarios>> PorNombre(Usuarios? entidad)
+        public async Task<List<Usuarios>> PorEmail(Usuarios? entidad)
         {
             var lista = new List<Usuarios>();
             var datos = new Dictionary<string, object>();
             datos["Entidad"] = entidad!;
 
             comunicaciones = new Comunicaciones();
-            datos = comunicaciones.ConstruirUrl(datos, "Usuarios/PorNombre");
+            datos = comunicaciones.ConstruirUrl(datos, "Usuarios/PorEmail");
             var respuesta = await comunicaciones!.Execute(datos);
 
             if (respuesta.ContainsKey("Error"))
@@ -49,7 +49,7 @@ namespace lib_presentaciones.Implementaciones
 
         public async Task<Usuarios?> Guardar(Usuarios? entidad)
         {
-            if (entidad!.id != 0)
+            if (entidad!.Id != 0)
             {
                 throw new Exception("lbFaltaInformacion");
             }
@@ -72,7 +72,7 @@ namespace lib_presentaciones.Implementaciones
 
         public async Task<Usuarios?> Modificar(Usuarios? entidad)
         {
-            if (entidad!.id == 0)
+            if (entidad!.Id == 0)
             {
                 throw new Exception("lbFaltaInformacion");
             }
@@ -97,7 +97,7 @@ namespace lib_presentaciones.Implementaciones
 
         public async Task<Usuarios?> Borrar(Usuarios? entidad)
         {
-            if (entidad!.id == 0)
+            if (entidad!.Id == 0)
             {
                 throw new Exception("lbFaltaInformacion");
             }

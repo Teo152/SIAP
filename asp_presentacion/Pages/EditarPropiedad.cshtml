@@ -1,0 +1,170 @@
+﻿@page "{id:int}"
+@model asp_presentacion.Pages.EditarPropiedadModel
+@{
+    ViewData["Title"] = "Editar propiedad";
+}
+
+<style>
+    body {
+        background-color: #fefcfc;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .container-form {
+        max-width: 900px;
+        margin: 50px auto;
+        background: #fff;
+        padding: 40px 50px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+        font-weight: 700;
+        color: #2b2b2b;
+        margin-bottom: 30px;
+    }
+
+    label.form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    input.form-control,
+    textarea.form-control,
+    select.form-select {
+        background-color: #fafafa;
+        border: none;
+        border-bottom: 2px solid #eee;
+        border-radius: 8px;
+        padding: 10px 14px;
+        transition: all 0.2s ease-in-out;
+    }
+
+        input.form-control:focus,
+        textarea.form-control:focus,
+        select.form-select:focus {
+            outline: none;
+            box-shadow: none;
+            border-color: #ff5a5f;
+            background-color: #fff;
+        }
+
+    textarea {
+        resize: none;
+    }
+
+    .btn-danger {
+        background-color: #ff5a5f;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 30px;
+        font-weight: 600;
+        transition: background-color 0.2s;
+    }
+
+        .btn-danger:hover {
+            background-color: #e14b4f;
+        }
+
+    .field-validation-error {
+        color: #ff5a5f;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="container-form">
+    <h2>Editar propiedad</h2>
+
+    <form method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Propiedad.Id" />
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <label class="form-label">Nombre</label>
+                <input asp-for="Propiedad.Nombre" class="form-control" />
+                <span asp-validation-for="Propiedad.Nombre" class="field-validation-error"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Dirección</label>
+                <input asp-for="Propiedad.Direccion" class="form-control" />
+                <span asp-validation-for="Propiedad.Direccion" class="field-validation-error"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Precio por noche</label>
+                <input asp-for="Propiedad.Precio" class="form-control" />
+                <span asp-validation-for="Propiedad.Precio" class="field-validation-error"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Capacidad (Número de huéspedes)</label>
+                <input asp-for="Propiedad.Capacidad" class="form-control" />
+                <span asp-validation-for="Propiedad.Capacidad" class="field-validation-error"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Estancia mínima (Noches)</label>
+                <input asp-for="Propiedad.EstanciaMinima" class="form-control" />
+                <span asp-validation-for="Propiedad.EstanciaMinima" class="field-validation-error"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Tipo de propiedad</label>
+                <select asp-for="Propiedad.TipoPropiedad" class="form-select">
+                    <option value="">Seleccionar</option>
+                    <option>Casa</option>
+                    <option>Apartamento</option>
+                    <option>Loft</option>
+                    <option>Cabaña</option>
+                </select>
+                <span asp-validation-for="Propiedad.TipoPropiedad" class="field-validation-error"></span>
+            </div>
+        </div>
+
+        <!-- Imagen actual -->
+        @if (!string.IsNullOrEmpty(Model.Propiedad.Imagen))
+        {
+            <div class="mt-4 text-center">
+                <img src="@Model.Propiedad.Imagen" alt="Imagen actual" style="width:200px; border-radius:10px;" />
+                <p class="text-muted small mt-2">Imagen actual</p>
+            </div>
+        }
+
+        <!-- Nueva foto -->
+        <div class="mt-4">
+            <label class="form-label">Cambiar imagen</label>
+            <input type="file" asp-for="Fotos" class="form-control" />
+        </div>
+
+        <div class="mt-4">
+            <label class="form-label">Reglas de la propiedad</label>
+            <textarea asp-for="Propiedad.ReglasPropiedad" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Propiedad.ReglasPropiedad" class="field-validation-error"></span>
+        </div>
+
+        <div class="mt-4">
+            <label class="form-label">Descripción</label>
+            <textarea asp-for="Propiedad.Descripcion" class="form-control" rows="4"></textarea>
+            <span asp-validation-for="Propiedad.Descripcion" class="field-validation-error"></span>
+        </div>
+
+        <div class="mt-4">
+            <label class="form-label">Políticas de cancelación</label>
+            <textarea asp-for="Propiedad.PoliticasCancelacion" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Propiedad.PoliticasCancelacion" class="field-validation-error"></span>
+        </div>
+
+        <input type="hidden" asp-for="Propiedad.MunicipioId" />
+
+        <div class="text-center mt-5">
+            <button type="submit" class="btn btn-danger">Guardar cambios</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

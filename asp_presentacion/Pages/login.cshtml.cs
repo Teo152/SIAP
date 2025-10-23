@@ -1,3 +1,5 @@
+using lib_dominio.Entidades;
+using lib_presentaciones.Implementaciones;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -15,18 +17,58 @@ namespace asp_presentacion.Pages
         {
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
-            // Aquí puedes agregar la validación real del usuario
-            if (Email == "admin" && Password == "1234")
-            {
-                // Ejemplo: redirigir al index si login correcto
-                return RedirectToPage("/Anfitrion");
-            }
+            if (!ModelState.IsValid)
+                return Page();
 
-            // Si es incorrecto, mostrar error (por ahora opcional)
-            ModelState.AddModelError(string.Empty, "Credenciales incorrectas");
-            return Page();
+            try
+            {
+                // ? Instanciamos el servicio que obtiene los usuarios
+                var servicio = new UsuariosPresentacion();
+                var usuarios = await servicio.Listar(); // usamos Listar en lugar de PorEmail
+
+                // ? Buscamos el usuario por email (ignorando mayúsculas/minúsculas)
+                var usuario = usuarios.FirstOrDefault(u =>
+                    u.Email.Equals(Email, StringComparison.OrdinalIgnoreCase));
+
+                if (usuario == null)
+                {
+                    ModelState.AddModelError(string.Empty, "El correo no está registrado.");
+                    return Page();
+                }
+
+                // ? Verificamos la contraseña
+                if (usuario.Contrasena != Password)
+                {
+                    ModelState.AddModelError(string.Empty, "Contraseña incorrecta.");
+                    return Page();
+                }
+
+                // ? Guardamos datos del usuario en sesión
+                HttpContext.Session.SetInt32("UsuarioId", usuario.Id);
+                HttpContext.Session.SetString("Rol", usuario.Rol.ToString());
+                HttpContext.Session.SetString("NombreUsuario", usuario.Nombre);
+
+                // ? Redirigimos según el rol
+                switch (usuario.Rol)
+                {
+                    case RolUsuario.Anfitrion:
+                        return RedirectToPage("/Anfitrion");
+
+                    case RolUsuario.Administrador:
+                        return RedirectToPage("/Admin/Index");
+
+                    case RolUsuario.Huesped:
+                    default:
+                        return RedirectToPage("/Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Error al iniciar sesión: {ex.Message}");
+                return Page();
+            }
         }
     }
 }

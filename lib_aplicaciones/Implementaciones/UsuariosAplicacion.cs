@@ -26,7 +26,7 @@ namespace lib_aplicaciones.Implementaciones
             if (entidad == null)
                 throw new Exception("lbFaltaInformacion");
 
-            if (entidad!.id == 0)
+            if (entidad!.Id == 0)
                 throw new Exception("lbNoSeGuardo");
 
             this.IConexion!.Usuarios!.Remove(entidad);
@@ -39,7 +39,7 @@ namespace lib_aplicaciones.Implementaciones
             if (entidad == null)
                 throw new Exception("lbFaltaInformacion");
 
-            if (entidad.id != 0)
+            if (entidad.Id != 0)
                 throw new Exception("lbYaSeGuardo");
 
           
@@ -54,12 +54,16 @@ namespace lib_aplicaciones.Implementaciones
             return this.IConexion!.Usuarios!.Take(20).ToList();
         }
 
-        public List<Usuarios> PorNombre(Usuarios? entidad)
+        public List<Usuarios> PorEmail(Usuarios? entidad)
         {
+            if (entidad == null || string.IsNullOrEmpty(entidad.Email))
+                throw new Exception("El correo no puede estar vacío.");
+
             return this.IConexion!.Usuarios!
-                .Where(x => x.nombre!.Contains(entidad!.nombre!))
+                .Where(x => x.Email == entidad.Email)
                 .ToList();
         }
+
 
         public Usuarios? Modificar(Usuarios? entidad)
 
@@ -68,7 +72,7 @@ namespace lib_aplicaciones.Implementaciones
             if (entidad == null)
                 throw new Exception("lbFaltaInformacion");
 
-            if (entidad!.id == 0)
+            if (entidad!.Id == 0)
                 throw new Exception("lbNoSeGuardo");
 
            

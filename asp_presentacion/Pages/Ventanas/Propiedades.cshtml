@@ -55,7 +55,7 @@
                 <input type="hidden"
                        asp-for="@Model.Actual!.Precio" />
                 <input type="hidden"
-                       asp-for="@Model.Actual!.EstanciaMiinima" />
+                       asp-for="@Model.Actual!.EstanciaMinima" />
                 <input type="hidden"
                        asp-for="@Model.Actual!.ReglasPropiedad" />
                 <input type="hidden"
@@ -127,7 +127,7 @@
                             <div class="col-lg-6">
                                 <input Id="nmDirreccion"
                                        class="cts_forms form-control"
-                                       asp-for="@Model.Actual!.EstanciaMiinima" />
+                                       asp-for="@Model.Actual!.EstanciaMinima" />
                             </div>
                         </div>
                         <div class="form-group">
@@ -147,7 +147,7 @@
                             <div class="col-lg-6">
                                 <input Id="nmNombre"
                                        class="cts_forms form-control"
-                                       asp-for="@Model.Actual!.Usuario" /> @*esta linea conecta con la variable del visual*@
+                                       asp-for="@Model.Actual!.UsuarioId" /> @*esta linea conecta con la variable del visual*@
                             </div>
                         </div>
                         <div class="form-group">
@@ -276,14 +276,14 @@
                                         @elemento.Precio
                                     </td>
                                     <td>
-                                        @elemento.EstanciaMiinima
+                                        @elemento.EstanciaMinima
                                     </td>
                                     <td>
                                         @elemento.ReglasPropiedad
                                     </td>
 
                                     <td class="cl_hidden">
-                                        @elemento.Usuario
+                                        @elemento.UsuarioId
                                     </td>
                                     <td class="cl_hidden">
                                         @elemento.Imagen

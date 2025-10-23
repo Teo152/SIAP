@@ -18,8 +18,10 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold">Tus propiedades</h2>
-        <a href="/Anfitrion/NuevaPropiedad" class="btn btn-danger">Nueva</a>
+        <a href="/NuevaPropiedad" class="btn btn-danger">Nueva</a>
     </div>
+
+   
 
     <table class="table table-bordered align-middle">
         <thead class="table-light">
@@ -39,10 +41,17 @@
                     <tr>
                         <td>@p.Nombre</td>
                         <td>@p.Direccion</td>
-                        <td><span class="badge bg-light text-dark">Activo</span></td>
-                        <td>0 reservas</td> 
+                        <td><span class="badge bg-light text-dark">Activa</span></td>
+                        <td>0 reservas</td>
                         <td>
-                            <a asp-page="/Anfitrion/EditarPropiedad" asp-route-id="@p.Id" class="text-decoration-none">Ver/Editar</a>
+                            <a asp-page="/EditarPropiedad" asp-route-id="@p.Id" class="text-decoration-none me-2 text-danger fw-semibold">Ver/Editar</a>
+
+                            <form method="post" asp-page-handler="Eliminar" asp-route-id="@p.Id" style="display:inline;">
+                                <button type="submit" class="btn btn-link p-0 text-danger fw-semibold"
+                                        onclick="return confirm('¿Seguro que deseas eliminar esta propiedad?');">
+                                    Eliminar
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 }
@@ -70,5 +79,15 @@
 
         .btn-danger:hover {
             background-color: #b00000;
+        }
+
+    button.btn-link {
+        color: #d00000;
+        text-decoration: none;
+    }
+
+        button.btn-link:hover {
+            color: #b00000;
+            text-decoration: underline;
         }
 </style>

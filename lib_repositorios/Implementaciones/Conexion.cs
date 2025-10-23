@@ -18,7 +18,7 @@ namespace lib_repositorios.Implementaciones
 
         public DbSet<Busquedas>? Busquedas { get; set; }
 
-        public DbSet<Estados>? Estados { get; set; }
+      //  public DbSet<Estados>? Estados { get; set; }  Presguntar por este
        public DbSet<Mensajes>? Mensajes { get; set; }
 
         public DbSet<Propiedades>? Propiedades { get; set; }

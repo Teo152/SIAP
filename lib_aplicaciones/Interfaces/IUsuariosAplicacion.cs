@@ -5,7 +5,7 @@ namespace lib_aplicaciones.Interfaces
     public interface IUsuariosAplicacion
     {
         void Configurar(string StringConexion);
-        List<Usuarios> PorNombre(Usuarios? entidad);
+        List<Usuarios> PorEmail(Usuarios? entidad);
         List<Usuarios> Listar();
         Usuarios? Guardar(Usuarios? entidad);
         Usuarios? Modificar(Usuarios? entidad);

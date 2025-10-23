@@ -15,7 +15,7 @@ public class Reservas
     public int EstadoId { get; set; }
     public int PropiedadId { get; set; }
     public int UsuarioId { get; set; }
-    public Estados Estado { get; set; }
+    //public Estados Estado { get; set; } preguntar por esto
 
     [JsonIgnore] public Propiedades Propiedad { get; set; } = null!;
     [JsonIgnore] public Usuarios Usuario { get; set; } = null!;
