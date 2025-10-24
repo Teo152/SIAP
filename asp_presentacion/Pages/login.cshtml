@@ -19,8 +19,16 @@
                 <input asp-for="Email" type="email" class="form-control form-control-lg" placeholder="Email" required />
             </div>
             <div class="mb-3">
-                <input asp-for="Password" type="password" class="form-control form-control-lg" placeholder="Contrasena" required />
+                <input asp-for="Password" type="password" class="form-control form-control-lg" placeholder="Contraseña" required />
             </div>
+
+            @* 🔹 Mensaje de error en caso de que el usuario no exista o las credenciales sean incorrectas *@
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="alert alert-danger text-center py-2" role="alert">
+                    @Model.ErrorMessage
+                </div>
+            }
 
             <button type="submit" class="btn btn-danger btn-lg w-100 fw-semibold">
                 Iniciar sesión
@@ -28,7 +36,12 @@
         </form>
 
         <div class="text-center mt-3">
-            <small>¿No tienes una cuenta? <a href="/Rol" class="text-decoration-none fw-semibold" style="color:#d00000;">Regístrate aquí</a></small>
+            <small>
+                ¿No tienes una cuenta?
+                <a href="/Rol" class="text-decoration-none fw-semibold" style="color:#d00000;">
+                    Regístrate aquí
+                </a>
+            </small>
         </div>
     </div>
 </div>
@@ -57,4 +70,12 @@
         .btn-danger:hover {
             background-color: #b00000;
         }
+
+    .alert-danger {
+        background-color: #fdecea;
+        color: #b00000;
+        border: 1px solid #f5c2c0;
+        border-radius: 6px;
+        font-size: 0.9rem;
+    }
 </style>

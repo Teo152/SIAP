@@ -13,6 +13,9 @@ namespace asp_presentacion.Pages
         [BindProperty]
         public string Password { get; set; } = string.Empty;
 
+        // ?? Propiedad para mostrar mensajes en el frontend
+        public string? ErrorMessage { get; set; }
+
         public void OnGet()
         {
         }
@@ -34,14 +37,14 @@ namespace asp_presentacion.Pages
 
                 if (usuario == null)
                 {
-                    ModelState.AddModelError(string.Empty, "El correo no está registrado.");
+                    ErrorMessage = "El usuario no existe";
                     return Page();
                 }
 
                 // ? Verificamos la contraseña
                 if (usuario.Contrasena != Password)
                 {
-                    ModelState.AddModelError(string.Empty, "Contraseña incorrecta.");
+                    ErrorMessage = "Contraseña incorrecta";
                     return Page();
                 }
 
@@ -49,6 +52,9 @@ namespace asp_presentacion.Pages
                 HttpContext.Session.SetInt32("UsuarioId", usuario.Id);
                 HttpContext.Session.SetString("Rol", usuario.Rol.ToString());
                 HttpContext.Session.SetString("NombreUsuario", usuario.Nombre);
+                // ?? Guardar la foto del usuario en la sesión
+                HttpContext.Session.SetString("FotoUsuario", usuario.Foto ?? "/uploads/user_default.jpg");
+
 
                 // ? Redirigimos según el rol
                 switch (usuario.Rol)
@@ -66,7 +72,7 @@ namespace asp_presentacion.Pages
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, $"Error al iniciar sesión: {ex.Message}");
+                ErrorMessage = $"Error al iniciar sesión: {ex.Message}";
                 return Page();
             }
         }

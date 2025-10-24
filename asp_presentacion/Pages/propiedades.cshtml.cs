@@ -3,7 +3,7 @@ using lib_presentaciones.Implementaciones;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace asp_presentacion.Pages.Anfitrion
+namespace asp_presentacion.Pages
 {
     public class PropiedadesModel : PageModel
     {

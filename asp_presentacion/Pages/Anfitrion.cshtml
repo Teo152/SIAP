@@ -2,6 +2,9 @@
 @model SkyBnB.Pages.Anfitrion.IndexModel
 @{
     ViewData["Title"] = "Mis Propiedades - SkyBnB";
+
+    // ✅ Obtenemos la foto del usuario desde sesión (por si no la tiene, usamos una por defecto)
+    var fotoUsuario = HttpContext.Session.GetString("FotoUsuario") ?? "/uploads/user_default.jpg";
 }
 
 <!-- NAVBAR -->
@@ -10,10 +13,13 @@
     <div class="ms-auto d-flex align-items-center">
         <a href="#" class="me-3 text-dark text-decoration-none">Mensajes</a>
         <a asp-page="/Propiedades" class="me-3 text-dark text-decoration-none">Mis propiedades</a>
-        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
-             style="width: 35px; height: 35px;">
-            <i class="bi bi-person"></i>
-        </div>
+
+        <!-- 🔹 Imagen del usuario logueado -->
+        <img src="@fotoUsuario"
+             onerror="this.src='/uploads/user_default.jpg';"
+             alt="Usuario"
+             class="rounded-circle"
+             style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ddd;">
     </div>
 </nav>
 
@@ -51,10 +57,9 @@
             {
                 <div class="col-md-3">
                     <div class="card border-0 shadow-sm h-100 rounded-3">
-                        <!-- 🔹 Mostrar imagen desde /uploads -->
                         <img src="@propiedad.Imagen"
                              onerror="this.src='/uploads/sin_imagen.jpg';"
-                             class="card-img-top rounded-top propiedad-img"
+                             class="card-img-top propiedad-img"
                              alt="Imagen propiedad" />
 
                         <div class="card-body">
@@ -73,19 +78,6 @@
             </div>
         }
     </div>
-
-    <!-- Paginación -->
-    <nav class="mt-4">
-        <ul class="pagination justify-content-center">
-            <li class="page-item disabled"><span class="page-link">&lt;</span></li>
-            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item disabled"><span class="page-link">...</span></li>
-            <li class="page-item"><a class="page-link" href="#">10</a></li>
-            <li class="page-item"><a class="page-link" href="#">&gt;</a></li>
-        </ul>
-    </nav>
 </div>
 
 <!-- ESTILOS -->
@@ -123,21 +115,6 @@
         border-top-left-radius: 12px;
         border-top-right-radius: 12px;
     }
-
-    .navbar-brand {
-        color: #000;
-    }
-
-    .btn-outline-secondary {
-        color: #6c757d;
-        border-color: #6c757d;
-    }
-
-        .btn-outline-secondary:hover {
-            background-color: #d63384;
-            border-color: #d63384;
-            color: white;
-        }
 
     .pagination .page-item.active .page-link {
         background-color: #d63384;
