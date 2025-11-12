@@ -1,7 +1,10 @@
-using asp_servicios;
 var builder = WebApplication.CreateBuilder(args);
-var startup = new Startup(builder.Configuration);
-startup.ConfigureServices(builder, builder.Services);
+
+var startup = new asp_servicios.Startup(builder.Configuration);
+startup.ConfigureServices(builder.Services);
+
 var app = builder.Build();
+
 startup.Configure(app, app.Environment);
+
 app.Run();
