@@ -11,10 +11,11 @@ public class Propiedades
     public string Direccion { get; set; } = null!;
     public int Capacidad { get; set; }
     public string TipoPropiedad { get; set; } = null!;
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal Precio { get; set; } //precio por noche
 
     //public bool? disponible { get; set; }
-    public string EstanciaMinima { get; set; } = null!;
+    public int EstanciaMinima { get; set; } 
 
     public string? ReglasPropiedad { get; set; }
     public string? Descripcion { get; set; }

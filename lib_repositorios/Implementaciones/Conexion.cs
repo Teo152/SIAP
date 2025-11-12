@@ -29,5 +29,37 @@ namespace lib_repositorios.Implementaciones
         public DbSet<Resenas>? Resenas { get; set; }
         public DbSet<Reservas>? Reservas { get; set; }
         public DbSet<Usuarios>? Usuarios { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Mensajes>()
+                .HasOne(m => m.Remitente)
+                .WithMany()
+                .HasForeignKey(m => m.RemitenteId)
+                .OnDelete(DeleteBehavior.Restrict); // ❌ sin cascada
+
+            modelBuilder.Entity<Mensajes>()
+                .HasOne(m => m.Destinatario)
+                .WithMany()
+                .HasForeignKey(m => m.DestinatarioId)
+                .OnDelete(DeleteBehavior.Restrict); // ❌ sin cascada
+
+            modelBuilder.Entity<Pagos>()
+          .HasOne(m => m.Reserva
+          )
+          .WithMany()
+          .HasForeignKey(m => m.ReservaId)
+          .OnDelete(DeleteBehavior.Restrict); // ❌ sin cascada
+
+            modelBuilder.Entity<Pagos>()
+                .HasOne(m => m.Usuario)
+                .WithMany()
+                .HasForeignKey(m => m.UsuarioId)
+                .OnDelete(DeleteBehavior.Restrict); // ❌ sin cascada
+        }
+
     }
+
 }

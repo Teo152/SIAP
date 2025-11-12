@@ -14,10 +14,6 @@ public class Busquedas
 
     public string? Ciudad { get; set; }
 
-    public double? Precio_min { get; set; }
-    public double? Precio_max { get; set; }
-
-    public string? TipoPropiedad { get; set; }
     public int UsuarioId { get; set; }
     [JsonIgnore] public Usuarios Usuario { get; set; }
 }
