@@ -5,7 +5,6 @@ using lib_repositorios;
 using lib_repositorios.Implementaciones;
 using lib_repositorios.Interfaces;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.EntityFrameworkCore; // <� IMPORTANTE
 
 namespace asp_servicios
 {
@@ -26,15 +25,8 @@ namespace asp_servicios
 
             services.AddControllers();
             services.AddEndpointsApiExplorer();
-            // services.AddSwaggerGen();
-
-            // ? Lee la cadena y registra tu DbContext REAL: Conexion
-            var cs = Configuration!.GetConnectionString("DefaultConnection")
-                     ?? throw new InvalidOperationException("Falta ConnectionStrings:DefaultConnection en appsettings*.json");
-
-            services.AddDbContext<Conexion>(opt => opt.UseSqlServer(cs)); // <� aqu� va tu contexto
-
-            // Resto de servicios
+            //services.AddSwaggerGen(); 
+            // Repositorios 
             services.AddScoped<IConexion, Conexion>();
             services.AddScoped<IPropiedadesAplicacion, PropiedadesAplicacion>();
             services.AddScoped<IUsuariosAplicacion, UsuariosAplicacion>();
