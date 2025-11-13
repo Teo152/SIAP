@@ -16,18 +16,20 @@
 <!-- FILTRO -->
 <div class="container mt-4">
     <div class="p-4 bg-light rounded-3 shadow-sm">
+        <!-- GET a esta misma página -->
         <form method="get" class="row g-3 align-items-center text-center">
             <div class="col-md-3">
-                <input type="text" name="Destino" class="form-control" placeholder="Explorar destinos" />
+                <!-- Coincide con Busquedas.Ciudad -->
+                <input asp-for="Ciudad" class="form-control" placeholder="destinos" />
             </div>
             <div class="col-md-2">
-                <input type="date" name="CheckIn" class="form-control" placeholder="Check-In" />
+                <input asp-for="Fecha_deseada" type="date" class="form-control" />
             </div>
             <div class="col-md-2">
-                <input type="date" name="CheckOut" class="form-control" placeholder="Check-Out" />
+                <input asp-for=" Fecha_Fin" type="date" class="form-control" />
             </div>
             <div class="col-md-2">
-                <input type="number" name="Huespedes" class="form-control" placeholder="¿Cuántos?" min="1" />
+                <input asp-for="Cantidad_Huespedes" type="number" class="form-control" placeholder="¿Cuántos?" min="1" />
             </div>
             <div class="col-md-2">
                 <button type="submit" class="btn btn-pink w-100">
@@ -47,7 +49,6 @@
             {
                 <div class="col-md-3">
                     <div class="card border-0 shadow-sm h-100 rounded-3">
-                        <!-- Imagen -->
                         <img src="@propiedad.Imagen"
                              onerror="this.src='/uploads/sin_imagen.jpg';"
                              class="card-img-top rounded-top propiedad-img"
@@ -56,7 +57,6 @@
                         <div class="card-body">
                             <h6 class="card-title fw-bold">@propiedad.Nombre</h6>
                             <p class="text-muted mb-1">@propiedad.Direccion</p>
-                           
                         </div>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
         }
     </div>
 
-    <!-- Paginación -->
+    <!-- Paginación dummy -->
     <nav class="mt-4">
         <ul class="pagination justify-content-center">
             <li class="page-item disabled"><span class="page-link">&lt;</span></li>

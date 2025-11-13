@@ -40,6 +40,7 @@ namespace asp_servicios
             services.AddScoped<IUsuariosAplicacion, UsuariosAplicacion>();
             services.AddScoped<TokenController, TokenController>();
             services.AddScoped<IBusquedasAplicacion, BusquedasAplicacion>();
+            services.AddScoped<IMunicipiosAplicacion, MunicipiosAplicacion>();
 
             services.AddCors(o => o.AddDefaultPolicy(b => b.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
         }

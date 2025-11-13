@@ -30,6 +30,8 @@ namespace lib_repositorios.Implementaciones
         public DbSet<Reservas>? Reservas { get; set; }
         public DbSet<Usuarios>? Usuarios { get; set; }
 
+        public DbSet<Municipios>? Municipios { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

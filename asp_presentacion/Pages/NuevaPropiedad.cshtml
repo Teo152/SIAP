@@ -155,6 +155,22 @@
                 <span asp-validation-for="Propiedad.TipoPropiedad" class="field-validation-error"></span>
             </div>
         </div>
+        <div class="col-md-6">
+            <label class="form-label">Municipio</label>
+            <select asp-for="MunicipioSeleccionado" class="form-select" required>
+                <option value="">Seleccione un municipio</option>
+
+                @foreach (var municipio in Model.ListaMunicipios)
+                {
+                    <option value="@municipio.Id">@municipio.Nombre</option>
+                }
+            </select>
+
+            <span asp-validation-for="MunicipioSeleccionado" class="field-validation-error"></span>
+        </div>
+
+
+
 
         <!-- Subir fotos -->
         <div class="mt-5">
@@ -192,8 +208,7 @@
             <span asp-validation-for="Propiedad.PoliticasCancelacion" class="field-validation-error"></span>
         </div>
 
-        <input type="hidden" asp-for="Propiedad.MunicipioId" value="1" />
-
+        <!--<input type="hidden" asp-for="Propiedad.MunicipioId" value="1" /> -->
         <!-- Botón -->
         <div class="text-center mt-5">
             <button type="submit" class="btn btn-danger">Subir</button>

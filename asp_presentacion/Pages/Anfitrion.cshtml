@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Mis Propiedades - SkyBnB";
 
-    // ✅ Obtenemos la foto del usuario desde sesión (por si no la tiene, usamos una por defecto)
     var fotoUsuario = HttpContext.Session.GetString("FotoUsuario") ?? "/uploads/user_default.jpg";
 }
 
@@ -14,7 +13,6 @@
         <a href="#" class="me-3 text-dark text-decoration-none">Mensajes</a>
         <a asp-page="/Propiedades" class="me-3 text-dark text-decoration-none">Mis propiedades</a>
 
-        <!-- 🔹 Imagen del usuario logueado -->
         <img src="@fotoUsuario"
              onerror="this.src='/uploads/user_default.jpg';"
              alt="Usuario"
@@ -28,16 +26,20 @@
     <div class="p-4 bg-light rounded-3 shadow-sm">
         <form method="get" class="row g-3 align-items-center text-center">
             <div class="col-md-3">
-                <input type="text" name="Destino" class="form-control" placeholder="Dónde" />
+                <!-- Ciudad -->
+                <input asp-for="Ciudad" class="form-control" placeholder="Dónde" />
             </div>
             <div class="col-md-2">
-                <input type="date" name="CheckIn" class="form-control" placeholder="Check-In" />
+                <!-- CheckIn -->
+                <input asp-for="Fecha_deseada" type="date" class="form-control" />
             </div>
             <div class="col-md-2">
-                <input type="date" name="CheckOut" class="form-control" placeholder="Check-Out" />
+                <!-- CheckOut -->
+                <input asp-for="Fecha_Fin" type="date" class="form-control" />
             </div>
             <div class="col-md-2">
-                <input type="number" name="Huespedes" class="form-control" placeholder="¿Cuántos?" min="1" />
+                <!-- Cantidad_Huespedes -->
+                <input asp-for="Cantidad_Huespedes" type="number" class="form-control" placeholder="¿Cuántos?" min="1" />
             </div>
             <div class="col-md-2">
                 <button type="submit" class="btn btn-pink w-100">
@@ -121,3 +123,4 @@
         border-color: #d63384;
     }
 </style>
+

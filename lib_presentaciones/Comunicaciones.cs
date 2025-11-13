@@ -66,7 +66,8 @@ data, string Metodo)
                     respuesta.Add("Error", "lbErrorAutenticacion");
                     return respuesta;
                 }
-                resp = Replace(resp);
+                resp = resp.Replace("\r", "").Replace("\n", "").Trim();
+
                 respuesta = JsonConversor.ConvertirAObjeto(resp);
                 return respuesta;
             }

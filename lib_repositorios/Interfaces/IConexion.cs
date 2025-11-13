@@ -20,6 +20,8 @@ namespace lib_repositorios.Interfaces
         DbSet<Reservas>? Reservas { get; set; }
         DbSet<Usuarios>? Usuarios { get; set; }
 
+        DbSet<Municipios>? Municipios { get; set; }
+
 
 
         EntityEntry<T> Entry<T>(T entity) where T : class;

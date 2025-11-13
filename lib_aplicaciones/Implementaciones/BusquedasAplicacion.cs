@@ -22,23 +22,50 @@ namespace lib_aplicaciones.Implementaciones
             this.IConexion!.StringConexion = StringConexion;
         }
 
-        //public List<Propiedades> BuscarPropiedades(Busquedas filtros)
-        //{
-        //    var query = this.IConexion.Propiedades;
+        public List<Propiedades> Filtro(Busquedas? entidad)
+        {
+            if (entidad == null)
+                throw new Exception("Debe especificar al menos un criterio de búsqueda.");
 
-        //    if (!string.IsNullOrEmpty(filtros.ciudad))
-        //        query = query.Where(p => p.Direccion.Contains(filtros.Ciudad));
+            var query = this.IConexion!.Propiedades!.AsQueryable();
 
-        //    if (!string.IsNullOrEmpty(filtros.TipoPropiedad))
-        //        query = query.Where(p => p.TipoPropiedad == filtros.TipoPropiedad);
+            // 1️⃣ FILTRO POR CIUDAD
+            if (!string.IsNullOrEmpty(entidad.Ciudad))
+            {
+                var municipio = this.IConexion!.Municipios!
+                    .FirstOrDefault(m => m.Nombre == entidad.Ciudad);
 
-        //    if (filtros.PrecioMin.HasValue)
-        //        query = query.Where(p => p.Precio >= filtros.PrecioMin.Value);
+                if (municipio != null)
+                {
+                    query = query.Where(p => p.MunicipioId == municipio.Id);
+                }
+                else
+                {
+                    return new List<Propiedades>();
+                }
+            }
 
-        //    if (filtros.PrecioMax.HasValue)
-        //        query = query.Where(p => p.Precio <= filtros.PrecioMax.Value);
+            // 2️⃣ FILTRO POR CAPACIDAD
+            if (entidad.Cantidad_Huespedes.HasValue)
+            {
+                query = query.Where(p => p.Capacidad >= entidad.Cantidad_Huespedes.Value);
+            }
 
-        //    return query.ToList();
-        //}
+            // 3️⃣ FUTURO: FILTRO POR FECHAS (CUANDO IMPLEMENTES RESERVAS)
+            // if (entidad.CheckIn.HasValue && entidad.CheckOut.HasValue)
+            // {
+            //     var checkIn = entidad.CheckIn.Value;
+            //     var checkOut = entidad.CheckOut.Value;
+            //
+            //     query = query.Where(p =>
+            //         !p.Reservas.Any(r =>
+            //             (checkIn < r.FechaFin && checkOut > r.FechaInicio)
+            //         ));
+            // }
+
+            return query.ToList();
+        }
+
+
     }
 }

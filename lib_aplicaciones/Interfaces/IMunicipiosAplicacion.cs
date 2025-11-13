@@ -2,11 +2,11 @@
 
 namespace lib_aplicaciones.Interfaces
 {
-    public interface IBusquedasAplicacion
+    public interface IMunicipiosAplicacion
     {
         void Configurar(string StringConexion);
-        
-        List<Propiedades> Filtro(Busquedas? entidad);
+
+        List<Municipios> Listar();
 
     }
 }
