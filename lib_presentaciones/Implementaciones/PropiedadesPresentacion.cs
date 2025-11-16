@@ -8,24 +8,7 @@ namespace lib_presentaciones.Implementaciones
     {
         private Comunicaciones? comunicaciones = null;
 
-        public async Task<List<Propiedades>> Listar()
-        {
-            var lista = new List<Propiedades>();
-            var datos = new Dictionary<string, object>();
-
-            comunicaciones = new Comunicaciones();
-            datos = comunicaciones.ConstruirUrl(datos, "Propiedades/Listar");
-            var respuesta = await comunicaciones!.Execute(datos);
-
-            if (respuesta.ContainsKey("Error"))
-            {
-                throw new Exception(respuesta["Error"].ToString()!);
-            }
-            lista = JsonConversor.ConvertirAObjeto<List<Propiedades>>(
-                JsonConversor.ConvertirAString(respuesta["Entidades"]));
-
-            return lista;
-        }
+       
 
         public async Task<List<Propiedades>> PorNombre(Propiedades? entidad)
         {
@@ -114,5 +97,29 @@ namespace lib_presentaciones.Implementaciones
                 JsonConversor.ConvertirAString(respuesta["Entidad"]));
             return entidad;
         }
+
+     
+
+
+        public async Task<List<Propiedades>> Listar()
+        {
+            var lista = new List<Propiedades>();
+            var datos = new Dictionary<string, object>();
+
+            comunicaciones = new Comunicaciones();
+            datos = comunicaciones.ConstruirUrl(datos, "Propiedades/Listar");
+            var respuesta = await comunicaciones!.Execute(datos);
+
+            if (respuesta.ContainsKey("Error"))
+            {
+                throw new Exception(respuesta["Error"].ToString()!);
+            }
+            lista = JsonConversor.ConvertirAObjeto<List<Propiedades>>(
+                JsonConversor.ConvertirAString(respuesta["Entidades"]));
+
+            return lista;
+        }
+
+
     }
 }

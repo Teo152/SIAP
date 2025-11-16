@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using lib_repositorios.Implementaciones;
 
@@ -11,9 +12,11 @@ using lib_repositorios.Implementaciones;
 namespace lib_repositorios.Migrations
 {
     [DbContext(typeof(Conexion))]
-    partial class ConexionModelSnapshot : ModelSnapshot
+    [Migration("20251114012642_SIAP")]
+    partial class SIAP
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,7 +107,19 @@ namespace lib_repositorios.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Ciudad")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Codigo_postal")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Cvv")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Departamento")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -122,6 +137,10 @@ namespace lib_repositorios.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Numero_targeta")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Pais")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -242,8 +261,8 @@ namespace lib_repositorios.Migrations
                     b.Property<int>("Cantidad_huespedes")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("Costo_total")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<double>("Costo_total")
+                        .HasColumnType("float");
 
                     b.Property<int?>("EstadoId")
                         .HasColumnType("int");

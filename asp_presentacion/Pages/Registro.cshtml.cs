@@ -20,6 +20,16 @@ namespace asp_presentacion.Pages
         [BindProperty]
         public IFormFile? FotoPerfil { get; set; }
 
+        // 1 = Anfitrión, 2 = Huésped (viene de /Registro?rol=1 o ?rol=2)
+        [BindProperty(SupportsGet = true)]
+        public int Rol { get; set; }
+
+        public void OnGet()
+        {
+            // Aquí podrías cambiar el título dinámicamente si quieres,
+            // pero lo importante es que Rol ya queda con el valor de la query (?rol=1 o 2)
+        }
+
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -27,7 +37,7 @@ namespace asp_presentacion.Pages
 
             try
             {
-                // ? Guardar imagen si existe
+                // Guardar imagen si existe
                 if (FotoPerfil != null)
                 {
                     var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
@@ -46,18 +56,31 @@ namespace asp_presentacion.Pages
                 }
                 else
                 {
-                    // Imagen por defecto
                     Usuario.Foto = "/uploads/user_default.jpg";
                 }
 
-                // ? Establecer rol (Anfitrión)
-                Usuario.Rol = RolUsuario.Anfitrion;
+                // ? Asignar el rol según lo que vino de /Registro?rol=...
+                // Suponiendo tu enum:
+                // public enum RolUsuario { Anfitrion = 1, Huesped = 2 }
+                if (Rol == 1)
+                {
+                    Usuario.Rol = RolUsuario.Anfitrion;
+                }
+                else if (Rol == 2)
+                {
+                    Usuario.Rol = RolUsuario.Huesped;
+                }
+                else
+                {
+                    // Por si acaso: default huésped
+                    Usuario.Rol = RolUsuario.Huesped;
+                }
 
-                // ? Guardar usuario en la base de datos
+                // Guardar usuario en la base de datos
                 var servicio = new UsuariosPresentacion();
                 var resultado = await servicio.Guardar(Usuario);
 
-                // ? Obtener ID del usuario recién creado
+                // Obtener ID del usuario recién creado
                 var usuarios = await servicio.Listar();
                 var nuevoUsuario = usuarios.LastOrDefault(u => u.Email == Usuario.Email);
 
@@ -68,8 +91,13 @@ namespace asp_presentacion.Pages
                     HttpContext.Session.SetString("NombreUsuario", nuevoUsuario.Nombre);
                 }
 
-                // ? Redirigir a la página de anfitrión
-                return RedirectToPage("/Anfitrion");
+                // Redirigir:
+                // Si es anfitrión ? página de anfitrión
+                // Si es huésped ? podrías mandarlo al home o a otra página
+                if (Usuario.Rol == RolUsuario.Anfitrion)
+                    return RedirectToPage("/Anfitrion");
+                else
+                    return RedirectToPage("/Huesped/Huesped");
             }
             catch (Exception ex)
             {

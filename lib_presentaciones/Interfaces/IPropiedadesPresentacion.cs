@@ -9,6 +9,8 @@ namespace lib_presentaciones.Interfaces
         Task<Propiedades?> Guardar(Propiedades? entidad);
         Task<Propiedades?> Modificar(Propiedades? entidad);
         Task<Propiedades?> Borrar(Propiedades? entidad);
+       
+
     }
 }
 

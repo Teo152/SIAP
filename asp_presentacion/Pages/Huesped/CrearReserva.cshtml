@@ -1,0 +1,469 @@
+﻿@page
+@model asp_presentacion.Pages.Huesped.CrearReservaModel
+@{
+    ViewData["Title"] = "Reserva tu estadía";
+}
+
+<div class="container py-4">
+
+    <!-- Breadcrumb -->
+    <nav class="mb-3">
+        <small class="text-muted">
+            @Model.Propiedad?.Nombre 
+        </small>
+    </nav>
+
+    <h2 class="fw-bold mb-4">Reserva tu estadía</h2>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>@error.ErrorMessage</div>
+            }
+        </div>
+    }
+
+    <!-- FECHA + CALENDARIO -->
+    <section class="mb-4">
+        <h5 class="fw-semibold mb-3">Fecha</h5>
+
+        <p class="text-muted small">
+            Has seleccionado del
+            <strong id="checkinLabel">@Model.Fecha_deseada</strong>
+            al
+            <strong id="checkoutLabel">@Model.Fecha_Fin</strong>
+            (<span id="nochesLabel">@Model.Noches</span> noche@(Model.Noches > 1 ? "s" : "")).
+        </p>
+
+        <!-- Calendario igual al de detalle -->
+        <div class="calendar-container mt-3">
+            <div class="d-flex justify-content-between align-items-center mb-2" style="max-width: 420px;">
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="prevMonthBtn">
+                    ◀
+                </button>
+
+                <div class="fw-semibold" id="calendarTitle" style="font-size:0.9rem;">
+                    <!-- Ej: Julio 2024 -->
+                </div>
+
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="nextMonthBtn">
+                    ▶
+                </button>
+            </div>
+
+            <table class="tabla-calendario text-center align-middle">
+                <thead>
+                    <tr class="text-muted very-small">
+                        <th>L</th>
+                        <th>M</th>
+                        <th>X</th>
+                        <th>J</th>
+                        <th>V</th>
+                        <th>S</th>
+                        <th>D</th>
+                    </tr>
+                </thead>
+                <tbody id="calendarBody">
+                    @* se llena por JS *@
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- TU RESERVA + DETALLES DE PAGO -->
+    <section class="mb-5">
+        <h5 class="fw-semibold mb-3">Tu reserva</h5>
+
+        <div class="d-flex align-items-center mb-4">
+            <img src="@(Model.Propiedad?.Imagen ?? "/uploads/sin_imagen.jpg")"
+                 class="rounded me-3"
+                 style="width:48px;height:48px;object-fit:cover;" />
+            <div>
+                <div class="fw-semibold">@Model.Propiedad?.Nombre </div>
+                <small class="text-muted">@Model.Propiedad?.Direccion</small>
+            </div>
+        </div>
+
+        <form method="post">
+            <div class="row g-3 align-items-end">
+
+                <!-- Check-in (solo lectura, pero se actualiza desde el calendario) -->
+                <div class="col-md-3">
+                    <label class="form-label small text-muted">Check in</label>
+                    <input class="form-control"
+                           id="checkinInputVisual"
+                           value="@Model.Fecha_deseada"
+                           readonly />
+                </div>
+
+                <!-- Check-out -->
+                <div class="col-md-3">
+                    <label class="form-label small text-muted">Check out</label>
+                    <input class="form-control"
+                           id="checkoutInputVisual"
+                           value="@Model.Fecha_Fin"
+                           readonly />
+                </div>
+
+                @{
+                    // 👇 Calculamos el máximo de huéspedes permitidos
+                    var maxHuespedes = Model.Propiedad?.Capacidad ?? 1;  // usa el nombre real de la propiedad
+                }
+
+                <div class="col-md-2">
+                    <label class="form-label small text-muted">Huéspedes</label>
+
+                    <input asp-for="Huespedes"
+                           type="number"
+                           min="1"
+                           max="@maxHuespedes"
+                           class="form-control" />
+
+                    <small class="text-muted">
+                        Máx. @maxHuespedes huésped@(maxHuespedes > 1 ? "es" : "").
+                    </small>
+
+                    <span asp-validation-for="Huespedes" class="text-danger small"></span>
+                </div>
+
+
+
+                <!-- Dirección (solo visual) -->
+                <div class="col-md-4">
+                    <label class="form-label small text-muted">Dirección</label>
+                    <input class="form-control"
+                           value="@Model.Propiedad?.Direccion"
+                           readonly />
+                </div>
+
+                <!-- Hidden para conservar datos en el POST -->
+                <input type="hidden" id="Fecha_deseada" name="Fecha_deseada" value="@Model.Fecha_deseada" />
+                <input type="hidden" id="Fecha_Fin" name="Fecha_Fin" value="@Model.Fecha_Fin" />
+                <input type="hidden" name="PropiedadId" value="@Model.PropiedadId" />
+
+                <!-- DETALLES DE PAGO -->
+                <div class="col-12 col-md-6 mt-4">
+                    <h5 class="fw-semibold mb-3">Detalles de pago</h5>
+
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted">
+                            $@Model.Propiedad?.Precio.ToString("N0")
+                            x
+                            <span id="nochesTexto">@Model.Noches</span>
+                            noche@(Model.Noches > 1 ? "s" : "")
+                        </span>
+                        <span id="subtotalTexto">
+                            $@Model.Subtotal.ToString("N0")
+                        </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted">Limpieza</span>
+                        <span>$@Model.Limpieza.ToString("N0")</span>
+                    </div>
+
+                    <div class="d-flex justify-content_between">
+                        <span class="text-muted">Impuesto</span>
+                        <span>$@Model.Impuestos.ToString("N0")</span>
+                    </div>
+
+                    <hr />
+
+                    <div class="d-flex justify-content-between fw-bold">
+                        <span>Total</span>
+                        <span id="totalTexto">$@Model.Total.ToString("N0")</span>
+                    </div>
+                </div>
+
+                <!-- BOTÓN FINAL RESERVAR -->
+                <div class="col-12 mt-4">
+                    <button type="submit"
+                            class="btn btn-danger w-100"
+                            style="max-width: 400px; margin: 0 auto; display:block;">
+                        Reservar
+                    </button>
+                </div>
+            </div>
+        </form>
+    </section>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            // =========================
+            //  Estado general
+            // =========================
+            const initialCheckIn = '@(Model.Fecha_deseada ?? "")';
+            const initialCheckOut = '@(Model.Fecha_Fin ?? "")';
+            const precioNoche = @((Model.Propiedad?.Precio ?? 0).ToString().Replace(',', '.')); // número JS
+
+            let checkIn = initialCheckIn || null;
+            let checkOut = initialCheckOut || null;
+
+            let today = new Date();
+            // si hay check-in, arrancamos mostrando ese mes
+            if (checkIn) {
+                const d = new Date(checkIn + "T00:00:00");
+                if (!isNaN(d)) {
+                    today = d;
+                }
+            }
+
+            let currentMonth = today.getMonth();   // 0-11
+            let currentYear = today.getFullYear(); // año
+
+            const monthNames = [
+                "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+            ];
+
+            const calendarTitle = document.getElementById("calendarTitle");
+            const calendarBody = document.getElementById("calendarBody");
+            const checkinLabel = document.getElementById("checkinLabel");
+            const checkoutLabel = document.getElementById("checkoutLabel");
+            const nochesLabel = document.getElementById("nochesLabel");
+            const nochesTexto = document.getElementById("nochesTexto");
+            const subtotalTexto = document.getElementById("subtotalTexto");
+            const totalTexto = document.getElementById("totalTexto");
+
+            const hiddenCheckIn = document.getElementById("Fecha_deseada");
+            const hiddenCheckOut = document.getElementById("Fecha_Fin");
+            const checkinInputVisual = document.getElementById("checkinInputVisual");
+            const checkoutInputVisual = document.getElementById("checkoutInputVisual");
+
+            const limpieza = @Model.Limpieza;
+            const impuestos = @Model.Impuestos;
+
+            // =========================
+            //  Helpers
+            // =========================
+            function toDateKey(year, month, day) {
+                const mm = (month + 1).toString().padStart(2, "0");
+                const dd = day.toString().padStart(2, "0");
+                return `${year}-${mm}-${dd}`;      // YYYY-MM-DD
+            }
+
+            function formatDisplay(dateStr) {
+                const d = new Date(dateStr + "T00:00:00");
+                if (isNaN(d)) return "";
+                const opts = { day: "numeric", month: "short", year: "numeric" };
+                return d.toLocaleDateString("es-ES", opts);
+            }
+
+            function calcularNoches(ci, co) {
+                if (!ci || !co) return 0;
+                const d1 = new Date(ci + "T00:00:00");
+                const d2 = new Date(co + "T00:00:00");
+                if (isNaN(d1) || isNaN(d2) || d2 <= d1) return 0;
+                const diffMs = d2 - d1;
+                return diffMs / (1000 * 60 * 60 * 24);
+            }
+
+            function updateLabelsYMontos() {
+                const noches = calcularNoches(checkIn, checkOut) || 1; // mínimo 1 noche
+
+                checkinLabel.textContent = checkIn ? formatDisplay(checkIn) : "No seleccionado";
+                checkoutLabel.textContent = checkOut ? formatDisplay(checkOut) : "No seleccionado";
+                nochesLabel.textContent = noches;
+                nochesTexto.textContent = noches;
+
+                if (checkinInputVisual) checkinInputVisual.value = checkIn || "";
+                if (checkoutInputVisual) checkoutInputVisual.value = checkOut || "";
+
+                if (hiddenCheckIn) hiddenCheckIn.value = checkIn || "";
+                if (hiddenCheckOut) hiddenCheckOut.value = checkOut || "";
+
+                const subtotal = precioNoche * noches;
+                const total = subtotal + limpieza + impuestos;
+
+                subtotalTexto.textContent = "$" + subtotal.toLocaleString("es-CO");
+                totalTexto.textContent = "$" + total.toLocaleString("es-CO");
+            }
+
+            function clearSelection() {
+                checkIn = null;
+                checkOut = null;
+                updateSelectionStyles();
+                updateLabelsYMontos();
+            }
+
+            function updateSelectionStyles() {
+                document.querySelectorAll(".cal-dia").forEach(td => {
+                    const date = td.dataset.date;
+                    td.classList.remove("selected", "in-range");
+
+                    if (checkIn && date === checkIn) {
+                        td.classList.add("selected");
+                    }
+                    if (checkOut && date === checkOut) {
+                        td.classList.add("selected");
+                    }
+                    if (checkIn && checkOut && date > checkIn && date < checkOut) {
+                        td.classList.add("in-range");
+                    }
+                });
+            }
+
+            // =========================
+            //  Renderizado del calendario
+            // =========================
+            function renderCalendar(month, year) {
+                calendarTitle.textContent = `${monthNames[month]} ${year}`;
+                calendarBody.innerHTML = "";
+
+                let firstDay = new Date(year, month, 1).getDay(); // 0 domingo ... 6 sábado
+                firstDay = (firstDay + 6) % 7; // 0 = lunes
+
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                let date = 1;
+
+                for (let i = 0; i < 6; i++) {
+                    const row = document.createElement("tr");
+
+                    for (let j = 0; j < 7; j++) {
+                        const cell = document.createElement("td");
+
+                        if (i === 0 && j < firstDay) {
+                            cell.textContent = "";
+                        } else if (date > daysInMonth) {
+                            cell.textContent = "";
+                        } else {
+                            const dateKey = toDateKey(year, month, date);
+                            cell.textContent = date;
+                            cell.dataset.date = dateKey;
+                            cell.classList.add("cal-dia");
+                            date++;
+                        }
+
+                        row.appendChild(cell);
+                    }
+
+                    calendarBody.appendChild(row);
+
+                    if (date > daysInMonth) break;
+                }
+
+                attachDayHandlers();
+                updateSelectionStyles();
+            }
+
+            // =========================
+            //  Eventos de cada día
+            // =========================
+            function attachDayHandlers() {
+                document.querySelectorAll(".cal-dia").forEach(td => {
+                    td.onclick = null;
+                    td.ondblclick = null;
+
+                    td.addEventListener("click", () => {
+                        const date = td.dataset.date;
+
+                        if (!checkIn || (checkIn && checkOut)) {
+                            checkIn = date;
+                            checkOut = null;
+                        } else if (checkIn && !checkOut) {
+                            if (date > checkIn) {
+                                checkOut = date;
+                            } else {
+                                checkIn = date;
+                                checkOut = null;
+                            }
+                        }
+
+                        updateSelectionStyles();
+                        updateLabelsYMontos();
+                    });
+
+                    td.addEventListener("dblclick", (e) => {
+                        e.preventDefault();
+                        clearSelection();
+                    });
+                });
+            }
+
+            // =========================
+            //  Navegación de meses
+            // =========================
+            document.getElementById("prevMonthBtn").addEventListener("click", () => {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                renderCalendar(currentMonth, currentYear);
+            });
+
+            document.getElementById("nextMonthBtn").addEventListener("click", () => {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                renderCalendar(currentMonth, currentYear);
+            });
+
+            // Render inicial
+            renderCalendar(currentMonth, currentYear);
+            updateLabelsYMontos();
+
+        })();
+    </script>
+}
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #fff;
+    }
+
+    .calendar-container {
+        max-width: 420px;
+    }
+
+    .tabla-calendario {
+        border-collapse: separate;
+        border-spacing: 4px;
+        font-size: 0.8rem;
+        width: 100%;
+    }
+
+        .tabla-calendario td {
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+        }
+
+    .very-small th {
+        font-size: 0.7rem;
+        font-weight: 500;
+    }
+
+    .cal-dia {
+        cursor: pointer;
+    }
+
+        .cal-dia.selected {
+            background-color: #ff385c;
+            color: #fff;
+        }
+
+        .cal-dia.in-range {
+            background-color: #ffe1e8;
+            color: #222;
+        }
+
+    .btn-danger {
+        background-color: #ff385c;
+        border-color: #ff385c;
+        border-radius: 999px;
+        font-weight: 600;
+    }
+
+        .btn-danger:hover {
+            background-color: #e03150;
+            border-color: #e03150;
+        }
+</style>

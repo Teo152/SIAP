@@ -1,10 +1,9 @@
 ﻿@page
 @model asp_presentacion.Pages.RegistroModel
 @{
-    ViewData["Title"] = "Registro Anfitrión";
+    ViewData["Title"] = "Registro";
 }
 
-<!-- NAVBAR -->
 <nav class="navbar navbar-light bg-white border-bottom shadow-sm px-4">
     <a class="navbar-brand fw-bold" href="/">🏠 SkyBnB</a>
     <div class="ms-auto">
@@ -12,7 +11,6 @@
     </div>
 </nav>
 
-<!-- FORMULARIO DE REGISTRO -->
 <div class="container mt-5 mb-5">
     <div class="mx-auto" style="max-width: 800px;">
         <h2 class="fw-bold mb-4 text-center" style="color:#2b2b2b;">Registro</h2>
@@ -50,8 +48,8 @@
                     </div>
                 </div>
 
-                <!-- Campo oculto del rol -->
-                <input type="hidden" asp-for="Usuario.Rol" />
+                <!-- Campo oculto del rol (1 = Anfitrión, 2 = Huésped) -->
+                <input type="hidden" asp-for="Rol" />
             </div>
 
             <div class="mt-5 text-center">

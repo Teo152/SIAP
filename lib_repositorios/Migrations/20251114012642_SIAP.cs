@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace lib_repositorios.Migrations
 {
     /// <inheritdoc />
-    public partial class migracion1 : Migration
+    public partial class SIAP : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -139,7 +139,7 @@ namespace lib_repositorios.Migrations
                     Fecha_fin = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Cantidad_huespedes = table.Column<int>(type: "int", nullable: false),
                     Costo_total = table.Column<double>(type: "float", nullable: false),
-                    EstadoId = table.Column<int>(type: "int", nullable: false),
+                    EstadoId = table.Column<int>(type: "int", nullable: true),
                     PropiedadId = table.Column<int>(type: "int", nullable: false),
                     UsuarioId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -167,9 +167,16 @@ namespace lib_repositorios.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Fecha_pago = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Codigo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Monto = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Metodo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Numero_targeta = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    precio = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Cvv = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Fecha_expiracion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Nombre_Apellidos = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Pais = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Departamento = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Ciudad = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Codigo_postal = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MetodoId = table.Column<int>(type: "int", nullable: false),
                     ReservaId = table.Column<int>(type: "int", nullable: false),
                     UsuarioId = table.Column<int>(type: "int", nullable: false)
                 },

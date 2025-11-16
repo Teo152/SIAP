@@ -1,0 +1,137 @@
+﻿@page "/Huesped"
+@model asp_presentacion.Pages.Huesped.HuespedModel
+@{
+    ViewData["Title"] = "SkyBnB";
+
+    var fotoUsuario = HttpContext.Session.GetString("FotoUsuario")
+                      ?? "/uploads/user_default.jpg";
+}
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm px-4">
+    <a class="navbar-brand fw-bold" href="/" style="font-size: 1.5rem;">🏠 SkyBnB</a>
+    <div class="ms-auto d-flex align-items-center">
+        <a href="#" class="me-3 text-dark text-decoration-none">Reservas</a>
+        <a href="#" class="me-3 text-dark text-decoration-none">Mensajes</a>
+
+        <img src="@fotoUsuario"
+             onerror="this.src='/uploads/user_default.jpg';"
+             alt="Usuario"
+             class="rounded-circle"
+             style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ddd;">
+    </div>
+</nav>
+
+<!-- FILTRO -->
+<div class="container mt-4">
+    <div class="p-4 bg-light rounded-3 shadow-sm">
+        <form method="get" class="row g-3 align-items-center text-center">
+            <div class="col-md-3">
+                <!-- Ciudad -->
+                <input asp-for="Ciudad" class="form-control" placeholder="Dónde" />
+            </div>
+            <div class="col-md-2">
+                <!-- CheckIn -->
+                <input asp-for="Fecha_deseada" type="date" class="form-control" />
+            </div>
+            <div class="col-md-2">
+                <!-- CheckOut -->
+                <input asp-for="Fecha_Fin" type="date" class="form-control" />
+            </div>
+            <div class="col-md-2">
+                <!-- Cantidad_Huespedes -->
+                <input asp-for="Cantidad_Huespedes" type="number" class="form-control" placeholder="¿Cuántos?" min="1" />
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-pink w-100">
+                    🔍 Buscar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- LISTA DE PROPIEDADES -->
+<div class="row">
+    @if (Model.Propiedades != null && Model.Propiedades.Any())
+    {
+        <div class="d-flex flex-wrap gap-4">
+            @foreach (var item in Model.Propiedades)
+            {
+                <div class="card shadow-sm border-0" style="width: 260px;">
+                    <!-- CLICK EN LA IMAGEN LLEVA AL DETALLE -->
+                    <a asp-page="/Huesped/Detalle"
+                       asp-route-nombre="@item.Nombre"
+                       style="text-decoration:none; color:inherit;">
+                        <img src="@(string.IsNullOrEmpty(item.Imagen) ? "/uploads/sin_imagen.jpg" : item.Imagen)"
+                             class="card-img-top"
+                             style="height: 180px; object-fit: cover;" />
+                    </a>
+
+                    <div class="card-body">
+                        <!-- CLICK EN EL TÍTULO TAMBIÉN LLEVA AL DETALLE -->
+                        <a asp-page="/Huesped/Detalle"
+                           asp-route-nombre="@item.Nombre"
+                           style="text-decoration:none; color:inherit;">
+                            <h5 class="card-title mb-1">@item.Nombre</h5>
+                        </a>
+
+                        <p class="text-muted mb-1">@item.Direccion</p>
+
+                        <p class="text-danger fw-bold mb-0">
+                            @item.Precio / noche
+                        </p>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">No se encontraron propiedades para mostrar.</p>
+    }
+</div>
+<div>
+    
+
+<!-- ESTILOS -->
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #fff;
+    }
+
+    .btn-pink {
+        background-color: #d63384;
+        color: white;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-pink:hover {
+            background-color: #b12d6b;
+            color: white;
+        }
+
+    .card {
+        border-radius: 12px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+    .propiedad-img {
+        height: 180px;
+        object-fit: cover;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #d63384;
+        border-color: #d63384;
+    }
+</style>

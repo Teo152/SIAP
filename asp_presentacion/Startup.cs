@@ -19,6 +19,8 @@ namespace asp_presentacion
             services.AddScoped<IMunicipiosPresentacion, MunicipiosPresentacion>();
             services.AddScoped<IBusquedasPresentacion, BusquedasPresentacion>();
             services.AddScoped<IPropiedadesPresentacion, PropiedadesPresentacion>();
+            services.AddScoped<IReservasPresentacion, ReservasPresentacion>();
+            services.AddScoped<IPagosPresentacion, PagosPresentacion>();
 
             services.AddControllers();
             services.AddEndpointsApiExplorer();

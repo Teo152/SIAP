@@ -12,8 +12,8 @@ using lib_repositorios.Implementaciones;
 namespace lib_repositorios.Migrations
 {
     [DbContext(typeof(Conexion))]
-    [Migration("20251112010459_migracion1")]
-    partial class migracion1
+    [Migration("20251116031847_cambio_en_entidad_pagos")]
+    partial class cambio_en_entidad_pagos
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -107,25 +107,35 @@ namespace lib_repositorios.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Codigo")
+                    b.Property<string>("Cvv")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Fecha_expiracion")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("Fecha_pago")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Metodo")
+                    b.Property<int>("MetodoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nombre_Apellidos")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Monto")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<string>("Numero_targeta")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ReservaId")
                         .HasColumnType("int");
 
                     b.Property<int>("UsuarioId")
                         .HasColumnType("int");
+
+                    b.Property<decimal?>("precio")
+                        .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("Id");
 
@@ -235,10 +245,10 @@ namespace lib_repositorios.Migrations
                     b.Property<int>("Cantidad_huespedes")
                         .HasColumnType("int");
 
-                    b.Property<double>("Costo_total")
-                        .HasColumnType("float");
+                    b.Property<decimal?>("Costo_total")
+                        .HasColumnType("decimal(18, 2)");
 
-                    b.Property<int>("EstadoId")
+                    b.Property<int?>("EstadoId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Fecha_creacion")

@@ -1,0 +1,116 @@
+﻿@page
+@model asp_presentacion.Pages.Huesped.PagosModel
+@{
+    ViewData["Title"] = "Pagos";
+}
+
+<div class="container py-4">
+
+    <!-- Breadcrumb -->
+    <nav class="mb-3">
+        <small class="text-muted">
+            Confirmar y pagar / Pago
+        </small>
+    </nav>
+
+    <h2 class="fw-bold mb-4">Elije tu método de pago</h2>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var e in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>@e.ErrorMessage</div>
+            }
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-7">
+
+            <form method="post" class="p-3 rounded-3" style="background-color:#fff6f6;">
+
+                <!-- Método -->
+                <div class="mb-3">
+                    <label class="form-label small text-muted">Método de pago</label>
+                    <select asp-for="Metodo" class="form-select">
+                        <option value="Tarjeta">Tarjeta de crédito / débito</option>
+                        <option value="PSE">PSE (demo)</option>
+                    </select>
+                </div>
+
+                <!-- Número de tarjeta -->
+                <div class="mb-3">
+                    <label class="form-label small">Número de tarjeta</label>
+                    <input asp-for="NumeroTarjeta"
+                           class="form-control"
+                           placeholder="0000 0000 0000 0000" />
+                    <span asp-validation-for="NumeroTarjeta" class="text-danger small"></span>
+                </div>
+
+                <!-- Fecha / CVV -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label small">Fecha de expiración</label>
+                        <input asp-for="FechaExpiracion"
+                               class="form-control"
+                               placeholder="MM/AA" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small">CVV</label>
+                        <input asp-for="Cvv"
+                               class="form-control"
+                               placeholder="123" />
+                        <span asp-validation-for="Cvv" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Titular -->
+                <div class="mb-3">
+                    <label class="form-label small">Titular de la tarjeta</label>
+                    <input asp-for="Titular"
+                           class="form-control"
+                           placeholder="Nombres y apellidos" />
+                </div>
+
+                <!-- Info de la reserva / total -->
+                <div class="mb-3 mt-4">
+                    <p class="mb-1 small text-muted">Total a pagar</p>
+                    <h4 class="fw-bold">
+                        $@Model.Total.ToString("N0")
+                    </h4>
+                    <small class="text-muted">Reserva #@Model.ReservaId</small>
+                </div>
+
+                <!-- Hidden -->
+                <input type="hidden" asp-for="ReservaId" />
+                <input type="hidden" asp-for="Total" />
+
+                <!-- Botón -->
+                <button type="submit"
+                        class="btn btn-danger w-100 mt-3"
+                        style="border-radius:999px;">
+                    Confirmar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #fff;
+    }
+
+    .btn-danger {
+        background-color: #ff385c;
+        border-color: #ff385c;
+        font-weight: 600;
+    }
+
+        .btn-danger:hover {
+            background-color: #e03150;
+            border-color: #e03150;
+        }
+</style>

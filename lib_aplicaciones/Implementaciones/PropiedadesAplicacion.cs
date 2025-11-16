@@ -82,5 +82,9 @@ namespace lib_aplicaciones.Implementaciones
             this.IConexion.SaveChanges();
             return entidad;
         }
+
+       
+        
+
     }
 }

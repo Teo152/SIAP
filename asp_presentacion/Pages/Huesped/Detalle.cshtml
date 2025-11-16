@@ -1,0 +1,455 @@
+﻿@page
+@model asp_presentacion.Pages.Huesped.DetalleModel
+@{
+    ViewData["Title"] = "Detalle propiedad";
+}
+
+@if (Model.Propiedad == null)
+{
+    <div class="container mt-5">
+        <h3 class="text-danger">Propiedad no encontrada.</h3>
+    </div>
+    return;
+}
+
+<div class="container py-4">
+
+    <!-- BREADCRUMB -->
+    <nav class="mb-2">
+        <small class="text-muted">
+            Colombia
+        </small>
+    </nav>
+
+    <!-- TÍTULO + SUBTÍTULO -->
+    <header class="mb-3">
+        <h2 class="fw-bold mb-1">@Model.Propiedad.Nombre</h2>
+        <p class="text-muted mb-0" style="font-size: 0.9rem;">
+            @Model.Propiedad.Descripcion
+        </p>
+    </header>
+
+    <!-- GALERÍA -->
+    <section class="mb-4">
+        <div class="row g-2">
+            <!-- Imagen principal -->
+            <div class="col-12 col-lg-7">
+                <img src="@Model.Propiedad.Imagen"
+                     alt="@Model.Propiedad.Nombre"
+                     class="w-100 galeria-principal rounded-4" />
+            </div>
+
+            <!-- 4 imágenes secundarias -->
+            <div class="col-12 col-lg-5">
+                <div class="row g-2 h-100">
+                    <div class="col-6">
+                        <img src="@Model.Propiedad.Imagen"
+                             class="w-100 h-100 galeria-secundaria rounded-top-4" />
+                    </div>
+                    <div class="col-6">
+                        <img src="@Model.Propiedad.Imagen"
+                             class="w-100 h-100 galeria-secundaria rounded-top-4" />
+                    </div>
+                    <div class="col-6">
+                        <img src="@Model.Propiedad.Imagen"
+                             class="w-100 h-100 galeria-secundaria rounded-bottom-4" />
+                    </div>
+                    <div class="col-6">
+                        <img src="@Model.Propiedad.Imagen"
+                             class="w-100 h-100 galeria-secundaria rounded-bottom-4" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DESCRIPCIÓN -->
+    <section class="mb-5">
+        <h4 class="fw-semibold mb-3">Acerca de este alojamiento</h4>
+
+        <!-- DESCRIPCIÓN -->
+        <p class="text-muted mb-4"
+           style="line-height: 1.7; font-size: 0.95rem; max-width: 900px;">
+            @(
+                        !string.IsNullOrEmpty(Model.Propiedad.Descripcion)
+                        ? Model.Propiedad.Descripcion
+                        : "El anfitrión aún no ha agregado una descripción detallada de este alojamiento."
+                        )
+        </p>
+
+        <!-- POLÍTICAS DE CANCELACIÓN -->
+        
+        <p class="text-muted"
+           style="line-height: 1.7; font-size: 0.95rem; max-width: 900px;">
+            @(
+                        !string.IsNullOrEmpty(Model.Propiedad.PoliticasCancelacion)
+                        ? Model.Propiedad.PoliticasCancelacion
+                        : "El anfitrión aún no ha definido políticas de cancelación para esta propiedad."
+                        )
+        </p>
+    </section>
+
+
+    <!-- DISPONIBILIDAD + CALENDARIO DINÁMICO -->
+    <section class="mb-5">
+        <h4 class="fw-semibold mb-3">Disponibilidad</h4>
+
+        <div class="calendar-container">
+
+            <!-- Encabezado mes / año + flechas -->
+            <div class="d-flex justify-content-between align-items-center mb-2" style="max-width: 420px;">
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="prevMonthBtn">
+                    ◀
+                </button>
+
+                <div class="fw-semibold" id="calendarTitle" style="font-size:0.9rem;">
+                    <!-- Ej: Julio 2024 -->
+                </div>
+
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="nextMonthBtn">
+                    ▶
+                </button>
+            </div>
+
+            <table class="tabla-calendario text-center align-middle">
+                <thead>
+                    <tr class="text-muted very-small">
+                        <th>L</th>
+                        <th>M</th>
+                        <th>X</th>
+                        <th>J</th>
+                        <th>V</th>
+                        <th>S</th>
+                        <th>D</th>
+                    </tr>
+                </thead>
+                <tbody id="calendarBody">
+                    @* se llena por JS *@
+                </tbody>
+            </table>
+
+            <!-- resumen selección -->
+            <div class="mt-3 small text-muted">
+                Check-in: <span id="checkinLabel">No seleccionado</span> ·
+                Check-out: <span id="checkoutLabel">No seleccionado</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRECIO + FORM -->
+    <section class="mb-5" style="max-width: 350px;">
+        <h4 class="fw-semibold mb-3">Precio</h4>
+
+        <!-- AHORA ES GET Y VA A /Huesped/CrearReserva -->
+        <form id="formReserva" method="get" asp-page="/Huesped/CrearReserva">
+            <div class="border rounded-3 p-3 shadow-sm">
+                <p class="mb-1 fw-semibold" style="font-size: 0.9rem;">
+                    $@Model.Propiedad.Precio Por  noches
+                </p>
+
+                <p class="text-muted mb-3" style="font-size: 0.85rem;">
+                    Máximo @Model.Propiedad.Capacidad huéspedes
+                </p>
+
+                <!-- estos hidden los llena el JS del calendario -->
+                <input type="hidden" id="Fecha_deseada" name="Fecha_deseada" />
+                <input type="hidden" id="Fecha_Fin" name="Fecha_Fin" />
+
+                <!-- Id de la propiedad para usarlo en la otra página -->
+                <input type="hidden" name="PropiedadId" value="@Model.Propiedad.Id" />
+
+                <button type="button" id="btnReservar" class="btn btn-pink w-100">
+                    Reservar
+                </button>
+            </div>
+        </form>
+    </section>
+
+    @* Reseñas: las puedes implementar más adelante aquí *@
+
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            // =========================
+            //  Estado general
+            // =========================
+            let today = new Date();
+            let currentMonth = today.getMonth();   // 0-11
+            let currentYear = today.getFullYear(); // año
+
+            let checkIn = null;    // 'YYYY-MM-DD'
+            let checkOut = null;   // 'YYYY-MM-DD'
+
+            const monthNames = [
+                "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+            ];
+
+            const calendarTitle = document.getElementById("calendarTitle");
+            const calendarBody = document.getElementById("calendarBody");
+            const checkinLabel = document.getElementById("checkinLabel");
+            const checkoutLabel = document.getElementById("checkoutLabel");
+            const inputFechaDeseada = document.getElementById("Fecha_deseada");
+            const inputFechaFin = document.getElementById("Fecha_Fin");
+
+            // 👉 Fechas reservadas que vienen desde el backend (DetalleModel.FechasReservadas)
+            const reservedDates = @Html.Raw(
+                            Newtonsoft.Json.JsonConvert.SerializeObject(Model.FechasReservadas ?? new List<string>())
+                    );
+
+        // =========================
+        //  Helpers
+        // =========================
+        function toDateKey(year, month, day) {
+            const mm = (month + 1).toString().padStart(2, "0");
+            const dd = day.toString().padStart(2, "0");
+            return `${year}-${mm}-${dd}`;      // YYYY-MM-DD
+        }
+
+            function formatDisplay(dateStr) {
+                const d = new Date(dateStr + "T00:00:00");
+                if (isNaN(d)) return "";
+                const opts = { day: "numeric", month: "short", year: "numeric" };
+                return d.toLocaleDateString("es-ES", opts);
+            }
+
+            function updateLabels() {
+                checkinLabel.textContent = checkIn ? formatDisplay(checkIn) : "No seleccionado";
+                checkoutLabel.textContent = checkOut ? formatDisplay(checkOut) : "No seleccionado";
+
+                inputFechaDeseada.value = checkIn || "";
+                inputFechaFin.value = checkOut || "";
+            }
+
+            function clearSelection() {
+                checkIn = null;
+                checkOut = null;
+                updateSelectionStyles();
+                updateLabels();
+            }
+
+            function updateSelectionStyles() {
+                document.querySelectorAll(".cal-dia").forEach(td => {
+                    const date = td.dataset.date;
+                    td.classList.remove("selected", "in-range");
+
+                    if (checkIn && date === checkIn) {
+                        td.classList.add("selected");
+                    }
+                    if (checkOut && date === checkOut) {
+                        td.classList.add("selected");
+                    }
+                    if (checkIn && checkOut && date > checkIn && date < checkOut) {
+                        td.classList.add("in-range");
+                    }
+                });
+            }
+
+            // =========================
+            //  Renderizado del calendario
+            // =========================
+            function renderCalendar(month, year) {
+                // Título: "Julio 2024"
+                calendarTitle.textContent = `${monthNames[month]} ${year}`;
+
+                // Limpia el body
+                calendarBody.innerHTML = "";
+
+                // Primer día del mes (0 = lunes, 6 = domingo)
+                let firstDay = new Date(year, month, 1).getDay(); // 0 domingo ... 6 sábado
+                firstDay = (firstDay + 6) % 7; // lo convertimos a 0=lunes
+
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                let date = 1;
+
+                for (let i = 0; i < 6; i++) {
+                    const row = document.createElement("tr");
+
+                    for (let j = 0; j < 7; j++) {
+                        const cell = document.createElement("td");
+
+                        if (i === 0 && j < firstDay) {
+                            // celdas vacías antes del primer día
+                            cell.textContent = "";
+                        } else if (date > daysInMonth) {
+                            cell.textContent = "";
+                        } else {
+                            const dateKey = toDateKey(year, month, date);
+                            cell.textContent = date;
+                            cell.dataset.date = dateKey;
+
+                            if (reservedDates.includes(dateKey)) {
+                                // día ocupado: rojo y sin eventos
+                                cell.classList.add("dia-reservado");
+                            } else {
+                                cell.classList.add("cal-dia");
+                            }
+
+                            date++;
+                        }
+
+                        row.appendChild(cell);
+                    }
+
+                    calendarBody.appendChild(row);
+
+                    if (date > daysInMonth) {
+                        break;
+                    }
+                }
+
+                attachDayHandlers();
+                updateSelectionStyles();
+            }
+
+            // =========================
+            //  Eventos de cada día
+            // =========================
+            function attachDayHandlers() {
+                // limpiar eventos previos
+                document.querySelectorAll(".cal-dia").forEach(td => {
+                    td.onclick = null;
+                    td.ondblclick = null;
+
+                    td.addEventListener("click", () => {
+                        const date = td.dataset.date;
+
+                        if (!checkIn || (checkIn && checkOut)) {
+                            // primer clic o reinicio
+                            checkIn = date;
+                            checkOut = null;
+                        } else if (checkIn && !checkOut) {
+                            if (date > checkIn) {
+                                checkOut = date;
+                            } else {
+                                // si eligen una fecha anterior, la tomamos como nuevo check-in
+                                checkIn = date;
+                                checkOut = null;
+                            }
+                        }
+
+                        updateSelectionStyles();
+                        updateLabels();
+                    });
+
+                    td.addEventListener("dblclick", (e) => {
+                        e.preventDefault();
+                        clearSelection();
+                    });
+                });
+            }
+
+            // =========================
+            //  Navegación de meses
+            // =========================
+            document.getElementById("prevMonthBtn").addEventListener("click", () => {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                renderCalendar(currentMonth, currentYear);
+            });
+
+            document.getElementById("nextMonthBtn").addEventListener("click", () => {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                renderCalendar(currentMonth, currentYear);
+            });
+
+            // =========================
+            //  Botón Reservar
+            // =========================
+            document.getElementById("btnReservar").addEventListener("click", () => {
+                if (!checkIn || !checkOut) {
+                    alert("Selecciona fecha de llegada (check-in) y salida (check-out) antes de reservar.");
+                    return;
+                }
+
+                document.getElementById("formReserva").submit();
+            });
+
+            // Render inicial
+            renderCalendar(currentMonth, currentYear);
+        })();
+    </script>
+}
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #fff;
+    }
+
+    .galeria-principal {
+        height: 360px;
+        object-fit: cover;
+    }
+
+    .galeria-secundaria {
+        height: 175px;
+        object-fit: cover;
+    }
+
+    .calendar-container {
+        max-width: 420px;
+    }
+
+    .tabla-calendario {
+        border-collapse: separate;
+        border-spacing: 4px;
+        font-size: 0.8rem;
+        width: 100%;
+    }
+
+        .tabla-calendario td {
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+        }
+
+    .very-small th {
+        font-size: 0.7rem;
+        font-weight: 500;
+    }
+
+    .cal-dia {
+        cursor: pointer;
+    }
+
+        .cal-dia.selected {
+            background-color: #ff385c;
+            color: #fff;
+        }
+
+        .cal-dia.in-range {
+            background-color: #ffe1e8;
+            color: #222;
+        }
+
+    .dia-reservado {
+        background-color: #ff385c;
+        color: #fff;
+        border-radius: 999px;
+        cursor: not-allowed;
+    }
+
+    .btn-pink {
+        background-color: #ff385c;
+        color: #fff;
+        border-radius: 8px;
+        font-weight: 600;
+        border: none;
+    }
+
+        .btn-pink:hover {
+            background-color: #e03150;
+            color: #fff;
+        }
+</style>

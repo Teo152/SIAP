@@ -10,5 +10,6 @@ namespace lib_aplicaciones.Interfaces
         Propiedades? Guardar(Propiedades? entidad);
         Propiedades? Modificar(Propiedades? entidad);
         Propiedades? Borrar(Propiedades? entidad);
+    
     }
 }

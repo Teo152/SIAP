@@ -67,7 +67,7 @@ namespace asp_presentacion.Pages
 
                     case RolUsuario.Huesped:
                     default:
-                        return RedirectToPage("/Index");
+                        return RedirectToPage("/Huesped/Huesped");
                 }
             }
             catch (Exception ex)
