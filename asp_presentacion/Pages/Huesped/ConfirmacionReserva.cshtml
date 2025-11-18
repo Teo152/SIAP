@@ -1,0 +1,124 @@
+﻿@page
+@model asp_presentacion.Pages.Huesped.ConfirmacionReservaModel
+@{
+    ViewData["Title"] = "Confirmación de pago";
+}
+
+<div class="container py-5" style="max-width: 960px;">
+
+    <h2 class="fw-bold text-center mb-5" style="font-size: 2rem;">
+        Tu reserva ha sido confirmada
+    </h2>
+
+    <h5 class="fw-semibold mb-3" style="margin-left: 100px;">
+        Detalles de reserva
+    </h5>
+
+    <div class="resumen-box mx-auto p-4">
+
+        <div class="detalle-row">
+            <p class="detalle-label">Numero de reserva</p>
+            <p class="detalle-valor">
+                #@Model.ReservaId
+            </p>
+        </div>
+
+
+        <div class="detalle-row">
+            <p class="detalle-label">Anfitrión</p>
+            <p class="detalle-valor">
+                @(string.IsNullOrEmpty(Model.Anfitrion) ? "-" : Model.Anfitrion)
+            </p>
+        </div>
+
+        <div class="detalle-row">
+            <p class="detalle-label">Huésped</p>
+            <p class="detalle-valor">
+                @(string.IsNullOrEmpty(Model.Huesped) ? "-" : Model.Huesped)
+            </p>
+        </div>
+
+
+        <div class="detalle-row">
+            <p class="detalle-label">Check-in</p>
+            <p class="detalle-valor">
+                @(Model.CheckIn.HasValue
+                                ? Model.CheckIn.Value.ToString("MMMM dd, yyyy")
+                                : "-")
+            </p>
+        </div>
+
+        <div class="detalle-row">
+            <p class="detalle-label">Check-out</p>
+            <p class="detalle-valor">
+                @(Model.CheckOut.HasValue
+                                ? Model.CheckOut.Value.ToString("MMMM dd, yyyy")
+                                : "-")
+            </p>
+        </div>
+
+        <div class="detalle-row">
+            <p class="detalle-label">Precio Total</p>
+            <p class="detalle-valor fw-bold">
+                $@Model.Total.ToString("N0")
+            </p>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a asp-page="/Huesped/Reservas"
+           class="btn btn-danger px-5 py-2"
+           style="border-radius:999px;">
+            Ver reservas
+        </a>
+
+
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #fff;
+    }
+
+    .resumen-box {
+        background-color: #fff6f6;
+        border-radius: 12px;
+        max-width: 700px;
+        padding-left: 120px !important;
+        padding-right: 80px !important;
+    }
+
+    .detalle-row {
+        padding: 18px 0;
+        border-bottom: 1px solid #f1e3e3;
+    }
+
+        .detalle-row:last-child {
+            border-bottom: none;
+        }
+
+    .detalle-label {
+        font-size: 0.85rem;
+        color: #ff385c;
+        margin-bottom: 4px;
+    }
+
+    .detalle-valor {
+        font-size: 0.95rem;
+        margin: 0;
+        color: #333;
+    }
+
+    .btn-danger {
+        background-color: #ff385c;
+        border-color: #ff385c;
+        font-weight: 600;
+    }
+
+        .btn-danger:hover {
+            background-color: #e03150;
+            border-color: #e03150;
+        }
+</style>

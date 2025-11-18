@@ -1,0 +1,157 @@
+﻿@page "{id:int}"
+@model asp_presentacion.Pages.Huesped.EditarReservaModel
+@{
+    ViewData["Title"] = "Editar reserva";
+}
+
+<div class="container py-5" style="max-width: 1100px;">
+
+    <h2 class="fw-bold mb-2">Reserva</h2>
+    <p class="text-muted mb-4">Ver y editar tu viaje</p>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var e in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>@e.ErrorMessage</div>
+            }
+        </div>
+    }
+
+    @if (Model.Reserva == null || Model.Propiedad == null)
+    {
+        <p class="text-muted">No se encontró la reserva.</p>
+    }
+    else
+    {
+        <div class="row">
+            <!-- Col izquierda: info + formulario -->
+            <div class="col-md-7">
+
+                <p class="text-muted small mb-1">
+                    @Model.Noches noches en @(Model.Propiedad.Direccion ?? "Sin dirección")
+                </p>
+
+                <h4 class="fw-semibold mb-1">@Model.Propiedad.Nombre</h4>
+
+                <p class="fw-semibold mb-3">
+                    @Model.Reserva.Fecha_deseada.ToString("MMMM dd, yyyy")
+                    -
+                    @Model.Reserva.Fecha_fin.ToString("MMMM dd, yyyy")
+                </p>
+
+                <hr class="my-4" />
+
+                <h5 class="fw-semibold mb-3">Editar reserva</h5>
+
+                <form method="post" class="row g-3" onsubmit="return confirmarModificacion();">
+                    <!-- Check-in -->
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted">Check-in</label>
+                        <input asp-for="Reserva.Fecha_deseada"
+                               type="date"
+                               class="form-control" />
+                        <span asp-validation-for="Reserva.Fecha_deseada"
+                              class="text-danger small"></span>
+                    </div>
+
+                    <!-- Check-out -->
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted">Check-out</label>
+                        <input asp-for="Reserva.Fecha_fin"
+                               type="date"
+                               class="form-control" />
+                        <span asp-validation-for="Reserva.Fecha_fin"
+                              class="text-danger small"></span>
+                    </div>
+
+                    <!-- Huéspedes -->
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted">Huéspedes</label>
+                        <input asp-for="Reserva.Cantidad_huespedes"
+                               type="number"
+                               min="1"
+                               class="form-control" />
+                        <span asp-validation-for="Reserva.Cantidad_huespedes"
+                              class="text-danger small"></span>
+                    </div>
+
+                    <!-- Hidden para Ids -->
+                    <input type="hidden" asp-for="Reserva.Id" />
+                    <input type="hidden" asp-for="Reserva.PropiedadId" />
+                    <input type="hidden" asp-for="Reserva.UsuarioId" />
+                    <input type="hidden" asp-for="Reserva.EstadoId" />
+
+                    <div class="col-12 mt-4">
+                        <button type="submit"
+                                class="btn btn-danger px-5"
+                                style="border-radius:999px;">
+                            Guardar cambios
+                        </button>
+
+                        <a asp-page="/Huesped/Reservas"
+                           class="btn btn-link text-muted ms-2">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+
+                <hr class="my-4" />
+
+                <p class="text-muted small mb-0">
+                    Solo puedes modificar reservas <strong>confirmadas</strong> cuyo
+                    check-in aún no ha ocurrido y respetando la capacidad máxima
+                    de la propiedad.
+                </p>
+            </div>
+
+            <!-- Col derecha: imagen -->
+            <div class="col-md-5 text-md-end mt-4 mt-md-0">
+                <img src="@(string.IsNullOrEmpty(Model.Propiedad.Imagen)
+                                                     ? "/uploads/sin_imagen.jpg"
+                                                     : Model.Propiedad.Imagen)"
+                 class="img-fluid rounded-3 shadow-sm"
+                 style="max-width: 380px; height: 230px; object-fit: cover;"
+                 alt="@Model.Propiedad.Nombre" />
+        </div>
+    </div>
+        }
+</div>
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #fff;
+    }
+
+    .btn-danger {
+        background-color: #ff385c;
+        border-color: #ff385c;
+        font-weight: 600;
+    }
+
+        .btn-danger:hover {
+            background-color: #e03150;
+            border-color: #e03150;
+        }
+</style>
+
+<script>
+    function confirmarModificacion() {
+        const checkIn = document.getElementById('Reserva_Fecha_deseada').value;
+        const checkOut = document.getElementById('Reserva_Fecha_fin').value;
+        const huespedes = document.getElementById('Reserva_Cantidad_huespedes').value;
+
+        const mensaje =
+            "¿Confirmar la modificación de la reserva?\n\n" +
+            "📅 Check-in: " + (checkIn || "-") + "\n" +
+            "📅 Check-out: " + (checkOut || "-") + "\n" +
+            "👤 Huéspedes: " + (huespedes || "-") + "\n\n" +
+            "Ten en cuenta que si el nuevo precio es mayor,\n" +
+            "se te pedirá realizar el pago del excedente.";
+
+        return confirm(mensaje);
+    }
+</script>
+

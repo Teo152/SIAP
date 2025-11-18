@@ -8,8 +8,8 @@ namespace lib_aplicaciones.Interfaces
         //List<Reservas> PorNombre(Reservas? entidad);
         List<Reservas> Listar();
         Reservas? Guardar(Reservas? entidad);
+        Reservas? Borrar(Reservas? entidad);
 
-       
 
         //Reservas? Aprobado(Reservas? entidad);
         bool PropiedadDisponible(Reservas entidad);
@@ -18,7 +18,7 @@ namespace lib_aplicaciones.Interfaces
 
 
 
-        //  Reservas? Modificar(Reservas? entidad); revisar si esta las vamos a usar
-        // Reservas? Borrar(Reservas? entidad);
+       Reservas? Modificar(Reservas? entidad);
+        
     }
 }

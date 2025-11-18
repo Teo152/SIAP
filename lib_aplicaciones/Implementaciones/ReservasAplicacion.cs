@@ -21,18 +21,46 @@ namespace lib_aplicaciones.Implementaciones
             this.IConexion!.StringConexion = StringConexion;
         }
 
-        /* public Reservas? Borrar(Reservas? entidad)
-         {
-             if (entidad == null)
-                 throw new Exception("lbFaltaInformacion");
+        public Reservas? Borrar(Reservas? entidad)
+        {
+            if (entidad == null)
+                throw new Exception("lbFaltaInformacion");
 
-             if (entidad!.Id == 0)
-                 throw new Exception("lbNoSeGuardo");
+            if (entidad.Id == 0)
+                throw new Exception("lbNoSeGuardo");
 
-             this.IConexion!.Reservas!.Remove(entidad);
-             this.IConexion.SaveChanges();
-             return entidad;
-         }*/
+            // -------------------------------
+            // VALIDACIÓN: Solo se puede borrar si faltan 8 días o más
+            // -------------------------------
+            var hoy = DateTime.Now.Date;
+            var diasRestantes = (entidad.Fecha_deseada.Date - hoy).TotalDays;
+
+            if (diasRestantes < 8)
+                throw new Exception("No se puede cancelar la reserva: faltan menos de 8 días para la fecha programada.");
+
+            // Buscar usuario
+            var usuario = IConexion!.Usuarios!.FirstOrDefault(u => u.Id == entidad.UsuarioId);
+            if (usuario == null)
+                throw new Exception("Usuario no encontrado.");
+
+            if (usuario.Rol != RolUsuario.Huesped)
+                throw new Exception("Solo los huéspedes pueden pagar.");
+
+         
+
+            if (entidad.EstadoId != 2)
+            {
+                throw new Exception("Solo se puede borrar la reserva en estado aprobado");
+
+            }
+
+            // Si todo está bien, borrar
+            this.IConexion!.Reservas!.Remove(entidad);
+            this.IConexion.SaveChanges();
+
+            return entidad;
+        }
+
 
         //Este metodo genera una nueva reserva
         public Reservas Guardar(Reservas entidad)
@@ -67,17 +95,17 @@ namespace lib_aplicaciones.Implementaciones
 
         public List<Reservas> Listar()
         {
-            return this.IConexion!.Reservas!.Take(20).ToList();
+            return this.IConexion!.Reservas!.ToList();
         }
 
-        /* public List<Reservas> PorNombre(Reservas? entidad)
+       /*  public List<Reservas> PorNombre(Reservas? entidad)
          {
              return this.IConexion!.Reservas!
                  .Where(x => x.Nombre!.Contains(entidad!.Nombre!))
                  .ToList();
-         }/*
+         }*/
 
-         /*   public Reservas? Modificar(Reservas? entidad)
+           public Reservas? Modificar(Reservas? entidad)
 
 
             {
@@ -93,7 +121,7 @@ namespace lib_aplicaciones.Implementaciones
                 entry.State = EntityState.Modified;
                 this.IConexion.SaveChanges();
                 return entidad;
-                }*/
+                }
 
        
         public bool PropiedadDisponible(Reservas entidad)

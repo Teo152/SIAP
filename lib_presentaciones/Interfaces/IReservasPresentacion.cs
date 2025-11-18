@@ -7,6 +7,8 @@ namespace lib_presentaciones.Interfaces
 
         Task<List<Reservas>> Listar();
         Task<Reservas?> Guardar(Reservas? entidad);
+        Task<Reservas?> Modificar(Reservas? entidad);
 
+        Task<Reservas?> Borrar(Reservas? entidad);
     }
 }

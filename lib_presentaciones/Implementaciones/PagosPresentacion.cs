@@ -33,6 +33,9 @@ namespace lib_presentaciones.Implementaciones
 
         public async Task<string> GenerarFactura(Pagos entidad)
         {
+            if (entidad == null)
+                throw new Exception("No se puede generar factura sin pago.");
+
             var datos = new Dictionary<string, object>();
             datos["Entidad"] = entidad;
 
@@ -44,8 +47,15 @@ namespace lib_presentaciones.Implementaciones
             if (respuesta.ContainsKey("Error"))
                 throw new Exception(respuesta["Error"].ToString()!);
 
-            return respuesta["Respuesta"].ToString()!;
+            // 👇 aquí estaba el problema: antes usabas "Respuesta"
+            if (!respuesta.ContainsKey("Factura"))
+                throw new Exception("El servicio Pagos/Generar_factura no devolvió la clave 'Factura'.");
+
+            var factura = respuesta["Factura"]!.ToString()!;
+            return factura;
         }
+
+
         public async Task<Propiedades?> Guardar(Propiedades? entidad)
         {
             if (entidad!.Id != 0)

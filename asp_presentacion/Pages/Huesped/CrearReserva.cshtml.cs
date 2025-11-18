@@ -112,7 +112,7 @@ namespace asp_presentacion.Pages.Huesped
                 Cantidad_huespedes = Huespedes,
                 Fecha_deseada = fechaIni,
                 Fecha_fin = fechaFin,
-              //  Costo_total = Total
+               Costo_total = Total
             };
 
             try
@@ -125,7 +125,7 @@ namespace asp_presentacion.Pages.Huesped
                 return RedirectToPage("/Huesped/Pagos", new
                 {
                     reservaId = reservaId,
-                   // total = total
+                    total = Total
                 });
             }
             catch (Exception ex)

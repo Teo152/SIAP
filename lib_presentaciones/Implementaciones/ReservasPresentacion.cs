@@ -52,7 +52,52 @@ namespace lib_presentaciones.Implementaciones
             return entidad;
         }
 
-       
-       
+        public async Task<Reservas?> Borrar(Reservas? entidad)
+        {
+            if (entidad!.Id == 0)
+            {
+                throw new Exception("lbFaltaInformacion");
+            }
+
+            var datos = new Dictionary<string, object>();
+            datos["Entidad"] = entidad;
+
+            comunicaciones = new Comunicaciones();
+            datos = comunicaciones.ConstruirUrl(datos, "Reservas/Borrar");
+            var respuesta = await comunicaciones!.Execute(datos);
+
+            if (respuesta.ContainsKey("Error"))
+            {
+                throw new Exception(respuesta["Error"].ToString()!);
+            }
+            entidad = JsonConversor.ConvertirAObjeto<Reservas>(
+                JsonConversor.ConvertirAString(respuesta["Entidad"]));
+            return entidad;
+        }
+
+        public async Task<Reservas?> Modificar(Reservas? entidad)
+        {
+            if (entidad!.Id == 0)
+            {
+                throw new Exception("lbFaltaInformacion");
+            }
+
+            var datos = new Dictionary<string, object>();
+            datos["Entidad"] = entidad;
+
+            comunicaciones = new Comunicaciones();
+            datos = comunicaciones.ConstruirUrl(datos, "Reservas/Modificar");
+            var respuesta = await comunicaciones!.Execute(datos);
+
+            if (respuesta.ContainsKey("Error"))
+            {
+                throw new Exception(respuesta["Error"].ToString()!);
+            }
+            entidad = JsonConversor.ConvertirAObjeto<Reservas>(
+                JsonConversor.ConvertirAString(respuesta["Entidad"]));
+            return entidad;
+        }
+
+
     }
 }

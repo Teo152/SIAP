@@ -1,24 +1,27 @@
-
-
-using System.Threading.Tasks;
 using lib_dominio.Entidades;
+using lib_presentaciones.Implementaciones;
 using lib_presentaciones.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace asp_presentacion.Pages.Huesped
 {
     public class PagosModel : PageModel
     {
         private readonly IPagosPresentacion _pagosPresentacion;
-
-        public PagosModel(IPagosPresentacion pagosPresentacion)
+        private readonly IReservasPresentacion _reservasPresentacion;
+        public PagosModel(IPagosPresentacion pagosPresentacion,
+                          IReservasPresentacion reservasPresentacion)
         {
             _pagosPresentacion = pagosPresentacion;
+            _reservasPresentacion = reservasPresentacion;
         }
 
-        // Llega desde la reserva
+        // Llega desde la reserva (query string)
         [BindProperty(SupportsGet = true)]
         public int ReservaId { get; set; }
 
@@ -33,7 +36,7 @@ namespace asp_presentacion.Pages.Huesped
         public string NumeroTarjeta { get; set; } = "";
 
         [BindProperty]
-        public DateTime FechaExpiracion { get; set; } 
+        public string FechaExpiracion { get; set; } = "";
 
         [BindProperty]
         public string Cvv { get; set; } = "";
@@ -43,16 +46,19 @@ namespace asp_presentacion.Pages.Huesped
 
         public void OnGet()
         {
-            // Solo muestra la pantalla con el total y la reservaId
+            // Solo muestra la pantalla con el total y la ReservaId
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (string.IsNullOrWhiteSpace(NumeroTarjeta) ||
-                NumeroTarjeta.Replace(" ", "").Length != 16)
+            // Normalizar número
+            var numero = (NumeroTarjeta ?? string.Empty).Replace(" ", "");
+
+            // Validaciones básicas
+            if (string.IsNullOrWhiteSpace(numero) || numero.Length != 16 || !numero.All(char.IsDigit))
             {
                 ModelState.AddModelError(nameof(NumeroTarjeta),
-                    "El número de tarjeta debe tener 16 dígitos.");
+                    "El número de tarjeta debe tener 16 dígitos numéricos.");
             }
 
             if (string.IsNullOrWhiteSpace(Cvv) || Cvv.Length < 3)
@@ -72,26 +78,37 @@ namespace asp_presentacion.Pages.Huesped
                 return Page();
             }
 
-            // Construimos la entidad Pagoss que necesita tu PagossAplicacion
+            // Construimos la entidad Pagos que necesita tu PagosAplicacion
             var pago = new Pagos
             {
                 UsuarioId = usuarioId,
                 ReservaId = ReservaId,
-                Numero_targeta = NumeroTarjeta.Replace(" ", ""),
+                Numero_targeta = numero,
                 Cvv = Cvv,
-                Fecha_expiracion=FechaExpiracion,
-                Nombre_Apellidos=Titular
-
-                // puedes guardar más campos si tu entidad los tiene
+                Nombre_Apellidos = Titular,
+                Fecha_expiracion = DateTime.Parse(FechaExpiracion),
+                precio = Total,
+                Fecha_pago = DateTime.Now,
+                
+                // ?? importante: la columna en BD es NOT NULL
+                // agrega aquí otros campos NOT NULL que tu entidad tenga
             };
 
             try
             {
-                var respuesta = await _pagosPresentacion.Procesar_Pago(pago);
 
-                TempData["MensajePago"] = respuesta; // "Pago exitoso"
-                // Redirigir a Mis Reservas o a una pantalla de confirmación
-                return RedirectToPage("/Huesped/Huesped");
+                var respuestaPago = await _pagosPresentacion.Procesar_Pago(pago);
+                var factura = await _pagosPresentacion.GenerarFactura(pago);
+
+
+                // 3) Redirigir a página de confirmación
+                return RedirectToPage("/Huesped/ConfirmacionReserva", new
+                {
+                    reservaId = ReservaId,
+                    total = Total,
+                    factura = factura
+                    
+                });
             }
             catch (Exception ex)
             {

@@ -1,0 +1,193 @@
+﻿@page
+@model asp_presentacion.Pages.Huesped.ReservasModel
+@{
+    ViewData["Title"] = "Reservas";
+}
+
+<div class="container py-5" style="max-width: 1100px;">
+
+    <!-- Mensajes -->
+    @if (TempData["MensajeReserva"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["MensajeReserva"]
+        </div>
+    }
+
+    @if (TempData["ErrorReserva"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorReserva"]
+        </div>
+    }
+
+    <!-- Título -->
+    <h2 class="fw-bold mb-2">Reservas</h2>
+    <p class="text-muted mb-4">Próximos viajes</p>
+
+    @if (!Model.Reservas.Any())
+    {
+        <p class="text-muted mt-4">Aún no tienes reservas próximas.</p>
+    }
+    else
+    {
+        @foreach (var r in Model.Reservas)
+        {
+            <div class="row align-items-center reserva-item mb-5">
+
+                <!-- Columna izquierda: texto -->
+                <div class="col-md-7">
+
+                    <p class="text-muted small mb-1">
+                        @r.Noches noches en @r.Ciudad
+                    </p>
+
+                    <h5 class="fw-semibold mb-1">@r.PropiedadNombre</h5>
+
+                    <p class="text-muted small mb-1">
+                        Anfitrión @r.AnfitrionNombre
+                    </p>
+
+                    <p class="fw-semibold mb-3">
+                        @r.CheckIn.ToString("MMMM dd, yyyy") - @r.CheckOut.ToString("MMMM dd, yyyy")
+                    </p>
+
+                    <button class="btn btn-light btn-sm px-4 mb-2">
+                        Enviar mensaje
+                    </button>
+
+                    <!-- ACCIONES -->
+                    <div class="mt-1">
+
+                        <!-- Ver / Editar -->
+                        <a asp-page="/Huesped/EditarReserva"
+                           asp-route-id="@r.ReservaId"
+                           class="text-muted small text-decoration-none">
+                            Ver/Editar
+                        </a>
+
+                        <!-- BOTÓN ELIMINAR (ABRE MODAL) -->
+                        <form method="post"
+                              asp-page-handler="Eliminar"
+                              asp-route-id="@r.ReservaId"
+                              class="d-inline eliminar-form"
+                              data-reserva-id="@r.ReservaId">
+
+                            <button type="button"
+                                    class="btn btn-link text-danger small text-decoration-none ms-3"
+                                    onclick="abrirModalEliminar(@r.ReservaId, '@r.PropiedadNombre', '@r.CheckIn.ToString("yyyy-MM-dd")');">
+                                Eliminar
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+                <!-- Columna derecha: imagen -->
+                <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                    <img src="@r.ImagenUrl"
+                         alt="@r.PropiedadNombre"
+                         class="img-fluid rounded-3 shadow-sm reserva-img" />
+                </div>
+
+            </div>
+        }
+    }
+</div>
+
+<!-- MODAL DE CONFIRMACIÓN -->
+<div class="modal fade" id="modalEliminarReserva" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-semibold">Cancelar reserva</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body">
+                <p id="texto-modal-eliminar" class="mb-2">
+                    ¿Seguro que deseas cancelar esta reserva?
+                </p>
+                <p class="text-muted small mb-0">
+                    Solo puedes cancelar hasta <strong>8 días antes</strong> de la fecha de check-in.
+                </p>
+            </div>
+
+            <div class="modal-footer border-0">
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        data-bs-dismiss="modal">
+                    Volver
+                </button>
+                <button type="button"
+                        class="btn btn-danger"
+                        onclick="confirmarEliminarReserva();">
+                    Cancelar reserva
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #fff;
+    }
+
+    .reserva-item {
+        border-bottom: 1px solid #f1f1f1;
+        padding-bottom: 24px;
+    }
+
+        .reserva-item:last-child {
+            border-bottom: none;
+        }
+
+    .reserva-img {
+        max-width: 320px;
+        height: 190px;
+        object-fit: cover;
+    }
+
+    .btn-light {
+        border-radius: 999px;
+        border: 1px solid #ddd;
+        font-size: 0.85rem;
+    }
+</style>
+
+<script>
+    let formAEliminar = null;
+
+    function abrirModalEliminar(reservaId, propiedadNombre, checkIn) {
+        // Buscar el form correspondiente por data-reserva-id
+        formAEliminar = document.querySelector(
+            "form.eliminar-form[data-reserva-id='" + reservaId + "']"
+        );
+
+        // Personalizar el texto del modal (opcional)
+        const texto = document.getElementById("texto-modal-eliminar");
+        if (texto) {
+            texto.textContent =
+                "¿Seguro que deseas cancelar la reserva de \"" +
+                propiedadNombre +
+                "\" con check-in el " + checkIn + "?";
+        }
+
+        // Mostrar el modal (requiere Bootstrap JS cargado en el layout)
+        const modalElement = document.getElementById('modalEliminarReserva');
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+    }
+
+    function confirmarEliminarReserva() {
+        if (formAEliminar) {
+            formAEliminar.submit();
+        }
+    }
+</script>
