@@ -1,0 +1,52 @@
+﻿@page
+@model asp_presentacion.Pages.Admin.Reportes.IndexModel
+@{
+    ViewData["Title"] = "Reportes de chat";
+}
+
+<div class="container py-4">
+    <h2 class="fw-bold mb-4">Reportes de chat activos</h2>
+
+    @if (TempData["ReporteCerrado"] is string msg)
+    {
+        <div class="alert alert-success">@msg</div>
+    }
+    @if (Model.Reportes == null || !Model.Reportes.Any())
+    {
+        <p class="text-muted">No hay reportes activos.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Propiedad</th>
+                        <th>Reportante</th>
+                        <th>Motivo</th>
+                        <th>Fecha</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model.Reportes)
+                    {
+                        <tr>
+                            <td>@r.PropiedadNombre</td>
+                            <td>@r.ReportanteNombre</td>
+                            <td>@(string.IsNullOrWhiteSpace(r.Motivo) ? "-" : r.Motivo)</td>
+                            <td>@r.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                <a asp-page="/Admin/VerChat"
+                                   asp-route-reporteId="@r.Id"
+                                   class="btn btn-outline-danger btn-sm">
+                                    Ingresar al chat
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

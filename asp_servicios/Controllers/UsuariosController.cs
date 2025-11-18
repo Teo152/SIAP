@@ -27,7 +27,6 @@ namespace asp_servicios.Controllers
             if (string.IsNullOrEmpty(datos))
                 datos = "{}";
 
-
             return JsonConversor.ConvertirAObjeto(datos);
         }
 
@@ -44,7 +43,7 @@ namespace asp_servicios.Controllers
                     return JsonConversor.ConvertirAString(respuesta);
                 }
 
-                this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion")); 
+                this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion"));
                 respuesta["Entidades"] = this.iAplicacion!.Listar();
 
                 respuesta["Respuesta"] = "OK";
@@ -74,15 +73,13 @@ namespace asp_servicios.Controllers
                 var entidad = JsonConversor.ConvertirAObjeto<Usuarios>(
                     JsonConversor.ConvertirAString(datos["Entidad"]));
 
-                this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion")); 
+                this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion"));
                 respuesta["Entidades"] = this.iAplicacion!.PorEmail(entidad);
 
                 respuesta["Respuesta"] = "OK";
                 respuesta["Fecha"] = DateTime.Now.ToString();
                 return JsonConversor.ConvertirAString(respuesta);
             }
-
-
             catch (Exception ex)
             {
                 respuesta["Error"] = ex.Message.ToString();
@@ -106,7 +103,7 @@ namespace asp_servicios.Controllers
                 var entidad = JsonConversor.ConvertirAObjeto<Usuarios>(
                     JsonConversor.ConvertirAString(datos["Entidad"]));
 
-                this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion")); 
+                this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion"));
                 entidad = this.iAplicacion!.Guardar(entidad);
 
                 respuesta["Entidad"] = entidad!;
@@ -137,9 +134,7 @@ namespace asp_servicios.Controllers
                 var entidad = JsonConversor.ConvertirAObjeto<Usuarios>(
                     JsonConversor.ConvertirAString(datos["Entidad"]));
 
-
-
-                this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion")); 
+                this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion"));
                 entidad = this.iAplicacion!.Modificar(entidad);
 
                 respuesta["Entidad"] = entidad!;
@@ -170,10 +165,48 @@ namespace asp_servicios.Controllers
                 var entidad = JsonConversor.ConvertirAObjeto<Usuarios>(
                     JsonConversor.ConvertirAString(datos["Entidad"]));
 
-                this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion")); 
+                this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion"));
                 entidad = this.iAplicacion!.Borrar(entidad);
 
                 respuesta["Entidad"] = entidad!;
+                respuesta["Respuesta"] = "OK";
+                respuesta["Fecha"] = DateTime.Now.ToString();
+                return JsonConversor.ConvertirAString(respuesta);
+            }
+            catch (Exception ex)
+            {
+                respuesta["Error"] = ex.Message.ToString();
+                return JsonConversor.ConvertirAString(respuesta);
+            }
+        }
+
+        [HttpPost]
+        public string PorId()
+        {
+            var respuesta = new Dictionary<string, object>();
+
+            try
+            {
+                var datos = ObtenerDatos();
+
+                if (!tokenController!.Validate(datos))
+                {
+                    respuesta["Error"] = "lbNoAutenticacion";
+                    return JsonConversor.ConvertirAString(respuesta);
+                }
+
+                this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion"));
+
+                if (!datos.ContainsKey("Entidad"))
+                    throw new Exception("lbFaltaEntidad");
+
+                var usuarioFiltro = JsonConversor.ConvertirAObjeto<Usuarios>(
+                    JsonConversor.ConvertirAString(datos["Entidad"])
+                );
+
+                var entidad = this.iAplicacion!.PorId(usuarioFiltro.Id);
+
+                respuesta["Entidad"] = entidad;
                 respuesta["Respuesta"] = "OK";
                 respuesta["Fecha"] = DateTime.Now.ToString();
                 return JsonConversor.ConvertirAString(respuesta);

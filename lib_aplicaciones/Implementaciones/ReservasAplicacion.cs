@@ -11,7 +11,6 @@ namespace lib_aplicaciones.Implementaciones
 
         public ReservasAplicacion(IConexion iConexion)
 
-
         {
             this.IConexion = iConexion;
         }
@@ -42,7 +41,7 @@ namespace lib_aplicaciones.Implementaciones
 
             if (entidad.Id != 0)
                 throw new Exception("La reserva ya fue guardada.");
-            // 🔹 Validar usuario
+
             var usuario = this.IConexion!.Usuarios!.FirstOrDefault(u => u.Id == entidad.UsuarioId);
             if (usuario == null)
                 throw new Exception("Usuario no encontrado.");
@@ -50,15 +49,12 @@ namespace lib_aplicaciones.Implementaciones
             if (usuario.Rol != RolUsuario.Huesped)
                 throw new Exception("Solo los usuarios con rol Huesped pueden realizar reservas.");
 
-            // 1 Valeidar disponibilidad
             if (!PropiedadDisponible(entidad))
                 throw new Exception("La propiedad no está disponible en las fechas seleccionadas.");
 
-            // Marcar estado pendiente
             entidad.EstadoId = 1;
             entidad.Fecha_creacion = DateTime.Now;
 
-            //  Guardar en la BD
             this.IConexion!.Reservas!.Add(entidad);
             this.IConexion.SaveChanges();
 
@@ -79,7 +75,6 @@ namespace lib_aplicaciones.Implementaciones
 
          /*   public Reservas? Modificar(Reservas? entidad)
 
-
             {
                 if (entidad == null)
                     throw new Exception("lbFaltaInformacion");
@@ -87,15 +82,12 @@ namespace lib_aplicaciones.Implementaciones
                 if (entidad!.Id == 0)
                     throw new Exception("lbNoSeGuardo");
 
-
-
                 var entry = this.IConexion!.Entry<Reservas>(entidad);
                 entry.State = EntityState.Modified;
                 this.IConexion.SaveChanges();
                 return entidad;
                 }*/
 
-       
         public bool PropiedadDisponible(Reservas entidad)
         {
             return !this.IConexion!.Reservas!
@@ -105,11 +97,44 @@ namespace lib_aplicaciones.Implementaciones
                     (
                         (entidad.Fecha_deseada >= r.Fecha_deseada && entidad.Fecha_deseada < r.Fecha_fin) ||
                         (entidad.Fecha_fin > r.Fecha_deseada && entidad.Fecha_fin <= r.Fecha_fin) ||
-                        (entidad.Fecha_deseada <= r.Fecha_deseada && entidad.Fecha_fin>= r.Fecha_fin)
+                        (entidad.Fecha_deseada <= r.Fecha_deseada && entidad.Fecha_fin >= r.Fecha_fin)
                     )
                 );
         }
 
-        
+        public List<Reservas> ListarParaMensajeria(int usuarioId)
+        {
+            if (usuarioId == 0)
+                throw new Exception("lbFaltaInformacion");
+
+            int estadoAprovado = (int)Estados.Aprovado;
+            int estadoActivo = (int)Estados.Activo;
+
+            var query = this.IConexion!.Reservas!
+                .Include(r => r.Propiedad)
+                .Include(r => r.Usuario)
+                .Where(r =>
+                    (r.EstadoId == estadoAprovado || r.EstadoId == estadoActivo) &&
+                    (
+                        // Soy huésped
+                        r.UsuarioId == usuarioId
+                        ||
+                        // Soy anfitrión (dueño de la propiedad)
+                        (r.Propiedad.UsuarioId.HasValue && r.Propiedad.UsuarioId.Value == usuarioId)
+                    )
+                );
+
+            return query.ToList();
+        }
+
+        public Reservas? PorId(int reservaId)
+        {
+            if (reservaId == 0)
+                throw new Exception("lbFaltaReservaId");
+
+            return this.IConexion!.Reservas!
+                .Include(r => r.Propiedad)
+                .FirstOrDefault(r => r.Id == reservaId);
+        }
     }
 }

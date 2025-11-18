@@ -1,0 +1,152 @@
+﻿@page
+@model asp_presentacion.Pages.Admin.VerChatModel
+@{
+    ViewData["Title"] = "Chat de soporte";
+}
+
+<div class="container py-4">
+    <h2 class="fw-bold mb-3">
+        Chat de soporte
+        @if (Model.Reporte?.Activo == true)
+        {
+            <span class="badge bg-success ms-2">Reporte activo</span>
+        }
+        else
+        {
+            <span class="badge bg-secondary ms-2">Reporte finalizado</span>
+        }
+    </h2>
+
+    @* Mensajes de feedback *@
+    @if (TempData["AdminMensaje"] is string adminMsg)
+    {
+        <div class="alert alert-info">@adminMsg</div>
+    }
+
+    @if (TempData["ReporteCerrado"] is string cerradoMsg)
+    {
+        <div class="alert alert-success">@cerradoMsg</div>
+    }
+
+    <div class="mb-3">
+        <div><strong>Reporte #:</strong> @Model.Reporte?.Id</div>
+        <div><strong>Reserva #:</strong> @Model.Reporte?.ReservaId</div>
+        <div><strong>Propiedad:</strong> @Model.PropiedadNombre</div>
+        <div>
+            <strong>Reportante:</strong>
+            @Model.Reporte?.UsuarioReportante?.Nombre @Model.Reporte?.UsuarioReportante?.Apellido
+        </div>
+        <div><strong>Fecha reporte:</strong> @Model.Reporte?.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</div>
+    </div>
+
+    <hr />
+
+    <div class="mb-2">
+        <strong>Participantes:</strong>
+        <span class="badge bg-secondary me-2">Huésped: @Model.HuespedNombre</span>
+        <span class="badge bg-secondary">Anfitrión: @Model.AnfitrionNombre</span>
+    </div>
+
+    <div class="border rounded-3 p-3" style="max-height: 60vh; overflow-y:auto; background-color:#fcf7f7;">
+        @if (Model.Conversacion == null || !Model.Conversacion.Any())
+        {
+            <p class="text-muted">Aún no hay mensajes en esta conversación.</p>
+        }
+        else
+        {
+            @foreach (var msg in Model.Conversacion)
+            {
+                // Detectamos si es mensaje del admin por el prefijo del texto
+                var esAdmin = msg.Texto != null && msg.Texto.StartsWith("[ADMIN]");
+                var esHuesped = msg.RemitenteId == Model.HuespedId && !esAdmin;
+
+                var nombre = esAdmin
+                ? "Administrador - Soporte"
+                : esHuesped
+                ? Model.HuespedNombre
+                : Model.AnfitrionNombre;
+
+                var alineacion = esAdmin
+                ? "text-center"
+                : esHuesped ? "text-start" : "text-end";
+
+                var colorClase = esAdmin
+                ? "bg-warning text-dark"
+                : esHuesped ? "bg-white" : "bg-danger text-white";
+
+                // Si es admin, quitamos el prefijo [ADMIN] del texto mostrado
+                var texto = esAdmin
+                ? msg.Texto.Substring("[ADMIN]".Length).TrimStart()
+                : msg.Texto;
+
+                <div class="mb-2 @alineacion">
+                    <div class="small text-muted">@nombre</div>
+                    <div class="d-inline-block px-3 py-2 rounded-3 @colorClase">
+                        @texto
+                    </div>
+                </div>
+            }
+
+        }
+    </div>
+
+    @* ====== Zona de respuesta / finalización ====== *@
+    @if (Model.Reporte?.Activo == true)
+    {
+        <form method="post" asp-page-handler="Responder" class="mt-3">
+            <input type="hidden" name="reporteId" value="@Model.Reporte!.Id" />
+            <div class="mb-2">
+                <label class="form-label">
+                    Responder como <strong>Administrador - Soporte</strong>
+                </label>
+                <textarea asp-for="TextoRespuesta"
+                          class="form-control"
+                          rows="3"
+                          placeholder="Escribe una respuesta para huésped y anfitrión..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-danger me-2">Enviar respuesta</button>
+        </form>
+
+        <form method="post" asp-page-handler="Finalizar" id="formFinalizar" class="mt-2">
+            <input type="hidden" name="reporteId" value="@Model.Reporte!.Id" />
+            <button type="button"
+                    class="btn btn-outline-secondary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalConfirmarFinalizar">
+                Finalizar reporte
+            </button>
+        </form>
+
+
+        <div class="modal fade" id="modalConfirmarFinalizar" tabindex="-1" aria-labelledby="modalFinalizarLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalFinalizarLabel">Confirmar acción</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Seguro que deseas finalizar este reporte?
+                        <br />
+                        <small class="text-muted">Una vez finalizado, no podrás enviar más mensajes como administrador.</small>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" onclick="document.getElementById('formFinalizar').submit();">
+                            Sí, finalizar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    }
+    else
+    {
+        <div class="alert alert-warning mt-3">
+            Este reporte está <strong>finalizado</strong>.
+            No puedes enviar más mensajes como administrador.
+        </div>
+    }
+</div>

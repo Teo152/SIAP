@@ -7,20 +7,6 @@
                       ?? "/uploads/user_default.jpg";
 }
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm px-4">
-    <a class="navbar-brand fw-bold" href="/" style="font-size: 1.5rem;">🏠 SkyBnB</a>
-    <div class="ms-auto d-flex align-items-center">
-        <a href="#" class="me-3 text-dark text-decoration-none">Reservas</a>
-        <a href="#" class="me-3 text-dark text-decoration-none">Mensajes</a>
-
-        <img src="@fotoUsuario"
-             onerror="this.src='/uploads/user_default.jpg';"
-             alt="Usuario"
-             class="rounded-circle"
-             style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ddd;">
-    </div>
-</nav>
 
 <!-- FILTRO -->
 <div class="container mt-4">
@@ -88,15 +74,16 @@
     }
     else
     {
-        <p class="text-muted">No se encontraron propiedades para mostrar.</p>
+        <p class="text-muted">No se encontraron propiedades passsra mostrar.</p>
     }
 </div>
-<div>
     
 
 <!-- ESTILOS -->
 <style>
+    /* Ajuste global para navbar fixed-top */
     body {
+        padding-top: 80px !important; /* Evita que el contenido se oculte detrás del navbar */
         font-family: 'Poppins', sans-serif;
         background-color: #fff;
     }
@@ -134,4 +121,5 @@
         background-color: #d63384;
         border-color: #d63384;
     }
+
 </style>

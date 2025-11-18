@@ -29,8 +29,8 @@ namespace lib_repositorios.Implementaciones
         public DbSet<Resenas>? Resenas { get; set; }
         public DbSet<Reservas>? Reservas { get; set; }
         public DbSet<Usuarios>? Usuarios { get; set; }
-
         public DbSet<Municipios>? Municipios { get; set; }
+        public DbSet<ReporteChat> ReportesChat { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,28 +40,41 @@ namespace lib_repositorios.Implementaciones
                 .HasOne(m => m.Remitente)
                 .WithMany()
                 .HasForeignKey(m => m.RemitenteId)
-                .OnDelete(DeleteBehavior.Restrict); // ❌ sin cascada
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Mensajes>()
                 .HasOne(m => m.Destinatario)
                 .WithMany()
                 .HasForeignKey(m => m.DestinatarioId)
-                .OnDelete(DeleteBehavior.Restrict); // ❌ sin cascada
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Pagos>()
           .HasOne(m => m.Reserva
           )
           .WithMany()
           .HasForeignKey(m => m.ReservaId)
-          .OnDelete(DeleteBehavior.Restrict); // ❌ sin cascada
+          .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Pagos>()
                 .HasOne(m => m.Usuario)
                 .WithMany()
                 .HasForeignKey(m => m.UsuarioId)
-                .OnDelete(DeleteBehavior.Restrict); // ❌ sin cascada
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ReporteChat>(entity =>
+            {
+                entity.HasKey(r => r.Id);
+
+                entity.HasOne(r => r.Reserva)
+                      .WithMany()
+                      .HasForeignKey(r => r.ReservaId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(r => r.UsuarioReportante)
+                      .WithMany()
+                      .HasForeignKey(r => r.UsuarioReportanteId)
+                      .OnDelete(DeleteBehavior.NoAction);
+            });
         }
-
     }
-
 }

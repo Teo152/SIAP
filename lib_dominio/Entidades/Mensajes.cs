@@ -9,6 +9,8 @@ public class Mensajes
     public string Texto { get; set; }
     public int RemitenteId { get; set; }
     public int DestinatarioId { get; set; }
+    public bool Leido { get; set; } = false;
+    public bool EsAdmin { get; set; } = false;
 
     [JsonIgnore] public Usuarios Remitente { get; set; } = null!;
     [JsonIgnore] public Usuarios Destinatario { get; set; } = null!;

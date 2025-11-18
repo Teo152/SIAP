@@ -10,21 +10,19 @@ namespace lib_repositorios.Interfaces
 
         DbSet<Busquedas>? Busquedas { get; set; }
 
-       // DbSet<Estados>? Estados { get; set; }
+        // DbSet<Estados>? Estados { get; set; }
         DbSet<Mensajes>? Mensajes { get; set; }
 
         DbSet<Propiedades>? Propiedades { get; set; }
-
         DbSet<Pagos>? Pagos { get; set; }
         DbSet<Resenas>? Resenas { get; set; }
         DbSet<Reservas>? Reservas { get; set; }
         DbSet<Usuarios>? Usuarios { get; set; }
-
         DbSet<Municipios>? Municipios { get; set; }
-
-
+        DbSet<ReporteChat> ReportesChat { get; }
 
         EntityEntry<T> Entry<T>(T entity) where T : class;
+
         int SaveChanges();
     }
 }

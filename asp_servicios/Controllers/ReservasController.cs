@@ -27,7 +27,6 @@ namespace asp_servicios.Controllers
             if (string.IsNullOrEmpty(datos))
                 datos = "{}";
 
-
             return JsonConversor.ConvertirAObjeto(datos);
         }
 
@@ -59,7 +58,6 @@ namespace asp_servicios.Controllers
         }
 
         [HttpPost]
-       
         public string Guardar()
         {
             var respuesta = new Dictionary<string, object>();
@@ -99,13 +97,86 @@ namespace asp_servicios.Controllers
                 Console.WriteLine("⚠️ ERROR EN BACKEND: " + errorMensaje);
                 return json;
             }
-
-
         }
 
-      
+        [HttpPost]
+        public string ListarParaMensajeria()
+        {
+            var respuesta = new Dictionary<string, object>();
 
-        
-       
+            try
+            {
+                var datos = ObtenerDatos();
+
+                if (!tokenController!.Validate(datos))
+                {
+                    respuesta["Error"] = "lbNoAutenticacion";
+                    return JsonConversor.ConvertirAString(respuesta);
+                }
+
+                this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion"));
+
+                if (!datos.ContainsKey("Entidad"))
+                    throw new Exception("lbFaltaInformacion");
+
+                // Esperamos algo como { "Entidad": { "UsuarioId": 2 }, "Bearer": "..." }
+                var filtro = JsonConversor.ConvertirAObjeto<Reservas>(
+                    JsonConversor.ConvertirAString(datos["Entidad"])
+                );
+
+                var lista = this.iAplicacion!.ListarParaMensajeria(filtro.UsuarioId);
+
+                respuesta["Entidades"] = lista;
+                respuesta["Respuesta"] = "OK";
+                respuesta["Fecha"] = DateTime.Now.ToString();
+
+                return JsonConversor.ConvertirAString(respuesta);
+            }
+            catch (Exception ex)
+            {
+                respuesta["Error"] = ex.Message.ToString();
+                return JsonConversor.ConvertirAString(respuesta);
+            }
+        }
+
+        [HttpPost]
+        public string PorId()
+        {
+            var respuesta = new Dictionary<string, object>();
+
+            try
+            {
+                var datos = ObtenerDatos();
+
+                if (!tokenController!.Validate(datos))
+                {
+                    respuesta["Error"] = "lbNoAutenticacion";
+                    return JsonConversor.ConvertirAString(respuesta);
+                }
+
+                this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion"));
+
+                if (!datos.ContainsKey("ReservaId"))
+                    throw new Exception("lbFaltaReservaId");
+
+                var reservaId = JsonConversor.ConvertirAObjeto<int>(
+                    JsonConversor.ConvertirAString(datos["ReservaId"])
+                );
+
+                var reserva = this.iAplicacion!.PorId(reservaId);
+
+                if (reserva == null)
+                    throw new Exception("lbReservaNoEncontrada");
+
+                respuesta["Entidad"] = reserva;
+                respuesta["Respuesta"] = "OK";
+            }
+            catch (Exception ex)
+            {
+                respuesta["Error"] = ex.Message;
+            }
+
+            return JsonConversor.ConvertirAString(respuesta);
+        }
     }
 }

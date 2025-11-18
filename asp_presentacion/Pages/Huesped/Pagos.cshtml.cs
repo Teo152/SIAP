@@ -1,5 +1,3 @@
-
-
 using System.Threading.Tasks;
 using lib_dominio.Entidades;
 using lib_presentaciones.Interfaces;
@@ -33,7 +31,7 @@ namespace asp_presentacion.Pages.Huesped
         public string NumeroTarjeta { get; set; } = "";
 
         [BindProperty]
-        public DateTime FechaExpiracion { get; set; } 
+        public DateTime FechaExpiracion { get; set; }
 
         [BindProperty]
         public string Cvv { get; set; } = "";
@@ -79,8 +77,8 @@ namespace asp_presentacion.Pages.Huesped
                 ReservaId = ReservaId,
                 Numero_targeta = NumeroTarjeta.Replace(" ", ""),
                 Cvv = Cvv,
-                Fecha_expiracion=FechaExpiracion,
-                Nombre_Apellidos=Titular
+                Fecha_expiracion = FechaExpiracion,
+                Nombre_Apellidos = Titular
 
                 // puedes guardar más campos si tu entidad los tiene
             };
