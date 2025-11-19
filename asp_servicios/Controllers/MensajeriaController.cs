@@ -29,7 +29,6 @@ namespace asp_servicios.Controllers
             return JsonConversor.ConvertirAObjeto(datos);
         }
 
-        // POST: /Mensajeria/Enviar
         [HttpPost]
         public string Enviar()
         {
@@ -39,7 +38,6 @@ namespace asp_servicios.Controllers
             {
                 var datos = ObtenerDatos();
 
-                // Validación de token (usa "Bearer", igual que Municipios/Listar)
                 if (!tokenController!.Validate(datos))
                 {
                     respuesta["Error"] = "lbNoAutenticacion";
@@ -48,7 +46,6 @@ namespace asp_servicios.Controllers
 
                 this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion"));
 
-                // ===== leer ReservaId correctamente =====
                 if (!datos.ContainsKey("ReservaId"))
                     throw new Exception("lbFaltaReservaId");
 
@@ -56,7 +53,6 @@ namespace asp_servicios.Controllers
                     JsonConversor.ConvertirAString(datos["ReservaId"])
                 );
 
-                // ===== leer Entidad (Mensajes) correctamente =====
                 if (!datos.ContainsKey("Entidad"))
                     throw new Exception("lbFaltaEntidad");
 
@@ -78,7 +74,6 @@ namespace asp_servicios.Controllers
             }
         }
 
-        // POST: /Mensajeria/ListarConversacion
         [HttpPost]
         public string ListarConversacion()
         {
@@ -102,6 +97,9 @@ namespace asp_servicios.Controllers
                 if (!datos.ContainsKey("Usuario2Id"))
                     throw new Exception("lbFaltaUsuario2Id");
 
+                if (!datos.ContainsKey("ReservaId"))
+                    throw new Exception("lbFaltaReservaId");
+
                 var usuario1Id = JsonConversor.ConvertirAObjeto<int>(
                     JsonConversor.ConvertirAString(datos["Usuario1Id"])
                 );
@@ -109,8 +107,11 @@ namespace asp_servicios.Controllers
                 var usuario2Id = JsonConversor.ConvertirAObjeto<int>(
                     JsonConversor.ConvertirAString(datos["Usuario2Id"])
                 );
+                var reservaId = JsonConversor.ConvertirAObjeto<int>(
+                    JsonConversor.ConvertirAString(datos["ReservaId"])
+                );
 
-                var lista = this.iAplicacion!.ListarConversacion(usuario1Id, usuario2Id);
+                var lista = this.iAplicacion!.ListarConversacion(usuario1Id, usuario2Id, reservaId);
 
                 respuesta["Entidades"] = lista;
                 respuesta["Respuesta"] = "OK";
@@ -141,16 +142,32 @@ namespace asp_servicios.Controllers
 
                 this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion"));
 
+                if (!datos.ContainsKey("UsuarioDestinoId") ||
+                    !datos.ContainsKey("OtroUsuarioId") ||
+                    !datos.ContainsKey("ReservaId"))
+                {
+                    throw new Exception("lbFaltaInformacion");
+                }
+
                 var usuarioDestinoId = JsonConversor.ConvertirAObjeto<int>(
                     JsonConversor.ConvertirAString(datos["UsuarioDestinoId"])
                 );
+
                 var otroUsuarioId = JsonConversor.ConvertirAObjeto<int>(
                     JsonConversor.ConvertirAString(datos["OtroUsuarioId"])
                 );
 
-                var cantidad = this.iAplicacion!.ContarNoLeidos(usuarioDestinoId, otroUsuarioId);
+                var reservaId = JsonConversor.ConvertirAObjeto<int>(
+                    JsonConversor.ConvertirAString(datos["ReservaId"])
+                );
 
-                respuesta["Respuesta"] = cantidad;  // 👈 clave que busca la capa presentación
+                var cantidad = this.iAplicacion!.ContarNoLeidos(
+                    usuarioDestinoId,
+                    otroUsuarioId,
+                    reservaId
+                );
+
+                respuesta["Respuesta"] = cantidad;
             }
             catch (Exception ex)
             {
@@ -177,14 +194,30 @@ namespace asp_servicios.Controllers
 
                 this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion"));
 
+                if (!datos.ContainsKey("UsuarioDestinoId") ||
+                    !datos.ContainsKey("OtroUsuarioId") ||
+                    !datos.ContainsKey("ReservaId"))
+                {
+                    throw new Exception("lbFaltaInformacion");
+                }
+
                 var usuarioDestinoId = JsonConversor.ConvertirAObjeto<int>(
                     JsonConversor.ConvertirAString(datos["UsuarioDestinoId"])
                 );
+
                 var otroUsuarioId = JsonConversor.ConvertirAObjeto<int>(
                     JsonConversor.ConvertirAString(datos["OtroUsuarioId"])
                 );
 
-                this.iAplicacion!.MarcarComoLeidos(usuarioDestinoId, otroUsuarioId);
+                var reservaId = JsonConversor.ConvertirAObjeto<int>(
+                    JsonConversor.ConvertirAString(datos["ReservaId"])
+                );
+
+                this.iAplicacion!.MarcarComoLeidos(
+                    usuarioDestinoId,
+                    otroUsuarioId,
+                    reservaId
+                );
 
                 respuesta["Respuesta"] = "OK";
             }
@@ -210,9 +243,6 @@ namespace asp_servicios.Controllers
                     respuesta["Error"] = "lbNoAutenticacion";
                     return JsonConversor.ConvertirAString(respuesta);
                 }
-
-                // Opcional: validar rol administrador en el token
-                // if (!tokenController!.UserIsAdmin(datos)) throw new Exception("lbNoAutorizado");
 
                 iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion"));
 

@@ -35,7 +35,6 @@ namespace asp_presentacion.Pages.Admin
         public int HuespedId { get; set; }
         public int AnfitrionId { get; set; }
 
-        // ================== GET ==================
         public async Task<IActionResult> OnGet(int reporteId)
         {
             var rol = HttpContext.Session.GetString("RolNombre") ?? "";
@@ -66,12 +65,11 @@ namespace asp_presentacion.Pages.Admin
                 ? $"{anfitrion.Nombre} {anfitrion.Apellido}".Trim()
                 : $"Anfitrión {AnfitrionId}";
 
-            Conversacion = await _mensajeria.ListarConversacion(HuespedId, AnfitrionId);
+            Conversacion = await _mensajeria.AdminListarConversacion(reserva.Id);
 
             return Page();
         }
 
-        // ============ POST: responder como admin ============
         public async Task<IActionResult> OnPostResponder(int reporteId)
         {
             var rol = HttpContext.Session.GetString("RolNombre") ?? "";
@@ -94,25 +92,17 @@ namespace asp_presentacion.Pages.Admin
                 return RedirectToPage(new { reporteId });
             }
 
-            var reserva = reporte.Reserva!;
-            var huespedId = reserva.UsuarioId;
-            var anfitrionId = reserva.Propiedad!.UsuarioId!.Value;
+            var adminId = HttpContext.Session.GetInt32("UsuarioId") ?? 0;
+            if (adminId == 0)
+                return RedirectToPage("/Login");
 
-            var mensaje = new Mensajes
-            {
-                RemitenteId = anfitrionId, // o huespedId, según tu flujo
-                DestinatarioId = huespedId,
-                Texto = "[ADMIN] " + TextoRespuesta
-            };
-
-            await _mensajeria.Enviar(reporte.ReservaId, mensaje);
+            await _mensajeria.AdminEnviar(reporte.ReservaId, adminId, TextoRespuesta);
 
             TempData["AdminMensaje"] = "Mensaje enviado al chat.";
 
             return RedirectToPage(new { reporteId });
         }
 
-        // ============ POST: finalizar reporte ============
         public async Task<IActionResult> OnPostFinalizar(int reporteId)
         {
             var rol = HttpContext.Session.GetString("RolNombre") ?? "";

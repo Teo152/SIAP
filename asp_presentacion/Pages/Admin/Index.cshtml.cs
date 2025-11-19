@@ -40,8 +40,6 @@ namespace asp_presentacion.Pages.Admin.Reportes
             {
                 Id = r.Id,
                 ReservaId = r.ReservaId,
-                // Ajusta según tu entidad Propiedad:
-                // NombrePropiedad, Nombre, Titulo, etc.
                 PropiedadNombre = r.Reserva?.Propiedad?.Nombre
                                   ?? r.Reserva?.Propiedad?.Nombre
                                   ?? $"Reserva #{r.ReservaId}",

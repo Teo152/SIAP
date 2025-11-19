@@ -59,9 +59,7 @@ namespace asp_presentacion.Pages
                     Usuario.Foto = "/uploads/user_default.jpg";
                 }
 
-                // ? Asignar el rol según lo que vino de /Registro?rol=...
-                // Suponiendo tu enum:
-                // public enum RolUsuario { Anfitrion = 1, Huesped = 2 }
+                // Asignar el rol según lo que vino de /Registro?rol=...
                 if (Rol == 1)
                 {
                     Usuario.Rol = RolUsuario.Anfitrion;
@@ -72,7 +70,6 @@ namespace asp_presentacion.Pages
                 }
                 else
                 {
-                    // Por si acaso: default huésped
                     Usuario.Rol = RolUsuario.Huesped;
                 }
 
@@ -86,18 +83,19 @@ namespace asp_presentacion.Pages
 
                 if (nuevoUsuario != null)
                 {
+                    var rolNombre = nuevoUsuario.Rol.ToString(); // "Anfitrion" o "Huesped"
+
                     HttpContext.Session.SetInt32("UsuarioId", nuevoUsuario.Id);
-                    HttpContext.Session.SetString("Rol", nuevoUsuario.Rol.ToString());
-                    HttpContext.Session.SetString("NombreUsuario", nuevoUsuario.Nombre);
+                    HttpContext.Session.SetString("RolNombre", rolNombre); // ?? clave que usa el _Layout
+                    HttpContext.Session.SetString("NombreUsuario", nuevoUsuario.Nombre ?? "Mi cuenta");
+                    HttpContext.Session.SetString("FotoUsuario", nuevoUsuario.Foto ?? "/uploads/user_default.jpg");
                 }
 
-                // Redirigir:
-                // Si es anfitrión ? página de anfitrión
-                // Si es huésped ? podrías mandarlo al home o a otra página
+                // Redirigir según el rol
                 if (Usuario.Rol == RolUsuario.Anfitrion)
                     return RedirectToPage("/Anfitrion");
                 else
-                    return RedirectToPage("/Huesped/Huesped");
+                    return RedirectToPage("/Huesped/Huesped"); // asegúrate que tu página tenga @page "/Huesped"
             }
             catch (Exception ex)
             {

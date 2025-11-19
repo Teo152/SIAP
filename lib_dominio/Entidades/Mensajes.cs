@@ -11,7 +11,8 @@ public class Mensajes
     public int DestinatarioId { get; set; }
     public bool Leido { get; set; } = false;
     public bool EsAdmin { get; set; } = false;
-
+    public int ReservaId { get; set; }
+    public Reservas? Reserva { get; set; }
     [JsonIgnore] public Usuarios Remitente { get; set; } = null!;
     [JsonIgnore] public Usuarios Destinatario { get; set; } = null!;
 }

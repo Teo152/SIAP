@@ -22,7 +22,6 @@ namespace asp_presentacion.Pages.Huesped
             _reservasPresentacion = reservasPresentacion;
         }
 
-        // ===== Query string que viene desde Detalle =====
         [BindProperty(SupportsGet = true)]
         public string? Fecha_deseada { get; set; }
 
@@ -32,16 +31,13 @@ namespace asp_presentacion.Pages.Huesped
         [BindProperty(SupportsGet = true)]
         public int PropiedadId { get; set; }
 
-        // ===== Datos de la propiedad =====
         public Propiedades? Propiedad { get; set; }
 
-        // ===== Form =====
         [BindProperty]
         public int Huespedes { get; set; } = 1;
 
-        // ===== Cálculos =====
         public int Noches { get; set; }
-        public decimal Subtotal { get; set; }       // precio x noches
+        public decimal Subtotal { get; set; }
         public decimal Limpieza { get; set; } = 50000m;
         public decimal Impuestos { get; set; } = 40000m;
         public decimal Total { get; set; }
@@ -56,7 +52,6 @@ namespace asp_presentacion.Pages.Huesped
 
         public async Task<IActionResult> OnPostAsync()
         {
-            // Volver a cargar la propiedad
             var lista = await _propiedadesPresentacion.Listar();
             Propiedad = lista.FirstOrDefault(p => p.Id == PropiedadId);
 
@@ -66,7 +61,6 @@ namespace asp_presentacion.Pages.Huesped
                 return Page();
             }
 
-            // Validar fechas
             DateTime fechaIni = default;
             DateTime fechaFin = default;
             if (!DateTime.TryParse(Fecha_deseada, out fechaIni) ||
@@ -76,7 +70,6 @@ namespace asp_presentacion.Pages.Huesped
                 ModelState.AddModelError(string.Empty, "Las fechas de la reserva no son válidas.");
             }
 
-            // Validar huéspedes
             if (Huespedes < 1)
             {
                 ModelState.AddModelError(nameof(Huespedes), "Debe haber al menos 1 huésped.");
@@ -89,14 +82,12 @@ namespace asp_presentacion.Pages.Huesped
                 );
             }
 
-            // Usuario logueado (ajusta la clave de sesión si usas otra)
             var usuarioId = HttpContext.Session.GetInt32("UsuarioId") ?? 0;
             if (usuarioId == 0)
             {
                 ModelState.AddModelError(string.Empty, "Debes iniciar sesión para reservar.");
             }
 
-            // Recalcular valores (Noches, Subtotal, Total)
             CalcularValores();
 
             if (!ModelState.IsValid)
@@ -104,7 +95,6 @@ namespace asp_presentacion.Pages.Huesped
                 return Page();
             }
 
-            // Construir la reserva con el costo total
             var reserva = new Reservas
             {
                 PropiedadId = PropiedadId,
@@ -112,7 +102,6 @@ namespace asp_presentacion.Pages.Huesped
                 Cantidad_huespedes = Huespedes,
                 Fecha_deseada = fechaIni,
                 Fecha_fin = fechaFin,
-              //  Costo_total = Total
             };
 
             try
@@ -120,12 +109,10 @@ namespace asp_presentacion.Pages.Huesped
                 var resultado = await _reservasPresentacion.Guardar(reserva);
 
                 var reservaId = resultado?.Id ?? 0;
-               // var total = resultado?.Costo_total ?? Total;
 
                 return RedirectToPage("/Huesped/Pagos", new
                 {
                     reservaId = reservaId,
-                   // total = total
                 });
             }
             catch (Exception ex)
@@ -152,7 +139,7 @@ namespace asp_presentacion.Pages.Huesped
             }
 
             if (Noches <= 0)
-                Noches = 1; // mínimo 1 noche
+                Noches = 1;
 
             var precioNoche = (decimal)Propiedad.Precio;
             Subtotal = precioNoche * Noches;

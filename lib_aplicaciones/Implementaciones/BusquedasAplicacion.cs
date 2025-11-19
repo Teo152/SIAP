@@ -1,5 +1,4 @@
-﻿
-using lib_aplicaciones.Interfaces;
+﻿using lib_aplicaciones.Interfaces;
 using lib_dominio.Entidades;
 using lib_repositorios.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +10,6 @@ namespace lib_aplicaciones.Implementaciones
         private IConexion? IConexion = null;
 
         public BusquedasAplicacion(IConexion iConexion)
-
 
         {
             this.IConexion = iConexion;
@@ -29,7 +27,6 @@ namespace lib_aplicaciones.Implementaciones
 
             var query = this.IConexion!.Propiedades!.AsQueryable();
 
-            // 1️⃣ FILTRO POR CIUDAD
             if (!string.IsNullOrEmpty(entidad.Ciudad))
             {
                 var municipio = this.IConexion!.Municipios!
@@ -45,7 +42,6 @@ namespace lib_aplicaciones.Implementaciones
                 }
             }
 
-            // 2️⃣ FILTRO POR CAPACIDAD
             if (entidad.Cantidad_Huespedes.HasValue)
             {
                 query = query.Where(p => p.Capacidad >= entidad.Cantidad_Huespedes.Value);
@@ -65,7 +61,5 @@ namespace lib_aplicaciones.Implementaciones
 
             return query.ToList();
         }
-
-
     }
 }

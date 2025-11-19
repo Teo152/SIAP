@@ -23,7 +23,6 @@ namespace lib_aplicaciones.Implementaciones
 
         public Mensajes? Enviar(Mensajes? entidad, int reservaId)
         {
-            // ===== VALIDACIONES BÁSICAS =====
             if (entidad == null)
                 throw new Exception("lbFaltaInformacion");
 
@@ -42,8 +41,6 @@ namespace lib_aplicaciones.Implementaciones
             if (entidad.Id != 0)
                 throw new Exception("lbYaSeGuardo");
 
-            // ===== VALIDAR RESERVA =====
-            // Se carga la reserva con su propiedad para identificar huésped y anfitrión
             var reserva = this.IConexion!.Reservas!
                 .Include(r => r.Propiedad)
                 .FirstOrDefault(r => r.Id == reservaId);
@@ -51,20 +48,17 @@ namespace lib_aplicaciones.Implementaciones
             if (reserva == null)
                 throw new Exception("lbReservaNoEncontrada");
 
-            // Estados permitidos para mensajería: Activo o Aprovado (confirmada)
             if (reserva.EstadoId != 2 && reserva.EstadoId != 3)
             {
                 throw new Exception("lbEstadoReservaNoPermiteMensajeria");
             }
 
-            // Identificamos huésped y anfitrión
-            var huespedId = reserva.UsuarioId;                    // quien hizo la reserva
-            var anfitrionId = reserva.Propiedad?.UsuarioId ?? 0;  // dueño de la propiedad
+            var huespedId = reserva.UsuarioId;
+            var anfitrionId = reserva.Propiedad?.UsuarioId ?? 0;
 
             if (anfitrionId == 0)
                 throw new Exception("lbPropiedadSinAnfitrion");
 
-            // Validar que el mensaje sea entre huésped y anfitrión de esta reserva
             var esCombinacionValida =
                 (entidad.RemitenteId == huespedId && entidad.DestinatarioId == anfitrionId) ||
                 (entidad.RemitenteId == anfitrionId && entidad.DestinatarioId == huespedId);
@@ -72,63 +66,64 @@ namespace lib_aplicaciones.Implementaciones
             if (!esCombinacionValida)
                 throw new Exception("lbUsuariosNoPertenecenALaReserva");
 
-            // ===== GUARDAR MENSAJE =====
+            entidad.ReservaId = reservaId;
+            //entidad.Leido = false;
+
             this.IConexion!.Mensajes!.Add(entidad);
             this.IConexion.SaveChanges();
 
             return entidad;
         }
 
-        public List<Mensajes> ListarConversacion(int usuario1Id, int usuario2Id)
+        public List<Mensajes> ListarConversacion(int usuario1Id, int usuario2Id, int reservaId)
         {
-            if (usuario1Id == 0 || usuario2Id == 0)
+            if (usuario1Id == 0 || usuario2Id == 0 || reservaId == 0)
                 throw new Exception("lbFaltaInformacion");
 
             return this.IConexion!.Mensajes!
                 .Where(m =>
-                    (m.RemitenteId == usuario1Id && m.DestinatarioId == usuario2Id) ||
-                    (m.RemitenteId == usuario2Id && m.DestinatarioId == usuario1Id)
+                    m.ReservaId == reservaId &&
+                    (
+                        (m.RemitenteId == usuario1Id && m.DestinatarioId == usuario2Id) ||
+                        (m.RemitenteId == usuario2Id && m.DestinatarioId == usuario1Id)
+                    )
                 )
-                // Suponemos que el Id crece con el tiempo;
-                // si luego agregas FechaHora al mensaje, se cambia a OrderBy(m => m.FechaHora)
                 .OrderBy(m => m.Id)
                 .ToList();
         }
 
-        // ===== RESTRICCIÓN: NO SE PERMITE EDITAR NI BORRAR =====
         public Mensajes? Modificar(Mensajes? entidad)
         {
-            // CA-4: no se puede editar el mensaje.
             throw new Exception("lbNoSePermiteEditarMensaje");
         }
 
         public Mensajes? Borrar(Mensajes? entidad)
         {
-            // CA-4: no se puede eliminar el mensaje.
             throw new Exception("lbNoSePermiteBorrarMensaje");
         }
 
-        public int ContarNoLeidos(int usuarioDestinoId, int otroUsuarioId)
+        public int ContarNoLeidos(int usuarioDestinoId, int otroUsuarioId, int reservaId)
         {
-            if (usuarioDestinoId == 0 || otroUsuarioId == 0)
+            if (usuarioDestinoId == 0 || otroUsuarioId == 0 || reservaId == 0)
                 throw new Exception("lbFaltaInformacion");
 
             return this.IConexion!.Mensajes!
                 .Count(m =>
-                    m.DestinatarioId == usuarioDestinoId &&   // 👈 YO soy el destino
-                    m.RemitenteId == otroUsuarioId &&       // 👈 él es el otro
+                    m.ReservaId == reservaId &&               // 👈 por reserva
+                    m.DestinatarioId == usuarioDestinoId &&
+                    m.RemitenteId == otroUsuarioId &&
                     m.Leido == false
                 );
         }
 
-        public void MarcarComoLeidos(int usuarioDestinoId, int otroUsuarioId)
+        public void MarcarComoLeidos(int usuarioDestinoId, int otroUsuarioId, int reservaId)
         {
-            if (usuarioDestinoId == 0 || otroUsuarioId == 0)
+            if (usuarioDestinoId == 0 || otroUsuarioId == 0 || reservaId == 0)
                 throw new Exception("lbFaltaInformacion");
 
-            // Traemos los mensajes no leídos
             var mensajes = this.IConexion!.Mensajes!
                 .Where(m =>
+                    m.ReservaId == reservaId &&
                     m.DestinatarioId == usuarioDestinoId &&
                     m.RemitenteId == otroUsuarioId &&
                     m.Leido == false
@@ -138,14 +133,10 @@ namespace lib_aplicaciones.Implementaciones
             if (!mensajes.Any())
                 return;
 
-            // Marcamos como leídos
             foreach (var m in mensajes)
                 m.Leido = true;
 
-            // 👇 FORZAMOS A EF A MARCARLOS COMO MODIFICADOS
             this.IConexion!.Mensajes!.UpdateRange(mensajes);
-
-            // Guardamos cambios
             this.IConexion.SaveChanges();
         }
 
@@ -154,10 +145,6 @@ namespace lib_aplicaciones.Implementaciones
             return _reportesChat.TieneReporteActivo(reservaId);
         }
 
-        /// <summary>
-        /// Devuelve la conversación huésped-anfitrión para una reserva,
-        /// solo si existe reporte activo.
-        /// </summary>
         public List<Mensajes> AdminListarConversacion(int reservaId)
         {
             if (!_reportesChat.TieneReporteActivo(reservaId))
@@ -176,12 +163,18 @@ namespace lib_aplicaciones.Implementaciones
             if (anfitrionId == 0)
                 throw new Exception("lbPropiedadSinAnfitrion");
 
-            return ListarConversacion(huespedId, anfitrionId);
+            return IConexion!.Mensajes!
+               .Where(m =>
+                   m.ReservaId == reservaId &&
+                   (
+                       (m.RemitenteId == huespedId && m.DestinatarioId == anfitrionId) ||
+                       (m.RemitenteId == anfitrionId && m.DestinatarioId == huespedId)
+                   )
+               )
+               .OrderBy(m => m.Id)
+               .ToList();
         }
 
-        /// <summary>
-        /// Enviar mensaje como "Administrador - Soporte" en el chat de una reserva.
-        /// </summary>
         public Mensajes AdminEnviarMensaje(int reservaId, int adminId, string texto)
         {
             if (!_reportesChat.TieneReporteActivo(reservaId))
@@ -206,14 +199,12 @@ namespace lib_aplicaciones.Implementaciones
             if (anfitrionId == 0)
                 throw new Exception("lbPropiedadSinAnfitrion");
 
-            // Decisión: mandamos el mensaje a los dos, pero en BD
-            // lo guardamos con DestinatarioId = 0 (broadcast lógico)
-            // o si prefieres, al huésped; aquí lo dejo dirigido al huésped.
             var mensaje = new Mensajes
             {
-                Texto = texto,
-                RemitenteId = adminId,
-                DestinatarioId = huespedId, // puedes cambiar lógica si quieres
+                Texto = "[ADMIN] " + texto,
+                RemitenteId = anfitrionId,
+                DestinatarioId = huespedId,
+                ReservaId = reservaId,
                 Leido = false,
                 EsAdmin = true
             };

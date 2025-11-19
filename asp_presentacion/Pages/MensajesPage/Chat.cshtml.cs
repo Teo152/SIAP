@@ -1,7 +1,6 @@
 ﻿using asp_presentacion.Hubs;
 using lib_dominio.Entidades;
 using lib_presentaciones.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.SignalR;
@@ -42,14 +41,12 @@ namespace asp_presentacion.Pages.MensajesPage
         [BindProperty]
         public string TextoMensaje { get; set; } = "";
 
-        // 🔹 Campos para reporte
         [BindProperty]
         public string MotivoReporte { get; set; } = "";
 
         public ReporteChat? ReporteActivo { get; set; }
         public bool TieneReporteActivo { get; set; }
 
-        // ===================== GET: abrir chat =====================
         public async Task<IActionResult> OnGet(int reservaId, int otroUsuarioId)
         {
             var http = HttpContext;
@@ -73,23 +70,19 @@ namespace asp_presentacion.Pages.MensajesPage
                     : otro.Foto;
             }
 
-            // ✅ Marcar como leídos
-            await _mensajeria.MarcarComoLeidos(UsuarioActualId, OtroUsuarioId);
+            await _mensajeria.MarcarComoLeidos(UsuarioActualId, OtroUsuarioId, ReservaId);
 
-            // ✅ Ver si hay reporte activo para esta reserva
             ReporteActivo = await _reportesChatPresentacion.ObtenerActivoPorReserva(ReservaId);
             TieneReporteActivo = ReporteActivo != null;
 
-            // Cargar conversación
             Conversacion = await _mensajeria.ListarConversacion(
                 UsuarioActualId,
-                OtroUsuarioId
-            );
+                OtroUsuarioId,
+                ReservaId);
 
             return Page();
         }
 
-        // ===================== POST: Enviar mensaje =====================
         public async Task<IActionResult> OnPostEnviar(int reservaId, int otroUsuarioId)
         {
             var http = HttpContext;
@@ -116,10 +109,13 @@ namespace asp_presentacion.Pages.MensajesPage
             if (string.IsNullOrWhiteSpace(TextoMensaje))
             {
                 ModelState.AddModelError("", "El mensaje no puede estar vacío.");
-                Conversacion = await _mensajeria.ListarConversacion(UsuarioActualId, OtroUsuarioId);
+                Conversacion = await _mensajeria.ListarConversacion(
+                    UsuarioActualId,
+                    OtroUsuarioId,
+                    ReservaId
+                );
                 return Page();
             }
-
             var nuevo = new Mensajes
             {
                 RemitenteId = UsuarioActualId,
@@ -152,14 +148,18 @@ namespace asp_presentacion.Pages.MensajesPage
 
             TextoMensaje = string.Empty;
 
-            Conversacion = await _mensajeria.ListarConversacion(UsuarioActualId, OtroUsuarioId);
+            Conversacion = await _mensajeria.ListarConversacion(
+                UsuarioActualId,
+                OtroUsuarioId,
+                ReservaId
+            );
+
             ReporteActivo = await _reportesChatPresentacion.ObtenerActivoPorReserva(ReservaId);
             TieneReporteActivo = ReporteActivo != null;
 
             return Page();
         }
 
-        // ===================== POST: Reportar chat =====================
         public async Task<IActionResult> OnPostReportar(int reservaId, int otroUsuarioId)
         {
             var http = HttpContext;
@@ -177,7 +177,6 @@ namespace asp_presentacion.Pages.MensajesPage
                 return Page();
             }
 
-            // 👈 usa la instancia correcta y el método que definimos en presentación
             await _reportesChatPresentacion.Crear(reservaId, UsuarioActualId, MotivoReporte);
 
             TempData["ReporteCreado"] = "Se ha enviado tu reporte al administrador.";

@@ -17,7 +17,6 @@
         }
     </h2>
 
-    @* Mensajes de feedback *@
     @if (TempData["AdminMensaje"] is string adminMsg)
     {
         <div class="alert alert-info">@adminMsg</div>
@@ -56,7 +55,6 @@
         {
             @foreach (var msg in Model.Conversacion)
             {
-                // Detectamos si es mensaje del admin por el prefijo del texto
                 var esAdmin = msg.Texto != null && msg.Texto.StartsWith("[ADMIN]");
                 var esHuesped = msg.RemitenteId == Model.HuespedId && !esAdmin;
 
@@ -74,7 +72,6 @@
                 ? "bg-warning text-dark"
                 : esHuesped ? "bg-white" : "bg-danger text-white";
 
-                // Si es admin, quitamos el prefijo [ADMIN] del texto mostrado
                 var texto = esAdmin
                 ? msg.Texto.Substring("[ADMIN]".Length).TrimStart()
                 : msg.Texto;
@@ -90,7 +87,6 @@
         }
     </div>
 
-    @* ====== Zona de respuesta / finalización ====== *@
     @if (Model.Reporte?.Activo == true)
     {
         <form method="post" asp-page-handler="Responder" class="mt-3">

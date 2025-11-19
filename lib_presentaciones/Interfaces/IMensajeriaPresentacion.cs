@@ -6,11 +6,11 @@ public interface IMensajeriaPresentacion
 {
     Task<Mensajes> Enviar(int reservaId, Mensajes entidad);
 
-    Task<List<Mensajes>> ListarConversacion(int usuario1Id, int usuario2Id);
+    Task<List<Mensajes>> ListarConversacion(int usuario1Id, int usuario2Id, int reservaId);
 
-    Task<int> ContarNoLeidos(int usuarioDestinoId, int otroUsuarioId);
+    Task<int> ContarNoLeidos(int usuarioDestinoId, int otroUsuarioId, int reservaId);
 
-    Task MarcarComoLeidos(int usuarioDestinoId, int otroUsuarioId);
+    Task MarcarComoLeidos(int usuarioDestinoId, int otroUsuarioId, int reservaId);
 
     Task<bool> AdminPuedeIngresar(int reservaId);
 

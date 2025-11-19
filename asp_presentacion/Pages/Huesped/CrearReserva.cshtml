@@ -6,7 +6,6 @@
 
 <div class="container py-4">
 
-    <!-- Breadcrumb -->
     <nav class="mb-3">
         <small class="text-muted">
             @Model.Propiedad?.Nombre 
@@ -25,7 +24,6 @@
         </div>
     }
 
-    <!-- FECHA + CALENDARIO -->
     <section class="mb-4">
         <h5 class="fw-semibold mb-3">Fecha</h5>
 
@@ -37,7 +35,6 @@
             (<span id="nochesLabel">@Model.Noches</span> noche@(Model.Noches > 1 ? "s" : "")).
         </p>
 
-        <!-- Calendario igual al de detalle -->
         <div class="calendar-container mt-3">
             <div class="d-flex justify-content-between align-items-center mb-2" style="max-width: 420px;">
                 <button type="button" class="btn btn-sm btn-outline-secondary" id="prevMonthBtn">
@@ -45,7 +42,6 @@
                 </button>
 
                 <div class="fw-semibold" id="calendarTitle" style="font-size:0.9rem;">
-                    <!-- Ej: Julio 2024 -->
                 </div>
 
                 <button type="button" class="btn btn-sm btn-outline-secondary" id="nextMonthBtn">
@@ -66,13 +62,11 @@
                     </tr>
                 </thead>
                 <tbody id="calendarBody">
-                    @* se llena por JS *@
                 </tbody>
             </table>
         </div>
     </section>
 
-    <!-- TU RESERVA + DETALLES DE PAGO -->
     <section class="mb-5">
         <h5 class="fw-semibold mb-3">Tu reserva</h5>
 
@@ -89,7 +83,6 @@
         <form method="post">
             <div class="row g-3 align-items-end">
 
-                <!-- Check-in (solo lectura, pero se actualiza desde el calendario) -->
                 <div class="col-md-3">
                     <label class="form-label small text-muted">Check in</label>
                     <input class="form-control"
@@ -98,7 +91,6 @@
                            readonly />
                 </div>
 
-                <!-- Check-out -->
                 <div class="col-md-3">
                     <label class="form-label small text-muted">Check out</label>
                     <input class="form-control"
@@ -108,8 +100,8 @@
                 </div>
 
                 @{
-                    // 👇 Calculamos el máximo de huéspedes permitidos
-                    var maxHuespedes = Model.Propiedad?.Capacidad ?? 1;  // usa el nombre real de la propiedad
+          
+                    var maxHuespedes = Model.Propiedad?.Capacidad ?? 1;  
                 }
 
                 <div class="col-md-2">
@@ -130,7 +122,6 @@
 
 
 
-                <!-- Dirección (solo visual) -->
                 <div class="col-md-4">
                     <label class="form-label small text-muted">Dirección</label>
                     <input class="form-control"
@@ -138,12 +129,10 @@
                            readonly />
                 </div>
 
-                <!-- Hidden para conservar datos en el POST -->
                 <input type="hidden" id="Fecha_deseada" name="Fecha_deseada" value="@Model.Fecha_deseada" />
                 <input type="hidden" id="Fecha_Fin" name="Fecha_Fin" value="@Model.Fecha_Fin" />
                 <input type="hidden" name="PropiedadId" value="@Model.PropiedadId" />
 
-                <!-- DETALLES DE PAGO -->
                 <div class="col-12 col-md-6 mt-4">
                     <h5 class="fw-semibold mb-3">Detalles de pago</h5>
 
@@ -177,7 +166,6 @@
                     </div>
                 </div>
 
-                <!-- BOTÓN FINAL RESERVAR -->
                 <div class="col-12 mt-4">
                     <button type="submit"
                             class="btn btn-danger w-100"
@@ -193,18 +181,16 @@
 @section Scripts {
     <script>
         (function () {
-            // =========================
-            //  Estado general
-            // =========================
+
             const initialCheckIn = '@(Model.Fecha_deseada ?? "")';
             const initialCheckOut = '@(Model.Fecha_Fin ?? "")';
-            const precioNoche = @((Model.Propiedad?.Precio ?? 0).ToString().Replace(',', '.')); // número JS
+            const precioNoche = @((Model.Propiedad?.Precio ?? 0).ToString().Replace(',', '.'));
 
             let checkIn = initialCheckIn || null;
             let checkOut = initialCheckOut || null;
 
             let today = new Date();
-            // si hay check-in, arrancamos mostrando ese mes
+
             if (checkIn) {
                 const d = new Date(checkIn + "T00:00:00");
                 if (!isNaN(d)) {
@@ -212,8 +198,8 @@
                 }
             }
 
-            let currentMonth = today.getMonth();   // 0-11
-            let currentYear = today.getFullYear(); // año
+            let currentMonth = today.getMonth();  
+            let currentYear = today.getFullYear(); 
 
             const monthNames = [
                 "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -237,13 +223,10 @@
             const limpieza = @Model.Limpieza;
             const impuestos = @Model.Impuestos;
 
-            // =========================
-            //  Helpers
-            // =========================
             function toDateKey(year, month, day) {
                 const mm = (month + 1).toString().padStart(2, "0");
                 const dd = day.toString().padStart(2, "0");
-                return `${year}-${mm}-${dd}`;      // YYYY-MM-DD
+                return `${year}-${mm}-${dd}`;      
             }
 
             function formatDisplay(dateStr) {
@@ -263,7 +246,7 @@
             }
 
             function updateLabelsYMontos() {
-                const noches = calcularNoches(checkIn, checkOut) || 1; // mínimo 1 noche
+                const noches = calcularNoches(checkIn, checkOut) || 1; 
 
                 checkinLabel.textContent = checkIn ? formatDisplay(checkIn) : "No seleccionado";
                 checkoutLabel.textContent = checkOut ? formatDisplay(checkOut) : "No seleccionado";
@@ -307,15 +290,12 @@
                 });
             }
 
-            // =========================
-            //  Renderizado del calendario
-            // =========================
             function renderCalendar(month, year) {
                 calendarTitle.textContent = `${monthNames[month]} ${year}`;
                 calendarBody.innerHTML = "";
 
-                let firstDay = new Date(year, month, 1).getDay(); // 0 domingo ... 6 sábado
-                firstDay = (firstDay + 6) % 7; // 0 = lunes
+                let firstDay = new Date(year, month, 1).getDay(); 
+                firstDay = (firstDay + 6) % 7; 
 
                 const daysInMonth = new Date(year, month + 1, 0).getDate();
                 let date = 1;
@@ -350,9 +330,6 @@
                 updateSelectionStyles();
             }
 
-            // =========================
-            //  Eventos de cada día
-            // =========================
             function attachDayHandlers() {
                 document.querySelectorAll(".cal-dia").forEach(td => {
                     td.onclick = null;
@@ -384,9 +361,6 @@
                 });
             }
 
-            // =========================
-            //  Navegación de meses
-            // =========================
             document.getElementById("prevMonthBtn").addEventListener("click", () => {
                 currentMonth--;
                 if (currentMonth < 0) {
@@ -405,7 +379,6 @@
                 renderCalendar(currentMonth, currentYear);
             });
 
-            // Render inicial
             renderCalendar(currentMonth, currentYear);
             updateLabelsYMontos();
 

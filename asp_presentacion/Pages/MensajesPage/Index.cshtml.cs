@@ -68,7 +68,8 @@ namespace asp_presentacion.Pages.MensajesPage
                 // 👇 AQUÍ: contar mensajes no leídos para esta conversación
                 int noLeidos = await _mensajeriaPresentacion.ContarNoLeidos(
                     UsuarioActualId,
-                    otroUsuarioId
+                    otroUsuarioId,
+                    r.Id
                 );
 
                 Conversaciones.Add(new ConversacionItem

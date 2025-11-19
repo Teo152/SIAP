@@ -31,13 +31,14 @@ namespace lib_presentaciones.Implementaciones
             return mensaje;
         }
 
-        public async Task<List<Mensajes>> ListarConversacion(int usuario1Id, int usuario2Id)
+        public async Task<List<Mensajes>> ListarConversacion(int usuario1Id, int usuario2Id, int reservaId)
         {
             var lista = new List<Mensajes>();
             var datos = new Dictionary<string, object>();
 
             datos["Usuario1Id"] = usuario1Id;
             datos["Usuario2Id"] = usuario2Id;
+            datos["ReservaId"] = reservaId;
 
             comunicaciones = new Comunicaciones();
             datos = comunicaciones.ConstruirUrl(datos, "Mensajeria/ListarConversacion");
@@ -54,12 +55,13 @@ namespace lib_presentaciones.Implementaciones
             return lista;
         }
 
-        public async Task<int> ContarNoLeidos(int usuarioDestinoId, int otroUsuarioId)
+        public async Task<int> ContarNoLeidos(int usuarioDestinoId, int otroUsuarioId, int reservaId)
         {
             var datos = new Dictionary<string, object>
             {
                 ["UsuarioDestinoId"] = usuarioDestinoId,
-                ["OtroUsuarioId"] = otroUsuarioId
+                ["OtroUsuarioId"] = otroUsuarioId,
+                ["ReservaId"] = reservaId
             };
 
             comunicaciones = new Comunicaciones();
@@ -74,12 +76,13 @@ namespace lib_presentaciones.Implementaciones
             );
         }
 
-        public async Task MarcarComoLeidos(int usuarioDestinoId, int otroUsuarioId)
+        public async Task MarcarComoLeidos(int usuarioDestinoId, int otroUsuarioId, int reservaId)
         {
             var datos = new Dictionary<string, object>
             {
                 ["UsuarioDestinoId"] = usuarioDestinoId,
-                ["OtroUsuarioId"] = otroUsuarioId
+                ["OtroUsuarioId"] = otroUsuarioId,
+                ["ReservaId"] = reservaId
             };
 
             comunicaciones = new Comunicaciones();
@@ -104,7 +107,6 @@ namespace lib_presentaciones.Implementaciones
             if (respuesta.ContainsKey("Error"))
                 throw new Exception(respuesta["Error"]!.ToString());
 
-            // La API devuelve {"PuedeIngresar": true/false, "Respuesta": "OK"}
             var puede = JsonConversor.ConvertirAObjeto<bool>(
                 JsonConversor.ConvertirAString(respuesta["PuedeIngresar"])
             );
