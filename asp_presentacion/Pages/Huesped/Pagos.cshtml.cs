@@ -36,7 +36,7 @@ namespace asp_presentacion.Pages.Huesped
         public string NumeroTarjeta { get; set; } = "";
 
         [BindProperty]
-        public string FechaExpiracion { get; set; } = "";
+        public DateTime FechaExpiracion { get; set; }
 
         [BindProperty]
         public string Cvv { get; set; } = "";
@@ -51,19 +51,19 @@ namespace asp_presentacion.Pages.Huesped
 
         public async Task<IActionResult> OnPostAsync()
         {
-            // Normalizar número
+            // Normalizar nï¿½mero
             var numero = (NumeroTarjeta ?? string.Empty).Replace(" ", "");
 
-            // Validaciones básicas
+            // Validaciones bï¿½sicas
             if (string.IsNullOrWhiteSpace(numero) || numero.Length != 16 || !numero.All(char.IsDigit))
             {
                 ModelState.AddModelError(nameof(NumeroTarjeta),
-                    "El número de tarjeta debe tener 16 dígitos numéricos.");
+                    "El numero de tarjeta debe tener 16 digitos numericos.");
             }
 
             if (string.IsNullOrWhiteSpace(Cvv) || Cvv.Length < 3)
             {
-                ModelState.AddModelError(nameof(Cvv), "CVV inválido.");
+                ModelState.AddModelError(nameof(Cvv), "CVV invalido.");
             }
 
             if (!ModelState.IsValid)
@@ -74,7 +74,7 @@ namespace asp_presentacion.Pages.Huesped
             var usuarioId = HttpContext.Session.GetInt32("UsuarioId") ?? 0;
             if (usuarioId == 0)
             {
-                ModelState.AddModelError(string.Empty, "Debes iniciar sesión para pagar.");
+                ModelState.AddModelError(string.Empty, "Debes iniciar sesiï¿½n para pagar.");
                 return Page();
             }
 
@@ -86,12 +86,12 @@ namespace asp_presentacion.Pages.Huesped
                 Numero_targeta = numero,
                 Cvv = Cvv,
                 Nombre_Apellidos = Titular,
-                Fecha_expiracion = DateTime.Parse(FechaExpiracion),
+                Fecha_expiracion = FechaExpiracion,
                 precio = Total,
                 Fecha_pago = DateTime.Now,
                 
                 // ?? importante: la columna en BD es NOT NULL
-                // agrega aquí otros campos NOT NULL que tu entidad tenga
+                // agrega aquï¿½ otros campos NOT NULL que tu entidad tenga
             };
 
             try
@@ -101,7 +101,7 @@ namespace asp_presentacion.Pages.Huesped
                 var factura = await _pagosPresentacion.GenerarFactura(pago);
 
 
-                // 3) Redirigir a página de confirmación
+                // 3) Redirigir a pï¿½gina de confirmaciï¿½n
                 return RedirectToPage("/Huesped/ConfirmacionReserva", new
                 {
                     reservaId = ReservaId,

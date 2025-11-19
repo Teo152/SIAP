@@ -11,7 +11,6 @@ namespace lib_aplicaciones.Implementaciones
 
         public UsuariosAplicacion(IConexion iConexion)
 
-
         {
             this.IConexion = iConexion;
         }
@@ -42,8 +41,6 @@ namespace lib_aplicaciones.Implementaciones
             if (entidad.Id != 0)
                 throw new Exception("lbYaSeGuardo");
 
-          
-
             this.IConexion!.Usuarios!.Add(entidad);
             this.IConexion.SaveChanges();
             return entidad;
@@ -64,9 +61,7 @@ namespace lib_aplicaciones.Implementaciones
                 .ToList();
         }
 
-
         public Usuarios? Modificar(Usuarios? entidad)
-
 
         {
             if (entidad == null)
@@ -75,12 +70,15 @@ namespace lib_aplicaciones.Implementaciones
             if (entidad!.Id == 0)
                 throw new Exception("lbNoSeGuardo");
 
-           
-
             var entry = this.IConexion!.Entry<Usuarios>(entidad);
             entry.State = EntityState.Modified;
             this.IConexion.SaveChanges();
             return entidad;
+        }
+
+        public Usuarios? PorId(int id)
+        {
+            return this.IConexion!.Usuarios!.FirstOrDefault(u => u.Id == id);
         }
     }
 }

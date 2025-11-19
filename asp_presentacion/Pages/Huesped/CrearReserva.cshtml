@@ -90,53 +90,53 @@
             <div class="row g-3 align-items-end">
 
                 <!-- Check-in (solo lectura, pero se actualiza desde el calendario) -->
-                <div class="col-md-3">
-                    <label class="form-label small text-muted">Check in</label>
-                    <input class="form-control"
-                           id="checkinInputVisual"
-                           value="@Model.Fecha_deseada"
-                           readonly />
+                <div class="row align-items-start">
+
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted">Check in</label>
+                        <input class="form-control"
+                               id="checkinInputVisual"
+                               value="@Model.Fecha_deseada"
+                               readonly />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted">Check out</label>
+                        <input class="form-control"
+                               id="checkoutInputVisual"
+                               value="@Model.Fecha_Fin"
+                               readonly />
+                    </div>
+
+                    @{
+                        var maxHuespedes = Model.Propiedad?.Capacidad ?? 1;
+                    }
+
+                    <div class="col-md-2">
+                        <label class="form-label small text-muted">Huéspedes</label>
+
+                        <input asp-for="Huespedes"
+                               type="number"
+                               min="1"
+                               max="@maxHuespedes"
+                               class="form-control" />
+
+                        <small class="text-muted">
+                            Máx. @maxHuespedes huésped@(maxHuespedes > 1 ? "es" : "").
+                        </small>
+
+                        <span asp-validation-for="Huespedes" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted">Dirección</label>
+                        <input class="form-control"
+                               value="@Model.Propiedad?.Direccion"
+                               readonly />
+                    </div>
+
                 </div>
 
-                <!-- Check-out -->
-                <div class="col-md-3">
-                    <label class="form-label small text-muted">Check out</label>
-                    <input class="form-control"
-                           id="checkoutInputVisual"
-                           value="@Model.Fecha_Fin"
-                           readonly />
-                </div>
-
-                @{
-                    // 👇 Calculamos el máximo de huéspedes permitidos
-                    var maxHuespedes = Model.Propiedad?.Capacidad ?? 1;  // usa el nombre real de la propiedad
-                }
-
-                <div class="col-md-2">
-                    <label class="form-label small text-muted">Huéspedes</label>
-
-                    <input asp-for="Huespedes"
-                           type="number"
-                           min="1"
-                           max="@maxHuespedes"
-                           class="form-control" />
-
-                    <small class="text-muted">
-                        Máx. @maxHuespedes huésped@(maxHuespedes > 1 ? "es" : "").
-                    </small>
-
-                    <span asp-validation-for="Huespedes" class="text-danger small"></span>
-                </div>
-
-
-
-                <!-- Dirección (solo visual) -->
-                <div class="col-md-4">
-                    <label class="form-label small text-muted">Dirección</label>
-                    <input class="form-control"
-                           value="@Model.Propiedad?.Direccion"
-                           readonly />
-                </div>
 
                 <!-- Hidden para conservar datos en el POST -->
                 <input type="hidden" id="Fecha_deseada" name="Fecha_deseada" value="@Model.Fecha_deseada" />
@@ -159,15 +159,17 @@
                         </span>
                     </div>
 
+
                     <div class="d-flex justify-content-between">
                         <span class="text-muted">Limpieza</span>
                         <span>$@Model.Limpieza.ToString("N0")</span>
                     </div>
 
-                    <div class="d-flex justify-content_between">
+                    <div class="d-flex justify-content-between">
                         <span class="text-muted">Impuesto</span>
                         <span>$@Model.Impuestos.ToString("N0")</span>
                     </div>
+
 
                     <hr />
 

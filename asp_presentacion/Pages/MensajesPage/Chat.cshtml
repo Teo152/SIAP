@@ -1,0 +1,493 @@
+﻿@page
+@model asp_presentacion.Pages.MensajesPage.ChatModel
+
+@{
+    ViewData["Title"] = "Mensajes";
+}
+
+<div class="main-container">
+
+    <main class="content-wrapper">
+
+        <!-- ==== SIDEBAR IZQUIERDA ==== -->
+        <aside class="sidebar">
+            <h2 class="sidebar-title">Mensajes</h2>
+
+            <!-- Solo el contacto, sin búsqueda -->
+            <div class="contact-item active">
+                <div class="contact-info d-flex align-items-center gap-3">
+
+                    <!-- FOTO DEL OTRO USUARIO -->
+                    <img src="@Model.FotoOtroUsuario"
+                         onerror="this.src='/uploads/user_default.jpg'"
+                         class="contact-avatar" />
+
+                    <!-- NOMBRE -->
+                    <div>
+                        <div class="contact-name">@Model.NombreOtroUsuario</div>
+                    </div>
+
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- ==== CHAT ==== -->
+        <section class="chat-section">
+
+            <!-- HEADER DEL CHAT + BOTÓN REPORTAR -->
+            <div class="chat-header d-flex justify-content-between align-items-center">
+                <h3 class="chat-title mb-0">@Model.NombreOtroUsuario</h3>
+
+                <div class="d-flex align-items-center gap-2">
+
+                    @* Si ya existe un reporte activo, mostramos badge *@
+                    @if (Model.ReporteActivo != null)
+                    {
+                        <span class="badge bg-danger me-2">
+                            Reporte activo
+                        </span>
+                    }
+
+                    @* Botón para mostrar/ocultar el formulario de reporte *@
+                    <button class="btn btn-outline-danger btn-sm"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#formReporte"
+                            aria-expanded="false"
+                            aria-controls="formReporte"
+                    @(Model.ReporteActivo != null ? "disabled" : "")>
+                        Reportar problema
+                    </button>
+                </div>
+            </div>
+
+            @* Mensaje de éxito si se creó el reporte *@
+            @if (TempData["ReporteCreado"] != null)
+            {
+                <div class="alert alert-success mt-2 mx-4">
+                    @TempData["ReporteCreado"]
+                </div>
+            }
+
+            @* FORMULARIO DE REPORTE (COLLAPSE) *@
+            <div class="collapse mt-3 mx-4" id="formReporte">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="fw-semibold mb-2">Describe el problema del chat</h6>
+                        <p class="text-muted small mb-2">
+                            Este reporte será enviado al administrador para que revise la conversación.
+                        </p>
+
+                        <form method="post" asp-page-handler="Reportar">
+                            <input type="hidden" name="reservaId" value="@Model.ReservaId" />
+                            <input type="hidden" name="otroUsuarioId" value="@Model.OtroUsuarioId" />
+
+                            <div class="mb-2">
+                                <textarea asp-for="MotivoReporte"
+                                          class="form-control"
+                                          rows="3"
+                                          placeholder="Ej: El anfitrión no responde, lenguaje inapropiado, etc."></textarea>
+                                <span asp-validation-for="MotivoReporte" class="text-danger small"></span>
+                            </div>
+
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                Enviar reporte
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LISTA DE MENSAJES -->
+            <div class="chat-messages" id="chatMessages">
+
+                @if (Model.Conversacion == null || !Model.Conversacion.Any())
+                {
+                    <p class="text-muted">Aún no hay mensajes.</p>
+                }
+                else
+                {
+                    @foreach (var msg in Model.Conversacion)
+                    {
+                        var esMio = msg.RemitenteId == Model.UsuarioActualId;
+                        var esAdmin = msg.Texto != null && msg.Texto.StartsWith("[ADMIN]");
+
+                        string nombre;
+                        string senderClass;
+                        string rowClass;
+                        string bubbleClass;
+                        string textoMostrar = msg.Texto ?? "";
+                        string? avatar = null;
+
+                        if (esAdmin)
+                        {
+                            // Mensaje de soporte
+                            nombre = "Administrador - Soporte";
+                            senderClass = "message-sender admin";
+                            rowClass = "message-row admin";
+                            bubbleClass = "message-bubble admin";
+                            textoMostrar = textoMostrar.Replace("[ADMIN]", "").Trim();
+                            // si quieres sin avatar, lo dejamos null
+                        }
+                        else
+                        {
+                            nombre = esMio ? Model.NombreUsuarioActual : Model.NombreOtroUsuario;
+                            senderClass = "message-sender" + (esMio ? " sent" : "");
+                            rowClass = "message-row" + (esMio ? " sent" : "");
+                            bubbleClass = "message-bubble " + (esMio ? "sent" : "received");
+                            avatar = esMio ? Model.FotoUsuarioActual : Model.FotoOtroUsuario;
+                        }
+
+                        <div class="message-group">
+                            <div class="@senderClass">@nombre</div>
+
+                            <div class="@rowClass">
+                                @* Avatar solo si NO es admin y no es mío *@
+                                @if (!esAdmin && !esMio)
+                                {
+                                    <img src="@avatar"
+                                         onerror="this.src='/uploads/user_default.jpg'"
+                                         class="message-avatar" />
+                                }
+
+                                <div class="@bubbleClass">
+                                    @textoMostrar
+                                </div>
+
+                                @* Avatar mío a la derecha, solo si no es admin *@
+                                @if (!esAdmin && esMio)
+                                {
+                                    <img src="@avatar"
+                                         onerror="this.src='/uploads/user_default.jpg'"
+                                         class="message-avatar" />
+                                }
+                            </div>
+                        </div>
+                    }
+
+                }
+            </div>
+
+            <!-- ==== INPUT ==== -->
+            <div class="message-input-container">
+                <form method="post" asp-page-handler="Enviar" class="message-input-wrapper w-100">
+                    <input type="hidden" name="reservaId" value="@Model.ReservaId" />
+                    <input type="hidden" name="otroUsuarioId" value="@Model.OtroUsuarioId" />
+
+                    <input asp-for="TextoMensaje"
+                           class="message-input"
+                           placeholder="Escribe un mensaje..."
+                           autocomplete="off" />
+
+                    <button type="submit" class="send-btn">Enviar</button>
+                </form>
+            </div>
+
+        </section>
+
+    </main>
+</div>
+<style>
+    /* RESET */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html, body {
+        height: 100%;
+        background-color: #fcf7f7;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    :root {
+        --navbar-height: 70px;
+        --sidebar-width: 300px;
+        --input-height: 90px;
+        --header-chat-height: 65px;
+    }
+
+    /* ========== SIDEBAR IZQUIERDA ========== */
+    .sidebar {
+        position: fixed;
+        top: var(--navbar-height);
+        left: 0;
+        width: var(--sidebar-width);
+        bottom: 0;
+        background-color: #ffffff;
+        border-right: 1px solid #f0d0d0;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .sidebar-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+
+    .contact-item {
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+    }
+
+        .contact-item.active {
+            background-color: transparent !important;
+            border: none !important;
+        }
+
+    .contact-avatar {
+        width: 55px; /* más pequeño */
+        height: 55px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .contact-name {
+        font-size: 17px;
+        font-weight: 600;
+        color: #1c0c0c;
+    }
+
+    /* ========== CHAT GENERAL ========== */
+    .chat-section {
+        position: relative;
+        margin-left: var(--sidebar-width);
+        margin-top: var(--navbar-height);
+        height: calc(100vh - var(--navbar-height));
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+    }
+
+    /* ========== ENCABEZADO DEL CHAT FIJO ========== */
+    .chat-header {
+        position: fixed;
+        top: var(--navbar-height);
+        left: var(--sidebar-width);
+        right: 0;
+        height: var(--header-chat-height);
+        background-color: #fcf7f7;
+        display: flex;
+        align-items: center;
+        padding: 0 40px;
+        border-bottom: 1px solid #e7dada;
+        z-index: 30;
+    }
+
+    .chat-title {
+        font-size: 25px;
+        font-weight: 700;
+        color: #1c0c0c;
+    }
+
+    /* ========== LISTA DE MENSAJES ========== */
+    .chat-messages {
+        margin-top: var(--header-chat-height);
+        padding: 25px 40px 0 40px;
+        height: calc(100vh - var(--navbar-height) - var(--header-chat-height) - var(--input-height));
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+        .chat-messages::-webkit-scrollbar {
+            display: none;
+        }
+
+    /* ========== MENSAJES ========== */
+    .message-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .message-sender {
+        font-size: 15px;
+        color: #9e6161;
+        margin-left: 5px;
+    }
+
+        .message-sender.sent {
+            text-align: right;
+            margin-right: 5px;
+        }
+
+    .message-row {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+    }
+
+        .message-row.sent {
+            justify-content: flex-end;
+        }
+
+    /* Foto en los mensajes */
+    .message-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    /* Burbuja más grande y profesional */
+    .message-bubble {
+        font-size: 20px;
+        padding: 16px 22px;
+        max-width: 75%;
+        border-radius: 16px;
+        line-height: 1.45;
+    }
+
+        .message-bubble.received {
+            background-color: #f2e8e8;
+            color: #1c0c0c;
+        }
+
+        .message-bubble.sent {
+            background-color: #ea2833;
+            color: #ffffff;
+        }
+
+    /* ========== BARRA DE ESCRIBIR FIJA ========== */
+    .message-input-container {
+        position: fixed;
+        bottom: 0;
+        left: var(--sidebar-width);
+        right: 0;
+        height: var(--input-height);
+        background-color: #fcf7f7;
+        padding: 15px 25px;
+        border-top: 1px solid #e5e8ea;
+        display: flex;
+        align-items: center;
+        z-index: 50;
+    }
+
+    .message-input-wrapper {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        gap: 12px;
+    }
+
+    .message-input {
+        flex: 1;
+        padding: 14px 16px;
+        border: none;
+        border-radius: 10px;
+        background-color: #f2e8e8;
+        font-size: 17px;
+    }
+
+    .send-btn {
+        background-color: #ea2833;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 17px;
+        font-weight: 600;
+    }
+
+        .send-btn:hover {
+            background-color: #d61e2a;
+        }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+    <script>
+        const usuarioActualId = @Model.UsuarioActualId;
+        const otroUsuarioId = @Model.OtroUsuarioId;
+
+        const nombreActual = "@Model.NombreUsuarioActual";
+        const nombreOtro = "@Model.NombreOtroUsuario";
+
+        const fotoActual = "@Model.FotoUsuarioActual";
+        const fotoOtro = "@Model.FotoOtroUsuario";
+
+        const chatMessages = document.getElementById("chatMessages");
+
+        function scrollAlFinal() {
+            if (!chatMessages) return;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        window.addEventListener("load", scrollAlFinal);
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chathub")
+            .build();
+
+        connection.on("RecibirMensaje", (msg) => {
+            const esParaEsteChat =
+                (msg.remitenteId === usuarioActualId && msg.destinatarioId === otroUsuarioId) ||
+                (msg.remitenteId === otroUsuarioId && msg.destinatarioId === usuarioActualId);
+
+            if (!esParaEsteChat)
+                return;
+
+            agregarMensaje(msg);
+            scrollAlFinal();
+        });
+
+        function agregarMensaje(msg) {
+            const esMio = msg.remitenteId === usuarioActualId;
+            const nombre = esMio ? nombreActual : nombreOtro;
+            const avatar = esMio ? fotoActual : fotoOtro;
+
+            const group = document.createElement("div");
+            group.className = "message-group";
+
+            const senderDiv = document.createElement("div");
+            senderDiv.className = "message-sender" + (esMio ? " sent" : "");
+            senderDiv.textContent = nombre;
+
+            const row = document.createElement("div");
+            row.className = "message-row" + (esMio ? " sent" : "");
+
+            if (!esMio) {
+                const imgLeft = document.createElement("img");
+                imgLeft.src = avatar;
+                imgLeft.onerror = () => { imgLeft.src = "/uploads/user_default.jpg"; };
+                imgLeft.className = "message-avatar";
+                row.appendChild(imgLeft);
+            }
+
+            const bubble = document.createElement("div");
+            bubble.className = "message-bubble " + (esMio ? "sent" : "received");
+            bubble.textContent = msg.texto;
+            row.appendChild(bubble);
+
+            if (esMio) {
+                const imgRight = document.createElement("img");
+                imgRight.src = avatar;
+                imgRight.onerror = () => { imgRight.src = "/uploads/user_default.jpg"; };
+                imgRight.className = "message-avatar";
+                row.appendChild(imgRight);
+            }
+
+            group.appendChild(senderDiv);
+            group.appendChild(row);
+            chatMessages.appendChild(group);
+        }
+
+        connection.start()
+            .then(scrollAlFinal)
+            .catch(err => console.error("Error al conectar con SignalR:", err));
+    </script>
+}

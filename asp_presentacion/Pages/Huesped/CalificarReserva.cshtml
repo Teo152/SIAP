@@ -1,0 +1,76 @@
+﻿@page "{id:int}"
+@model asp_presentacion.Pages.Huesped.CalificarReservaModel
+@{
+    ViewData["Title"] = "Calificar reserva";
+}
+
+<div class="container py-5" style="max-width: 700px;">
+
+    <h2 class="fw-bold mb-3">Dejar reseña</h2>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var e in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>@e.ErrorMessage</div>
+            }
+        </div>
+    }
+
+    @if (Model.Reserva == null || Model.Propiedad == null)
+    {
+        <p class="text-muted">No se encontró la reserva.</p>
+    }
+    else
+    {
+        <div class="mb-4">
+            <h5 class="fw-semibold mb-1">@Model.Propiedad.Nombre</h5>
+            <p class="text-muted mb-0">
+                @Model.Reserva.Fecha_deseada.ToString("dd MMM yyyy")
+                -
+                @Model.Reserva.Fecha_fin.ToString("dd MMM yyyy")
+            </p>
+        </div>
+
+        <form method="post" class="border rounded-3 p-4 shadow-sm">
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Calificación</label>
+                <select asp-for="Calificacion" class="form-select" style="max-width:200px;">
+                    <option value="">Selecciona...</option>
+                    <option value="5">5 - Excelente</option>
+                    <option value="4">4 - Muy bueno</option>
+                    <option value="3">3 - Bueno</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="1">1 - Malo</option>
+                </select>
+                <span asp-validation-for="Calificacion" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Comentario (opcional)</label>
+                <textarea asp-for="Comentario"
+                          class="form-control"
+                          rows="4"
+                          maxlength="500"
+                          placeholder="Cuéntale a otros cómo fue tu experiencia."></textarea>
+            </div>
+
+            <button type="submit"
+                    class="btn btn-danger px-5"
+                    style="border-radius:999px;">
+                Enviar reseña
+            </button>
+
+            <a asp-page="/Huesped/Reservas"
+               class="btn btn-link ms-2">
+                Cancelar
+            </a>
+        </form>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

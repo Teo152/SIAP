@@ -6,21 +6,6 @@
     var fotoUsuario = HttpContext.Session.GetString("FotoUsuario") ?? "/uploads/user_default.jpg";
 }
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm px-4">
-    <a class="navbar-brand fw-bold" href="/" style="font-size: 1.5rem;">🏠 SkyBnB</a>
-    <div class="ms-auto d-flex align-items-center">
-        <a href="#" class="me-3 text-dark text-decoration-none">Mensajes</a>
-        <a asp-page="/Propiedades" class="me-3 text-dark text-decoration-none">Mis propiedades</a>
-
-        <img src="@fotoUsuario"
-             onerror="this.src='/uploads/user_default.jpg';"
-             alt="Usuario"
-             class="rounded-circle"
-             style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ddd;">
-    </div>
-</nav>
-
 <!-- FILTRO -->
 <div class="container mt-4">
     <div class="p-4 bg-light rounded-3 shadow-sm">
@@ -84,7 +69,9 @@
 
 <!-- ESTILOS -->
 <style>
+    /* Ajuste global para navbar fixed-top */
     body {
+        padding-top: 80px !important; /* Evita que se oculte debajo del navbar */
         font-family: 'Poppins', sans-serif;
         background-color: #fff;
     }
@@ -122,5 +109,6 @@
         background-color: #d63384;
         border-color: #d63384;
     }
+
 </style>
 

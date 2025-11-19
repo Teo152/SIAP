@@ -24,7 +24,6 @@ namespace lib_presentaciones.Implementaciones
             lista = JsonConversor.ConvertirAObjeto<List<Usuarios>>(
                 JsonConversor.ConvertirAString(respuesta["Entidades"]));
 
-
             return lista;
         }
 
@@ -80,8 +79,6 @@ namespace lib_presentaciones.Implementaciones
             var datos = new Dictionary<string, object>();
             datos["Entidad"] = entidad;
 
-
-
             comunicaciones = new Comunicaciones();
             datos = comunicaciones.ConstruirUrl(datos, "Usuarios/Modificar");
             var respuesta = await comunicaciones!.Execute(datos);
@@ -116,6 +113,34 @@ namespace lib_presentaciones.Implementaciones
             entidad = JsonConversor.ConvertirAObjeto<Usuarios>(
                 JsonConversor.ConvertirAString(respuesta["Entidad"]));
             return entidad;
+        }
+
+        public async Task<Usuarios?> PorId(int id)
+        {
+            var datos = new Dictionary<string, object>();
+
+            // Puedes mandar el id dentro de una "Entidad" o como parámetro simple,
+            // según cómo armes tus otros servicios
+            datos["Entidad"] = new Usuarios { Id = id };
+
+            comunicaciones = new Comunicaciones();
+            datos = comunicaciones.ConstruirUrl(datos, "Usuarios/PorId");
+
+            var respuesta = await comunicaciones.Execute(datos);
+
+            if (respuesta.ContainsKey("Error"))
+            {
+                throw new Exception(respuesta["Error"]!.ToString());
+            }
+
+            if (!respuesta.ContainsKey("Entidad") || respuesta["Entidad"] == null)
+                return null;
+
+            var usuario = JsonConversor.ConvertirAObjeto<Usuarios>(
+                JsonConversor.ConvertirAString(respuesta["Entidad"])
+            );
+
+            return usuario;
         }
     }
 }

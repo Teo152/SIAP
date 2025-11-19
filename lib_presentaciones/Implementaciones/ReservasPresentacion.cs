@@ -1,6 +1,7 @@
 ﻿using lib_dominio.Entidades;
 using lib_dominio.Nucleo;
 using lib_presentaciones.Interfaces;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace lib_presentaciones.Implementaciones
 {
@@ -26,8 +27,6 @@ namespace lib_presentaciones.Implementaciones
 
             return lista;
         }
-
-       
 
         public async Task<Reservas?> Guardar(Reservas? entidad)
         {
@@ -97,6 +96,75 @@ namespace lib_presentaciones.Implementaciones
                 JsonConversor.ConvertirAString(respuesta["Entidad"]));
             return entidad;
         }
+
+
+        public async Task<List<Reservas>> ListarParaMensajeria(int usuarioId)
+        {
+            var datos = new Dictionary<string, object>();
+
+            datos["Entidad"] = new Reservas
+            {
+                UsuarioId = usuarioId
+            };
+
+            comunicaciones = new Comunicaciones();
+            datos = comunicaciones.ConstruirUrl(datos, "Reservas/ListarParaMensajeria");
+
+            var respuesta = await comunicaciones.Execute(datos);
+
+            if (respuesta.ContainsKey("Error"))
+            {
+                throw new Exception(respuesta["Error"]!.ToString());
+            }
+
+            if (!respuesta.ContainsKey("Entidades") || respuesta["Entidades"] == null)
+            {
+                return new List<Reservas>();
+            }
+
+            var reservas = JsonConversor.ConvertirAObjeto<List<Reservas>>(
+                JsonConversor.ConvertirAString(respuesta["Entidades"])
+            );
+
+            return reservas;
+        }
+
+        public async Task<Reservas?> PorId(int reservaId)
+        {
+            var datos = new Dictionary<string, object>
+            {
+                ["ReservaId"] = reservaId
+            };
+
+            comunicaciones = new Comunicaciones();
+            datos = comunicaciones.ConstruirUrl(datos, "Reservas/PorId");
+            var respuesta = await comunicaciones.Execute(datos);
+
+            if (respuesta.ContainsKey("Error"))
+                throw new Exception(respuesta["Error"]!.ToString());
+
+            return JsonConversor.ConvertirAObjeto<Reservas?>(
+                JsonConversor.ConvertirAString(respuesta["Entidad"])
+            );
+        }
+
+        public async Task<string> ActualizarEstados()
+        {
+            var datos = new Dictionary<string, object>();
+
+            // 👇 Igual que haces en los demás
+            comunicaciones = new Comunicaciones();
+            datos = comunicaciones.ConstruirUrl(datos, "Reservas/ActualizarEstados");
+
+            var respuesta = await comunicaciones.Execute(datos);
+
+            if (respuesta.ContainsKey("Error"))
+                throw new Exception(respuesta["Error"].ToString()!);
+
+            return respuesta["Respuesta"].ToString()!;
+        }
+
+
 
 
     }

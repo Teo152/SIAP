@@ -63,6 +63,12 @@ namespace lib_repositorios.Migrations
                     b.Property<int>("DestinatarioId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("EsAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Leido")
+                        .HasColumnType("bit");
+
                     b.Property<int>("RemitenteId")
                         .HasColumnType("int");
 
@@ -198,6 +204,38 @@ namespace lib_repositorios.Migrations
                     b.HasIndex("UsuarioId");
 
                     b.ToTable("Propiedades");
+                });
+
+            modelBuilder.Entity("lib_dominio.Entidades.ReporteChat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Motivo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReservaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsuarioReportanteId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReservaId");
+
+                    b.HasIndex("UsuarioReportanteId");
+
+                    b.ToTable("ReportesChat");
                 });
 
             modelBuilder.Entity("lib_dominio.Entidades.Resenas", b =>
@@ -375,6 +413,25 @@ namespace lib_repositorios.Migrations
                     b.Navigation("_Municipios");
 
                     b.Navigation("_Usuarios");
+                });
+
+            modelBuilder.Entity("lib_dominio.Entidades.ReporteChat", b =>
+                {
+                    b.HasOne("lib_dominio.Entidades.Reservas", "Reserva")
+                        .WithMany()
+                        .HasForeignKey("ReservaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lib_dominio.Entidades.Usuarios", "UsuarioReportante")
+                        .WithMany()
+                        .HasForeignKey("UsuarioReportanteId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Reserva");
+
+                    b.Navigation("UsuarioReportante");
                 });
 
             modelBuilder.Entity("lib_dominio.Entidades.Resenas", b =>

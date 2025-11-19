@@ -1,5 +1,9 @@
+ï»¿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using lib_dominio.Entidades;
 using lib_presentaciones.Implementaciones;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -13,7 +17,7 @@ namespace asp_presentacion.Pages
         [BindProperty]
         public string Password { get; set; } = string.Empty;
 
-        // ?? Propiedad para mostrar mensajes en el frontend
+        // Mensaje para mostrar errores en la vista
         public string? ErrorMessage { get; set; }
 
         public void OnGet()
@@ -27,11 +31,11 @@ namespace asp_presentacion.Pages
 
             try
             {
-                // ? Instanciamos el servicio que obtiene los usuarios
+                // Servicio que obtiene los usuarios
                 var servicio = new UsuariosPresentacion();
                 var usuarios = await servicio.Listar(); // usamos Listar en lugar de PorEmail
 
-                // ? Buscamos el usuario por email (ignorando mayúsculas/minúsculas)
+                // Buscar usuario por email (ignorando mayÃºsculas/minÃºsculas)
                 var usuario = usuarios.FirstOrDefault(u =>
                     u.Email.Equals(Email, StringComparison.OrdinalIgnoreCase));
 
@@ -41,22 +45,39 @@ namespace asp_presentacion.Pages
                     return Page();
                 }
 
-                // ? Verificamos la contraseña
+                // Verificar contraseÃ±a
                 if (usuario.Contrasena != Password)
                 {
-                    ErrorMessage = "Contraseña incorrecta";
+                    ErrorMessage = "ContraseÃ±a incorrecta";
                     return Page();
                 }
 
-                // ? Guardamos datos del usuario en sesión
+                // Normalizar el nombre del rol para guardarlo en sesiÃ³n
+                string rolNombre;
+                switch (usuario.Rol)
+                {
+                    case RolUsuario.Administrador:
+                        rolNombre = "Admin";          // ðŸ‘ˆ asÃ­ lo usan tus pÃ¡ginas de Admin
+                        break;
+
+                    case RolUsuario.Anfitrion:
+                        rolNombre = "Anfitrion";
+                        break;
+
+                    case RolUsuario.Huesped:
+                    default:
+                        rolNombre = "Huesped";
+                        break;
+                }
+
+                // Guardar datos del usuario en sesiÃ³n
                 HttpContext.Session.SetInt32("UsuarioId", usuario.Id);
-                HttpContext.Session.SetString("Rol", usuario.Rol.ToString());
+                HttpContext.Session.SetInt32("Rol", (int)usuario.Rol);   // rol numÃ©rico
+                HttpContext.Session.SetString("RolNombre", rolNombre);   // rol texto normalizado
                 HttpContext.Session.SetString("NombreUsuario", usuario.Nombre);
-                // ?? Guardar la foto del usuario en la sesión
                 HttpContext.Session.SetString("FotoUsuario", usuario.Foto ?? "/uploads/user_default.jpg");
 
-
-                // ? Redirigimos según el rol
+                // Redirigir segÃºn el rol
                 switch (usuario.Rol)
                 {
                     case RolUsuario.Anfitrion:
@@ -72,7 +93,7 @@ namespace asp_presentacion.Pages
             }
             catch (Exception ex)
             {
-                ErrorMessage = $"Error al iniciar sesión: {ex.Message}";
+                ErrorMessage = $"Error al iniciar sesiÃ³n: {ex.Message}";
                 return Page();
             }
         }

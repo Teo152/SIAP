@@ -31,7 +31,22 @@ namespace asp_presentacion.Pages.Huesped
 
         public async Task OnGetAsync()
         {
+
+
+            try
+            {
+                await _reservasPresentacion.ActualizarEstados();
+            }
+            catch
+            {
+                // si falla, solo no actualiza estados, pero la página sigue
+            }
+
+            // 2?? Ahora sí, trae las reservas ya actualizadas
             await CargarReservasAsync();
+        
+
+           
         }
 
         private async Task CargarReservasAsync()

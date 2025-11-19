@@ -11,11 +11,12 @@ public class Propiedades
     public string Direccion { get; set; } = null!;
     public int Capacidad { get; set; }
     public string TipoPropiedad { get; set; } = null!;
+
     [Column(TypeName = "decimal(18, 2)")]
-    public decimal Precio { get; set; } //precio por noche
+    public decimal Precio { get; set; }
 
     //public bool? disponible { get; set; }
-    public int EstanciaMinima { get; set; } 
+    public int EstanciaMinima { get; set; }
 
     public string? ReglasPropiedad { get; set; }
     public string? Descripcion { get; set; }
@@ -24,17 +25,7 @@ public class Propiedades
     public int? MunicipioId { get; set; }
     public string? Imagen { get; set; }
 
+    public ICollection<Resenas> Resenas { get; set; } = new List<Resenas>();
     [ForeignKey("UsuarioId")][JsonIgnore] public Usuarios? _Usuarios { get; set; }
     [ForeignKey("MunicipioId")][JsonIgnore] public Municipios? _Municipios { get; set; }
-
-    // Relación con Usuarios
-    // Un anfitrión puede tener múltiples propiedades
-    //  [JsonIgnore]
-    //public Usuarios? Usuario { get; set; } //preguntar por ? o null!
-
-    //[JsonIgnore] public Municipios? Municipio { get; set; }  // "
-
-    //   [JsonIgnore] public ICollection<Reservas>? Reservas { get; set; }
-
-
 }

@@ -51,20 +51,38 @@ namespace lib_aplicaciones.Implementaciones
                 query = query.Where(p => p.Capacidad >= entidad.Cantidad_Huespedes.Value);
             }
 
-            // 3️⃣ FUTURO: FILTRO POR FECHAS (CUANDO IMPLEMENTES RESERVAS)
-            // if (entidad.CheckIn.HasValue && entidad.CheckOut.HasValue)
-            // {
-            //     var checkIn = entidad.CheckIn.Value;
-            //     var checkOut = entidad.CheckOut.Value;
-            //
-            //     query = query.Where(p =>
-            //         !p.Reservas.Any(r =>
-            //             (checkIn < r.FechaFin && checkOut > r.FechaInicio)
-            //         ));
-            // }
+            // 3️⃣ DISPONIBILIDAD POR FECHAS (hecha 100% en SQL)
+            // 3️⃣ DISPONIBILIDAD POR FECHAS (hecha 100% en SQL)
+            if (entidad.Fecha_deseada.HasValue && entidad.Fecha_Fin.HasValue)
+            {
+                var inicio = entidad.Fecha_deseada.Value.Date;
+                var fin = entidad.Fecha_Fin.Value.Date;
+
+                if (fin <= inicio)
+                    return new List<Propiedades>();
+
+                query = query.Where(p =>
+                    !this.IConexion!.Reservas!.Any(r =>
+                        r.PropiedadId == p.Id &&
+
+                        // 👇 AQUÍ ES LA CLAVE:
+                        // Solo NO bloquean las reservas canceladas o completadas.
+                        // Ajusta los valores 4 y 5 a los que uses en tu enum.
+                        r.EstadoId != 4 &&   // por ejemplo: 4 = Cancelada
+                        r.EstadoId != 5 &&   // por ejemplo: 5 = Completada
+
+                        // cruce de rangos de fechas
+                        inicio < r.Fecha_fin &&
+                        fin > r.Fecha_deseada
+                    )
+                );
+            }
+
 
             return query.ToList();
         }
+
+
 
 
     }

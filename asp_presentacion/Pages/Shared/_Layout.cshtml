@@ -1,84 +1,189 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"]</title>
-    <link rel="stylesheet"
-          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet"
-          href="~/css/site.css"
-          asp-append-version="true" />
-    <link rel="stylesheet"
-          href="~/asp_presentacion.styles.css"
-          asp-append-version="true" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light
-bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand"
-                   asp-area=""
-                   asp-page="/Index">
-                    asp_presentacion
-                </a>
-                <button class="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target=".navbar-collapse"
-                        aria-controls="navbarSupportedContent"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-                    </span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify
-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-area=""
-                               asp-page="/Ventanas/Propiedades">
-                                Propiedades
+    <title>@ViewData["Title"] - SkyBnB</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+        body {
+            padding-top: 80px !important;
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff;
+        }
+
+        /* Dropdown rosado */
+        .dropdown-menu .dropdown-item:hover {
+            background-color: #ffe8ee !important;
+        }
+
+        .dropdown-menu .dropdown-item.text-danger:hover {
+            background-color: #ffd6dd !important;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .menu-header {
+            padding: 10px 15px 5px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* NAVBAR SIN LOGIN */
+        .btn-login {
+            border-radius: 10px;
+            border: 2px solid #ea2833;
+            padding: 6px 15px;
+            font-weight: 600;
+            color: #ea2833 !important;
+        }
+
+            .btn-login:hover {
+                background-color: #ffe5ea;
+            }
+
+        .btn-register {
+            background-color: #ea2833;
+            border-radius: 10px;
+            padding: 6px 15px;
+            color: white !important;
+            font-weight: 600;
+        }
+
+            .btn-register:hover {
+                background-color: #d61e2a;
+            }
+    </style>
+</head>
+
+<body>
+
+    @{
+        var http = HttpContextAccessor.HttpContext;
+
+        var usuarioId = http?.Session.GetInt32("UsuarioId") ?? 0;
+        var rolNombre = http?.Session.GetString("RolNombre") ?? "";
+        var nombreUsuario = http?.Session.GetString("NombreUsuario") ?? "Mi cuenta";
+        var foto = http?.Session.GetString("FotoUsuario") ?? "/uploads/user_default.jpg";
+
+        var paginaActual = ViewContext.RouteData.Values["page"]?.ToString()?.ToLower() ?? "";
+        var esLogin = paginaActual == "/login";
+    }
+
+    <header>
+
+        @* NAVBAR PARA TODOS, login incluído *@
+        <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+            <div class="container d-flex justify-content-between">
+
+                <!-- LOGO -->
+                <a class="navbar-brand fw-bold d-flex align-items-center"
+                   href="@(
+        usuarioId == 0
+            ? "/"
+            : rolNombre == "Admin"
+                ? "/Admin/Index"
+                : rolNombre == "Anfitrion"
+                    ? "/Anfitrion"
+                    : "/Huesped"
+      )"
+                   style="font-size: 1.5rem;">
+                    🏠 SkyBnB
+                </a>
+
+
+                <div class="d-flex align-items-center">
+
+                    @* 🔹 USUARIO NO AUTENTICADO (LOGIN, REGISTER, ETC) *@
+                    @if (usuarioId == 0)
+                    {
+                        <a asp-page="/Login" class="btn-login me-2">
+                            Iniciar sesión
+                        </a>
+
+                        <a asp-page="/Rol" class="btn-register">
+                            Registrarse
+                        </a>
+                    }
+                    else
+                    {
+                        @* 🔹 MENÚ PARA HUÉSPED *@
+                        if (rolNombre == "Huesped")
+                        {
+                            <a asp-page="/Huesped/Reservas" class="me-4 text-dark text-decoration-none">
+                                Mis reservas
                             </a>
-                        </li>
-                    </ul>
+
+                            <a asp-page="/MensajesPage/Index" class="me-4 text-dark text-decoration-none">
+                                Mensajes
+                            </a>
+                        }
+
+                        @* 🔹 MENÚ PARA ANFITRIÓN *@
+                        if (rolNombre == "Anfitrion")
+                        {
+                            <a asp-page="/Propiedades" class="me-4 text-dark text-decoration-none">
+                                Mis propiedades
+                            </a>
+
+                            <a asp-page="/MensajesPage/Index" class="me-4 text-dark text-decoration-none">
+                                Mensajes
+                            </a>
+                        }
+
+                        @* 🔹 DROPDOWN DEL USUARIO *@
+                        <div class="dropdown">
+                            <a href="#" class="d-flex align-items-center text-decoration-none"
+                               id="userMenu" data-bs-toggle="dropdown">
+
+                                <img src="@foto"
+                                     class="rounded-circle"
+                                     onerror="this.src='/uploads/user_default.jpg'"
+                                     style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ddd;">
+                            </a>
+
+                            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userMenu">
+                                <li class="menu-header">
+                                    <span class="user-name">@nombreUsuario</span>
+                                </li>
+
+                                <li><hr class="dropdown-divider" /></li>
+
+                                <li>
+                                    <a class="dropdown-item text-danger fw-semibold" asp-page="/Logout">
+                                        Cerrar sesión
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    }
                 </div>
+
             </div>
         </nav>
+
     </header>
-    <div class="container">
-        <main role="main"
-              class="pb-3">
 
 
+
+    <div class="container mt-3">
+        <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - asp_presentacion -
-            <a asp-area="" asp-page="/Privacy">
-                Privacy
-            </a>
-        </div>
-    </footer>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
 
-    <script src="~/lib/jquery/dist/jquery.min.js">
-
-    </script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js">
-
-    </script>
-    <script src="~/js/site.js"
-            asp-append-version="true">
-
-    </script>
-
-    @await RenderSectionAsync("Scripts", required: false)
 </body>
-</html> 
+</html>

@@ -63,11 +63,10 @@
         </div>
     </section>
 
-    <!-- DESCRIPCIÓN -->
+    <!-- DESCRIPCIÓN + POLÍTICAS -->
     <section class="mb-5">
         <h4 class="fw-semibold mb-3">Acerca de este alojamiento</h4>
 
-        <!-- DESCRIPCIÓN -->
         <p class="text-muted mb-4"
            style="line-height: 1.7; font-size: 0.95rem; max-width: 900px;">
             @(
@@ -77,8 +76,6 @@
                         )
         </p>
 
-        <!-- POLÍTICAS DE CANCELACIÓN -->
-        
         <p class="text-muted"
            style="line-height: 1.7; font-size: 0.95rem; max-width: 900px;">
             @(
@@ -88,7 +85,6 @@
                         )
         </p>
     </section>
-
 
     <!-- DISPONIBILIDAD + CALENDARIO DINÁMICO -->
     <section class="mb-5">
@@ -140,11 +136,11 @@
     <section class="mb-5" style="max-width: 350px;">
         <h4 class="fw-semibold mb-3">Precio</h4>
 
-        <!-- AHORA ES GET Y VA A /Huesped/CrearReserva -->
+        <!-- GET hacia /Huesped/CrearReserva -->
         <form id="formReserva" method="get" asp-page="/Huesped/CrearReserva">
             <div class="border rounded-3 p-3 shadow-sm">
                 <p class="mb-1 fw-semibold" style="font-size: 0.9rem;">
-                    $@Model.Propiedad.Precio Por  noches
+                    $@Model.Propiedad.Precio por noche
                 </p>
 
                 <p class="text-muted mb-3" style="font-size: 0.85rem;">
@@ -155,7 +151,7 @@
                 <input type="hidden" id="Fecha_deseada" name="Fecha_deseada" />
                 <input type="hidden" id="Fecha_Fin" name="Fecha_Fin" />
 
-                <!-- Id de la propiedad para usarlo en la otra página -->
+                <!-- Id de la propiedad -->
                 <input type="hidden" name="PropiedadId" value="@Model.Propiedad.Id" />
 
                 <button type="button" id="btnReservar" class="btn btn-pink w-100">
@@ -165,7 +161,99 @@
         </form>
     </section>
 
-    @* Reseñas: las puedes implementar más adelante aquí *@
+    <!-- =======================
+         RESEÑAS
+         ======================= -->
+    <section class="mb-5">
+        <h4 class="fw-semibold mb-3">Reseñas</h4>
+
+        @if (Model.TotalResenas == 0)
+        {
+            <p class="text-muted">Aún no hay reseñas para esta propiedad.</p>
+        }
+        else
+        {
+            <div class="row mb-4">
+                <!-- Promedio -->
+                <div class="col-md-3 d-flex align-items-center">
+                    <div>
+                        <h2 class="fw-bold mb-0">@Model.PromedioCalificacion.ToString("0.0")</h2>
+                        <div style="font-size:1.1rem;">★★★★★</div>
+                        <small class="text-muted">@Model.TotalResenas reseña@(Model.TotalResenas == 1 ? "" : "s")</small>
+                    </div>
+                </div>
+
+                <!-- Distribución -->
+                <div class="col-md-9">
+                    @for (int estrellas = 5; estrellas >= 1; estrellas--)
+                    {
+                        var idx = estrellas - 1;
+                        var total = Model.TotalResenas == 0 ? 1.0 : (double)Model.TotalResenas;
+                        var porcentaje = Math.Round((Model.Distribucion[idx] / total) * 100);
+
+                        <div class="d-flex align-items-center mb-1 very-small">
+                            <span style="width:40px;">@estrellas ★</span>
+                            <div class="flex-grow-1 mx-2 barra-resena">
+                                <div class="barra-resena-fill"
+                                     style="width:@porcentaje%;"></div>
+                            </div>
+                            <span style="width:40px;">@porcentaje%</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Lista de reseñas -->
+            @foreach (var r in Model.ListaResenas.OrderByDescending(x => x.Fecha_creacion))
+            {
+                <article class="mb-4">
+                    <div class="d-flex align-items-center mb-1">
+                        <img src="/uploads/user_default.jpg"
+                             class="rounded-circle me-3"
+                             style="width:40px;height:40px;object-fit:cover;" />
+                        <div>
+                            <p class="fw-semibold mb-0">
+                                Huésped
+                                @* Si más adelante tienes el nombre:
+                                   @(r.Reserva?.Usuario != null
+                                        ? r.Reserva.Usuario.Nombre + " " + r.Reserva.Usuario.Apellido
+                                        : "Huésped")
+                                *@
+                            </p>
+                            <small class="text-muted">
+                                @r.Fecha_creacion.ToString("MMMM yyyy")
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="very-small mb-1">
+                        @{
+                            var stars = new string('★', r.Calificacion);
+                            var empty = new string('☆', 5 - r.Calificacion);
+                        }
+                        <span>@stars@empty</span>
+                    </div>
+
+                    <p class="mb-0" style="font-size:0.9rem;">
+                        @r.Comentario
+                    </p>
+                </article>
+
+                <hr />
+            }
+        }
+
+        <!-- Botón para dejar reseña (solo si puede) -->
+        @if (Model.PuedeDejarResena && Model.ReservaParaResenaId.HasValue)
+        {
+            <a asp-page="/Huesped/CalificarReserva"
+               asp-route-id="@Model.ReservaParaResenaId.Value"
+               class="btn btn-outline-danger mt-3"
+               style="border-radius:999px;">
+                Dejar reseña
+            </a>
+        }
+    </section>
 
 </div>
 
@@ -194,14 +282,11 @@
             const inputFechaDeseada = document.getElementById("Fecha_deseada");
             const inputFechaFin = document.getElementById("Fecha_Fin");
 
-            // 👉 Fechas reservadas que vienen desde el backend (DetalleModel.FechasReservadas)
+            // Fechas reservadas desde el backend
             const reservedDates = @Html.Raw(
                             Newtonsoft.Json.JsonConvert.SerializeObject(Model.FechasReservadas ?? new List<string>())
                     );
 
-        // =========================
-        //  Helpers
-        // =========================
         function toDateKey(year, month, day) {
             const mm = (month + 1).toString().padStart(2, "0");
             const dd = day.toString().padStart(2, "0");
@@ -247,19 +332,12 @@
                 });
             }
 
-            // =========================
-            //  Renderizado del calendario
-            // =========================
             function renderCalendar(month, year) {
-                // Título: "Julio 2024"
                 calendarTitle.textContent = `${monthNames[month]} ${year}`;
-
-                // Limpia el body
                 calendarBody.innerHTML = "";
 
-                // Primer día del mes (0 = lunes, 6 = domingo)
-                let firstDay = new Date(year, month, 1).getDay(); // 0 domingo ... 6 sábado
-                firstDay = (firstDay + 6) % 7; // lo convertimos a 0=lunes
+                let firstDay = new Date(year, month, 1).getDay(); // 0 dom ... 6 sáb
+                firstDay = (firstDay + 6) % 7; // 0 = lunes
 
                 const daysInMonth = new Date(year, month + 1, 0).getDate();
 
@@ -272,7 +350,6 @@
                         const cell = document.createElement("td");
 
                         if (i === 0 && j < firstDay) {
-                            // celdas vacías antes del primer día
                             cell.textContent = "";
                         } else if (date > daysInMonth) {
                             cell.textContent = "";
@@ -282,7 +359,6 @@
                             cell.dataset.date = dateKey;
 
                             if (reservedDates.includes(dateKey)) {
-                                // día ocupado: rojo y sin eventos
                                 cell.classList.add("dia-reservado");
                             } else {
                                 cell.classList.add("cal-dia");
@@ -296,20 +372,14 @@
 
                     calendarBody.appendChild(row);
 
-                    if (date > daysInMonth) {
-                        break;
-                    }
+                    if (date > daysInMonth) break;
                 }
 
                 attachDayHandlers();
                 updateSelectionStyles();
             }
 
-            // =========================
-            //  Eventos de cada día
-            // =========================
             function attachDayHandlers() {
-                // limpiar eventos previos
                 document.querySelectorAll(".cal-dia").forEach(td => {
                     td.onclick = null;
                     td.ondblclick = null;
@@ -318,14 +388,12 @@
                         const date = td.dataset.date;
 
                         if (!checkIn || (checkIn && checkOut)) {
-                            // primer clic o reinicio
                             checkIn = date;
                             checkOut = null;
                         } else if (checkIn && !checkOut) {
                             if (date > checkIn) {
                                 checkOut = date;
                             } else {
-                                // si eligen una fecha anterior, la tomamos como nuevo check-in
                                 checkIn = date;
                                 checkOut = null;
                             }
@@ -342,9 +410,6 @@
                 });
             }
 
-            // =========================
-            //  Navegación de meses
-            // =========================
             document.getElementById("prevMonthBtn").addEventListener("click", () => {
                 currentMonth--;
                 if (currentMonth < 0) {
@@ -363,9 +428,6 @@
                 renderCalendar(currentMonth, currentYear);
             });
 
-            // =========================
-            //  Botón Reservar
-            // =========================
             document.getElementById("btnReservar").addEventListener("click", () => {
                 if (!checkIn || !checkOut) {
                     alert("Selecciona fecha de llegada (check-in) y salida (check-out) antes de reservar.");
@@ -375,7 +437,6 @@
                 document.getElementById("formReserva").submit();
             });
 
-            // Render inicial
             renderCalendar(currentMonth, currentYear);
         })();
     </script>
@@ -452,4 +513,22 @@
             background-color: #e03150;
             color: #fff;
         }
+
+    /* Barras de distribución de reseñas */
+    .barra-resena {
+        background-color: #f3f3f3;
+        border-radius: 999px;
+        height: 6px;
+        overflow: hidden;
+    }
+
+    .barra-resena-fill {
+        background-color: #ff385c;
+        height: 100%;
+        border-radius: 999px;
+    }
+
+    .very-small {
+        font-size: 0.8rem;
+    }
 </style>

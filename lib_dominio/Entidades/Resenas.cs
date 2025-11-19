@@ -14,7 +14,8 @@ public class Resenas
 
     // 🔸 Propiedades de navegación
     [JsonIgnore] public Reservas Reserva { get; set; } = null!;
+    [JsonIgnore] public Propiedades Propiedad { get; set; } = null!;
 
-  //  [NotMapped]
-   // public Propiedades Propiedad => Reserva.Propiedad;
+    //  [NotMapped]
+    // public Propiedades Propiedad => Reserva.Propiedad;
 }

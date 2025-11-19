@@ -54,8 +54,11 @@ namespace lib_aplicaciones.Implementaciones
         }
 
         public List<Propiedades> Listar()
+
         {
+            
             return this.IConexion!.Propiedades!.Take(20).ToList();
+            
         }
 
         public List<Propiedades> PorNombre(Propiedades? entidad)
@@ -80,11 +83,12 @@ namespace lib_aplicaciones.Implementaciones
             var entry = this.IConexion!.Entry<Propiedades>(entidad);
             entry.State = EntityState.Modified;
             this.IConexion.SaveChanges();
+            
             return entidad;
         }
 
+
        
-        
 
     }
 }
